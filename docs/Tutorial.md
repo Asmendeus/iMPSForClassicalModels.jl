@@ -1,6 +1,6 @@
 # Tutorial
 
-## 0. Tensor Network for Classical Model
+## 0. Review: Tensor Network for Classical Model
 
 ## How to transform partition function into tensor network
 

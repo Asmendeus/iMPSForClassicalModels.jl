@@ -1,29 +1,29 @@
 """
     mutable struct InfiniteMPO{L, T} <: AbstractInfiniteMPO{L, 1}
-        const A::AbstractVector{AbstractTensorMap}
+        const O::AbstractVector{MPOTensor}
      end
 
 Concrete type of iMPO, where `L` is the cell size, `T == Float64` or `ComplexF64` is the number type of local tensors.
 """
 
 mutable struct InfiniteMPO{L, T} <: AbstractInfiniteMPO{L, 1}
-    const A::AbstractVector{AbstractTensorMap}
+    const O::AbstractVector{MPOTensor}
 
     function InfiniteMPO{L, T}() where {L, T}
-        A = Vector{AbstractTensorMap}(undef, L)
-        return new{L, T}(A)
+        O = Vector{MPOTensor}(undef, L)
+        return new{L, T}(O)
     end
     InfiniteMPO(L::Int, T::Type{<:Union{Float64, ComplexF64}}=Float64)=InfiniteMPO{L, T}()
 
-    function InfiniteMPO{L, T}(A::AbstractVector{<:AbstractTensorMap}) where {L, T}
-        length(A) == L || throw(ArgumentError("The InfiniteMPO length `L` does not match the length of the local tensor vector"))
+    function InfiniteMPO{L, T}(O::AbstractVector{<:MPOTensor}) where {L, T}
+        length(O) == L || throw(ArgumentError("The InfiniteMPO length `L` does not match the length of the local tensor vector"))
         T ∈ [Float64, ComplexF64] || throw(ArgumentError("Unsupported data types"))
-        return new{L, T}(A)
+        return new{L, T}(O)
     end
-    function InfiniteMPO(A::AbstractVector{<:AbstractTensorMap})
-        L = length(A)
-        T = mapreduce(eltype, promote_type, A)
-        return new{L, T}(A)
+    function InfiniteMPO(O::AbstractVector{<:MPOTensor})
+        L = length(O)
+        T = mapreduce(eltype, promote_type, O)
+        return new{L, T}(O)
     end
 
 end
@@ -44,7 +44,7 @@ function Base.show(io::IO, mpo::InfiniteMPO{L, T}) where {L, T}
 
     # schematic diagram: line 2
     for l in 1:L
-        print(io, " — A$l")
+        print(io, " — O$l")
     end
     println(io, " —")
 
@@ -57,6 +57,6 @@ function Base.show(io::IO, mpo::InfiniteMPO{L, T}) where {L, T}
 
     # local tensors
     println(io)
-    println(io, "local tensors:")
-    show(io, mpo.A)
+    println(io, "MPO tensors:")
+    show(io, mpo.O)
 end
