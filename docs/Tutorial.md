@@ -2,9 +2,9 @@
 
 ## 0. Tensor Network for Classical Model
 
-### How to solve a partition function tensor network
+## How to transform partition function into tensor network
 
-For any two-dimensional discrete classical statistical model under thermodynamic limit with a Hamiltonian $H$, the partition function
+For any two-dimensional classical statistical model on a discrete lattice under thermodynamic limit with a Hamiltonian $H$, the partition function
 
 $$
 Z = \int\mathrm{e}^{-\beta H} \mathrm{d}\Omega
@@ -14,7 +14,48 @@ can always be expressed as the contraction result of an infinite tensor network 
 
 ![PartitionFunction](fig/PartitionFunction.png "Partition Function")
 
-(Notably, a continuous phase space $\Omega$ requires infinite bond dimensions, so although it also allows for formal transformation into a tensor network, it can not be solved numerically. Here we are actually discussing models like Ising, Clock, and other models whose phase spaces are discrete. For the XY-like model, we need to do one additional discretization.)
+Notably, a continuous phase space $\Omega$ requires infinite bond dimensions, so although a classical model with continuous phase space allows for formal transformation into a tensor network, it can not be solved numerically. Here we are actually discussing models like Ising, Clock, and other models whose phase spaces are discrete. For the XY-like model, we need to do one additional discretization.
+
+Now, let us take the 2D classical Ising model as an example to explain how to transform the partition function into a tensor network.
+
+The Hamiltonian of 2D classical Ising model is written as
+
+$$
+H = -J\sum_{\langle i,j\rangle} s_i s_j - h\sum_i s_i
+$$
+
+where $s_i$ is the spin configuration on site $i$ with discrete values $\{1,-1\}$, and $\langle i,j\rangle$ represents the next neighbor site $i$ and site $j$. The partition function is
+
+$$
+Z = \sum_{\{s_i\}}\mathrm{e}^{\beta J\sum_{\langle i,j\rangle} s_is_j + \beta h\sum_i s_i}
+= \sum_{\{s_i\}}\left[\prod_{\langle i,j\rangle}\mathrm{e}^{\beta Js_is_j} \prod_{i}\mathrm{e}^{\beta hs_i}\right]
+$$
+
+where $\beta = \frac{1}{k_BT}$ is inverse temperature. $\sum_{\{s_i\}}$ represents the sum of all the spin configurations and can be swapped with the multiplication. Considering $s_i$ has only two discrete values of $\{1, -1\}$, $\sum_{\{s_i\}}\mathrm{e}^{\beta Js_is_j}$ in the partition function can be viewed as a matrix $J_{ij}$
+
+$$
+J_{ij} = \left(\begin{array}{c c}
+\mathrm{e}^{\beta J} & \mathrm{e}^{-\beta J}\\
+\mathrm{e}^{-\beta J} & \mathrm{e}^{\beta J}\\
+\end{array}\right)
+$$
+
+and $\sum_{\{s_i\}}\mathrm{e}^{\beta hs_i}$ can be viewed as a vector $h_i$
+
+$$
+h_i = \left(\begin{array}{c}
+\mathrm{e}^{\beta h}\\
+\mathrm{e}^{-\beta h}\\
+\end{array}\right)
+$$
+
+Then we can get the tensor network as shown in the figure below, whose contraction result is the partition function of the 2D classical Ising model,
+
+![IsingPartitionFunction](fig/IsingPartitionFunction.png "Ising Partition Function")
+
+Here $\delta$ is a 5-leg identity tensor.
+
+### How to solve a partition function tensor network
 
 To solve a partition function tensor network, we can consider a variational boundary iMPS at its lower  boundary at infinity as follow
 
@@ -89,6 +130,11 @@ However, due to the exponential growth of the computational cost of the multi-le
 ![PartitionFunction2](fig/PartitionFunction3.png "Partition Function")
 
 ## 1. Installation
+
+```
+julia> ]
+pkg> add https://github.com/Asmendeus/iMPSForClassicalModels.jl.git#main
+```
 
 ## 2. Model
 

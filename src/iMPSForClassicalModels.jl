@@ -1,4 +1,4 @@
-module iMPSForClassicalModel
+module iMPSForClassicalModels
 
 using Reexport
 using TensorKit, OptimKit, KrylovKit
@@ -21,7 +21,7 @@ include("iMPO/MultirowInfiniteMPO.jl")
 # Environment
 
 # Algorithm
-include("Algorithm/iTEBD.jl")
+include("Algorithm/ViTEBD.jl")
 include("Algorithm/VUMPS.jl")
 
 end # module iMPSForClassicalModel
