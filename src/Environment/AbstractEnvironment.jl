@@ -1,6 +1,6 @@
-# fieldnames:
-# BL(BR)::LeftIsometricTensor
-# O::AbstractVector{<:MPOTensor}
-# AL(AR)::RightIsometricTensor
+"""
+     abstract type AbstractEnvironment
 
+Wrapper type of Environment Tensor's generating environment.
+"""
 abstract type AbstractEnvironment{W} end

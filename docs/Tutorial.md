@@ -4,7 +4,7 @@
 
 ## How to transform partition function into tensor network
 
-For any two-dimensional classical statistical model on a discrete lattice under thermodynamic limit with a Hamiltonian $H$, the partition function
+For any two-dimensional (2D) classical statistical model on a discrete lattice under thermodynamic limit with a Hamiltonian $H$, the partition function
 
 $$
 Z = \int\mathrm{e}^{-\beta H} \mathrm{d}\Omega
@@ -27,11 +27,14 @@ $$
 where $s_i$ is the spin configuration on site $i$ with discrete values $\{1,-1\}$, and $\langle i,j\rangle$ represents the next neighbor site $i$ and site $j$. The partition function is
 
 $$
-Z = \sum_{\{s_i\}}\mathrm{e}^{\beta J\sum_{\langle i,j\rangle} s_is_j + \beta h\sum_i s_i}
-= \sum_{\{s_i\}}\left[\prod_{\langle i,j\rangle}\mathrm{e}^{\beta Js_is_j} \prod_{i}\mathrm{e}^{\beta hs_i}\right]
+\begin{align*}
+Z &= \sum_{\{s_i\}}\mathrm{e}^{\beta J\sum_{\langle i,j\rangle} s_is_j + \beta h\sum_i s_i}\\
+&= \sum_{\{s_i\}}\left[\prod_{\langle i,j\rangle}\mathrm{e}^{\beta Js_is_j} \prod_{i}\mathrm{e}^{\beta hs_i}\right]\\
+&= \prod_i\sum_{\{s_i\}} \left(\mathrm{e}^{\beta hs_i}\prod_\rho \mathrm{e}^{\beta Js_is_{i+\rho}}\right)
+\end{align*}
 $$
 
-where $\beta = \frac{1}{k_BT}$ is inverse temperature. $\sum_{\{s_i\}}$ represents the sum of all the spin configurations and can be swapped with the multiplication. Considering $s_i$ has only two discrete values of $\{1, -1\}$, $\sum_{\{s_i\}}\mathrm{e}^{\beta Js_is_j}$ in the partition function can be viewed as a matrix $J_{ij}$
+where $\beta = \frac{1}{k_BT}$ is inverse temperature and $\sum_{\{s_i\}}$ represents the sum of all the spin configurations. $\rho$ represents vector between a pair of NN sites. Considering $s_i$ has only two discrete values of $\{1, -1\}$, $\sum_{\{s_i\}}\mathrm{e}^{\beta Js_is_j}$ in the partition function can be viewed as a tranfer matrix $J_{ij}$
 
 $$
 J_{ij} = \left(\begin{array}{c c}
@@ -141,3 +144,7 @@ pkg> add https://github.com/Asmendeus/iMPSForClassicalModels.jl.git#main
 ## 3. Solving Fixed Point
 
 ## 4. Observables
+
+## 5. For Quantum Systems
+
+In fact, `iMPSForClassicalModels.jl` can also be used to solve the ground state of a quantum model by the imaginary time evolution method, where MPO is the projection operator of a single imaginary time slice. However, the package does not support controlling global quantum numbers, although it allows adding local symmetry. The package `InfiniteMPS.jl` for quantum systems are being rapidly developed.
