@@ -1,6 +1,8 @@
 """
-     abstract type AbstractEnvironment
+     abstract type AbstractEnvironment{L, N}
 
-Wrapper type of environment tensor's generating environment.
+Wrapper type for
+    1. generating environment tensor;
+    2. updating center tensors.
 """
-abstract type AbstractEnvironment{N} end
+abstract type AbstractEnvironment{L, N} end

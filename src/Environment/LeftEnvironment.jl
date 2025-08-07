@@ -1,37 +1,37 @@
 """
-    mutable struct LeftEnvironment <: AbstractEnvironment{3}
-        const BL::AbstractVector{<:AdjointLeftIsometricTensor}
-        const O::AbstractVector{<:MPOTensor}
-        const AL::AbstractVector{<:LeftIsometricTensor}
+    mutable struct LeftEnvironment{L} <: AbstractEnvironment{L, 3}
+        const AL::AbstractVector{LeftIsometricMPSTensor}
+        const O::AbstractVector{MPOTensor}
+        const BL::AbstractVector{AdjointLeftIsometricMPSTensor}
     end
 
 Wrapper type for left environment tensor's generating environment.
 
 Graphic presentation:
 
-    —— BL ——
+    —— BL1 —— ... —— BLL ——
        |
-    —— O  ——
+    —— O1  —— ... —— OL  ——
        |
-    —— AL ——
+    —— AL1 —— ... —— ALL ——
 
 # Constructors
-    LeftEnvironment(BL::AbstractVector{<:AdjointLeftIsometricTensor}, O::AbstractVector{<:MPOTensor}, AL::AbstractVector{<:LeftIsometricTensor})
-    LeftEnvironment(AL::AbstractVector{<:LeftIsometricTensor}, O::AbstractVector{<:MPOTensor}, BL::AbstractVector{<:AdjointLeftIsometricTensor})
-    LeftEnvironment(BL::AbstractVector{<:AdjointLeftIsometricTensor}, AL::AbstractVector{<:LeftIsometricTensor}, O::AbstractVector{<:MPOTensor})
-    LeftEnvironment(AL::AbstractVector{<:LeftIsometricTensor}, BL::AbstractVector{<:AdjointLeftIsometricTensor}, O::AbstractVector{<:MPOTensor})
-    LeftEnvironment(O::AbstractVector{<:MPOTensor}, BL::AbstractVector{<:AdjointLeftIsometricTensor}, AL::AbstractVector{<:LeftIsometricTensor})
-    LeftEnvironment(O::AbstractVector{<:MPOTensor}, AL::AbstractVector{<:LeftIsometricTensor}, BL::AbstractVector{<:AdjointLeftIsometricTensor})
+    LeftEnvironment{L}(AL::AbstractVector{<:LeftIsometricMPSTensor}, O::AbstractVector{<:MPOTensor}, BL::AbstractVector{<:AdjointLeftIsometricMPSTensor})
+    LeftEnvironment(AL::AbstractVector{<:LeftIsometricMPSTensor}, O::AbstractVector{<:MPOTensor}, BL::AbstractVector{<:AdjointLeftIsometricMPSTensor})
+    LeftEnvironment(AL::LeftIsometricMPSTensor, O::MPOTensor, BL::AdjointLeftIsometricMPSTensor)
 """
-mutable struct LeftEnvironment <: AbstractEnvironment{3}
-    const BL::AbstractVector{<:AdjointLeftIsometricTensor}
-    const O::AbstractVector{<:MPOTensor}
-    const AL::AbstractVector{<:LeftIsometricTensor}
+mutable struct LeftEnvironment{L} <: AbstractEnvironment{L, 3}
+    const AL::AbstractVector{LeftIsometricMPSTensor}
+    const O::AbstractVector{MPOTensor}
+    const BL::AbstractVector{AdjointLeftIsometricMPSTensor}
 
-    LeftEnvironment(BL::AbstractVector{<:AdjointLeftIsometricTensor}, O::AbstractVector{<:MPOTensor}, AL::AbstractVector{<:LeftIsometricTensor}) = new(BL, O, AL)
-    LeftEnvironment(AL::AbstractVector{<:LeftIsometricTensor}, O::AbstractVector{<:MPOTensor}, BL::AbstractVector{<:AdjointLeftIsometricTensor}) = new(BL, O, AL)
-    LeftEnvironment(BL::AbstractVector{<:AdjointLeftIsometricTensor}, AL::AbstractVector{<:LeftIsometricTensor}, O::AbstractVector{<:MPOTensor}) = new(BL, O, AL)
-    LeftEnvironment(AL::AbstractVector{<:LeftIsometricTensor}, BL::AbstractVector{<:AdjointLeftIsometricTensor}, O::AbstractVector{<:MPOTensor}) = new(BL, O, AL)
-    LeftEnvironment(O::AbstractVector{<:MPOTensor}, BL::AbstractVector{<:AdjointLeftIsometricTensor}, AL::AbstractVector{<:LeftIsometricTensor}) = new(BL, O, AL)
-    LeftEnvironment(O::AbstractVector{<:MPOTensor}, AL::AbstractVector{<:LeftIsometricTensor}, BL::AbstractVector{<:AdjointLeftIsometricTensor}) = new(BL, O, AL)
+    LeftEnvironment{L}(AL::AbstractVector{<:LeftIsometricMPSTensor}, O::AbstractVector{<:MPOTensor}, BL::AbstractVector{<:AdjointLeftIsometricMPSTensor}) where L = new{L}(AL, O, BL)
+    function LeftEnvironment(AL::AbstractVector{<:LeftIsometricMPSTensor}, O::AbstractVector{<:MPOTensor}, BL::AbstractVector{<:AdjointLeftIsometricMPSTensor})
+        L = length(AL)
+        (L == length(O) == length(BL)) || throw(ArgumentError("The lengths of `AL`, `O` and `BL` do not match"))
+        return new{L}(AL, O, BL)
+    end
+    function LeftEnvironment(AL::LeftIsometricMPSTensor, O::MPOTensor, BL::AdjointLeftIsometricMPSTensor)
+        return new{1}([AL,], [O,], [BL,])
+    end
 end

@@ -32,7 +32,7 @@ struct MPSTensor <: AbstractMPSTensor
 end
 
 """
-    struct LeftIsometricTensor <: AbstractMPSTensor
+    struct LeftIsometricMPSTensor <: AbstractMPSTensor
         A::AbstractTensorMap
     end
 
@@ -51,19 +51,20 @@ Left isometry means
      —— AL  ——    |
 
 # Constructor(s)
-    LeftIsometricTensor(::AbstractTensorMap)
+    LeftIsometricMPSTensor(::AbstractTensorMap; tol::Float64=1e-8, check::Bool=true)
 """
-struct LeftIsometricTensor <: AbstractMPSTensor
+struct LeftIsometricMPSTensor <: AbstractMPSTensor
     A::AbstractTensorMap
 
-    function LeftIsometricTensor(A::AbstractMPSTensor)
-        (length(codomain(A)) == 2 && length(domain(A)) == 1) || throw(ArgumentError("The space $(space(A)) does not conform to `LeftIsometricTensor` space"))
+    function LeftIsometricMPSTensor(A::AbstractTensorMap; tol::Float64=Defaults.tol_norm, check::Bool=true)
+        (length(codomain(A)) == 2 && length(domain(A)) == 1) || throw(ArgumentError("The space $(space(A)) does not conform to `LeftIsometricMPSTensor` space"))
+        (check && !isLeftIsometric(A; tol=tol)) && throw(ArgumentError("The tensor is not left isometric"))
         return new(A)
     end
 end
 
 """
-    struct RightIsometricTensor <: AbstractMPSTensor
+    struct RightIsometricMPSTensor <: AbstractMPSTensor
         A::AbstractTensorMap
     end
 
@@ -82,13 +83,14 @@ Right isometry means
      —— AR  ——    |
 
 # Constructor(s)
-    RightIsometricTensor(::AbstractTensorMap)
+    RightIsometricMPSTensor(::AbstractTensorMap; tol::Float64=1e-8, check::Bool=true)
 """
-struct RightIsometricTensor <: AbstractMPSTensor
+struct RightIsometricMPSTensor <: AbstractMPSTensor
     A::AbstractTensorMap
 
-    function RightIsometricTensor(A::AbstractMPSTensor)
-        (length(codomain(A)) == 2 && length(domain(A)) == 1) || throw(ArgumentError("The space $(space(A)) does not conform to `RightIsometricTensor` space"))
+    function RightIsometricMPSTensor(A::AbstractTensorMap; tol::Float64=Defaults.tol_norm, check::Bool=true)
+        (length(codomain(A)) == 2 && length(domain(A)) == 1) || throw(ArgumentError("The space $(space(A)) does not conform to `RightIsometricMPSTensor` space"))
+        (check && !isRightIsometric(A; tol=tol)) && throw(ArgumentError("The tensor is not right isometric"))
         return new(A)
     end
 end
@@ -122,7 +124,7 @@ adjoint(A::MPSTensor) = AdjointMPSTensor(A.A')
 adjoint(A::AdjointMPSTensor)::MPSTensor = A.A'
 
 """
-    struct AdjointLeftIsometricTensor <: AbstractMPSTensor
+    struct AdjointLeftIsometricMPSTensor <: AbstractMPSTensor
         A::AbstractTensorMap
     end
 
@@ -141,21 +143,22 @@ Left isometry means
      —— BL* ——    |
 
 # Constructor(s)
-    AdjointLeftIsometricTensor(::AbstractTensorMap)
+    AdjointLeftIsometricMPSTensor(::AbstractTensorMap; tol::Float64=1e-8, check::Bool=true)
 """
-struct AdjointLeftIsometricTensor <: AbstractMPSTensor
+struct AdjointLeftIsometricMPSTensor <: AbstractMPSTensor
     A::AbstractTensorMap
 
-    function AdjointLeftIsometricTensor(A::AbstractMPSTensor)
-        (length(codomain(A)) == 1 && length(domain(A)) == 2) || throw(ArgumentError("The space $(space(A)) does not conform to `AdjointLeftIsometricTensor` space"))
+    function AdjointLeftIsometricMPSTensor(A::AbstractTensorMap; tol::Float64=Defaults.tol_norm, check::Bool=true)
+        (length(codomain(A)) == 1 && length(domain(A)) == 2) || throw(ArgumentError("The space $(space(A)) does not conform to `AdjointLeftIsometricMPSTensor` space"))
+        (check && !isLeftIsometric(A; tol=tol)) && throw(ArgumentError("The tensor is not left isometric"))
         return new(A)
     end
 end
-adjoint(A::LeftIsometricTensor) = AdjointLeftIsometricTensor(A.A')
-adjoint(A::AdjointLeftIsometricTensor)::LeftIsometricTensor = A.A'
+adjoint(A::LeftIsometricMPSTensor) = AdjointLeftIsometricMPSTensor(A.A')
+adjoint(A::AdjointLeftIsometricMPSTensor)::LeftIsometricMPSTensor = A.A'
 
 """
-    struct AdjointRightIsometricTensor <: AbstractMPSTensor
+    struct AdjointRightIsometricMPSTensor <: AbstractMPSTensor
         A::AbstractTensorMap
     end
 
@@ -174,15 +177,16 @@ Right isometry means
      —— BR* ——    |
 
 # Constructor(s)
-    AdjointRightIsometricTensor(::AbstractTensorMap)
+    AdjointRightIsometricMPSTensor(::AbstractTensorMap; tol::Float64=Defaults.tol_norm, check::Bool=true)
 """
-struct AdjointRightIsometricTensor <: AbstractMPSTensor
+struct AdjointRightIsometricMPSTensor <: AbstractMPSTensor
     A::AbstractTensorMap
 
-    function AdjointRightIsometricTensor(A::AbstractMPSTensor)
-        (length(codomain(A)) == 1 && length(domain(A)) == 2) || throw(ArgumentError("The space $(space(A)) does not conform to `AdjointRightIsometricTensor` space"))
+    function AdjointRightIsometricMPSTensor(A::AbstractTensorMap; tol::Float64=Defaults.tol_norm, check::Bool=true)
+        (length(codomain(A)) == 1 && length(domain(A)) == 2) || throw(ArgumentError("The space $(space(A)) does not conform to `AdjointRightIsometricMPSTensor` space"))
+        (check && !isRightIsometric(A; tol=tol)) && throw(ArgumentError("The tensor is not right isometric"))
         return new(A)
     end
 end
-adjoint(A::RightIsometricTensor) = AdjointRightIsometricTensor(A.A')
-adjoint(A::AdjointRightIsometricTensor)::RightIsometricTensor = A.A'
+adjoint(A::RightIsometricMPSTensor) = AdjointRightIsometricMPSTensor(A.A')
+adjoint(A::AdjointRightIsometricMPSTensor)::RightIsometricMPSTensor = A.A'
