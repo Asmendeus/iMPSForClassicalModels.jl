@@ -3,10 +3,10 @@
 
 The right or left variational environment tensors.
 """
-abstract type AbstractEnvironmentTensor <: AbstractTensorWrapper end
+abstract type AbstractEnvironmentTensor{N} <: AbstractTensorWrapper end
 
 """
-    struct LeftEnvironmentTensor <: AbstractEnvironmentTensor
+    struct LeftEnvironmentTensor{N} <: AbstractEnvironmentTensor{N}
         A::AbstractTensorMap
     end
 
@@ -28,7 +28,7 @@ Convention (' marks codomain):
     LeftEnvironmentTensor{N}(::AbstractTensorMap)
     LeftEnvironmentTensor(::AbstractTensorMap)
 """
-struct LeftEnvironmentTensor{N} <: AbstractEnvironmentTensor
+struct LeftEnvironmentTensor{N} <: AbstractEnvironmentTensor{N}
     A::AbstractTensorMap
 
     function LeftEnvironmentTensor{N}(A::AbstractTensorMap)
@@ -43,7 +43,7 @@ struct LeftEnvironmentTensor{N} <: AbstractEnvironmentTensor
 end
 
 """
-    struct RightEnvironmentTensor <: AbstractEnvironmentTensor
+    struct RightEnvironmentTensor{N} <: AbstractEnvironmentTensor{N}
         A::AbstractTensorMap
     end
 
@@ -63,7 +63,7 @@ Convention (' marks codomain):
     RightEnvironmentTensor{N}(::AbstractTensorMap)
     RightEnvironmentTensor(::AbstractTensorMap)
 """
-struct RightEnvironmentTensor <: AbstractEnvironmentTensor
+struct RightEnvironmentTensor{N} <: AbstractEnvironmentTensor{N}
     A::AbstractTensorMap
 
     function RightEnvironmentTensor{N}(A::AbstractTensorMap)

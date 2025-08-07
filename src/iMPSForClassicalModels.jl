@@ -6,8 +6,8 @@ using Reexport
 @reexport import TensorKit: ×, one, zero, dim, inner, scalar, domain, codomain, eltype, scalartype, leftorth, rightorth, leftnull, rightnull, tsvd, adjoint, normalize!, norm, axpy!, axpby!, add!, add!!, dot, mul!, rmul!, NoTruncation, fuse, zerovector!, zerovector, scale, scale!, scale!!
 @reexport import LinearAlgebra: BLAS, rank, qr, diag, I, diagm
 
-# Defaults
-include("Defaults.jl")
+# utils
+include("utils/Defaults.jl")
 
 # Tensor wrapper
 export AbstractTensorWrapper
@@ -22,7 +22,7 @@ export AbstractEnvironmentTensor, LeftEnvironmentTensor, RightEnvironmentTensor
 include("TensorWrapper/EnvironmentTensor.jl")
 
 export isLeftIsometric, isRightIsometric, leftorth, rightorth
-include("TensorWrapper/tools.jl")
+include("TensorWrapper/utils.jl")
 
 # Transfer matrix
 export AbstractTransferMatrix
@@ -31,6 +31,21 @@ export TransferMatrix
 include("TransferMatrix/TransferMatrix.jl")
 
 # Environment
+export AbstractEnvironment
+include("Environment/AbstractEnvironment.jl")
+export BondEnvironment
+include("Environment/BondEnvironment.jl")
+export LeftEnvironment, RightEnvironment, MidEnvironment
+include("Environment/LeftEnvironment.jl")
+include("Environment/RightEnvironment.jl")
+include("Environment/MidEnvironment.jl")
+export MultirowLeftEnvironment, MultirowRightEnvironment, MultirowMidEnvironment
+include("Environment/MultirowLeftEnvironment.jl")
+include("Environment/MultirowRightEnvironment.jl")
+include("Environment/MultirowMidEnvironment.jl")
+
+export Environment
+include("Environment/utils.jl")
 
 # MPS
 
