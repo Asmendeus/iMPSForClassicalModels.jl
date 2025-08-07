@@ -31,7 +31,7 @@ Convention (' marks codomain):
 struct LeftEnvironmentTensor{N} <: AbstractEnvironmentTensor{N}
     A::AbstractTensorMap
 
-    function LeftEnvironmentTensor{N}(A::AbstractTensorMap)
+    function LeftEnvironmentTensor{N}(A::AbstractTensorMap) where N
         (length(codomain(A)) == 1 && length(domain(A)) == N-1) || throw(ArgumentError("The space $(space(A)) does not conform to `LeftEnvironmentTensor` space"))
         return new{N}(A)
     end
@@ -66,7 +66,7 @@ Convention (' marks codomain):
 struct RightEnvironmentTensor{N} <: AbstractEnvironmentTensor{N}
     A::AbstractTensorMap
 
-    function RightEnvironmentTensor{N}(A::AbstractTensorMap)
+    function RightEnvironmentTensor{N}(A::AbstractTensorMap) where N
         (length(domain(A)) == 1 && length(codomain(A)) == N-1) || throw(ArgumentError("The space $(space(A)) does not conform to `RightEnvironmentTensor` space"))
         return new{N}(A)
     end
