@@ -1,7 +1,7 @@
 """
-    mutable struct TransferMatrix <: AbstractTransferMatrix
-        const B::Union{AdjointMPSTensor, AdjointLeftIsometricMPSTensor, AdjointRightIsometricMPSTensor}
-        const A::Union{MPSTensor, LeftIsometricMPSTensor, RightIsometricMPSTensor}
+    mutable struct TransferMatrix{TA, TB} <: AbstractTransferMatrix where {TA<:Union{MPSTensor, LeftIsometricTensor, RightIsometricTensor}, TB<:Union{AdjointMPSTensor, AdjointLeftIsometricTensor, AdjointRightIsometricTensor}}
+        A::TA
+        B::TB
     end
 
 Wrapper type for transfer matrix.
@@ -13,17 +13,37 @@ Graphic presentation:
     —— A ——
 
 # Constructors
-    TransferMatrix(B::Union{AdjointMPSTensor, AdjointLeftIsometricMPSTensor, AdjointRightIsometricMPSTensor}, A::Union{MPSTensor, LeftIsometricMPSTensor, RightIsometricMPSTensor})
-    TransferMatrix(A::Union{MPSTensor, LeftIsometricMPSTensor, RightIsometricMPSTensor}, B::Union{AdjointMPSTensor, AdjointLeftIsometricMPSTensor, AdjointRightIsometricMPSTensor})
+    TransferMatrix{TA, TB}(A::TA, B::TB) where {Union{MPSTensor, LeftIsometricTensor, RightIsometricTensor}, TB<:Union{AdjointMPSTensor, AdjointLeftIsometricTensor, AdjointRightIsometricTensor}}
+    TransferMatrix(A::Union{MPSTensor, LeftIsometricTensor, RightIsometricTensor}, B::Union{AdjointMPSTensor, AdjointLeftIsometricTensor, AdjointRightIsometricTensor})
 """
-mutable struct TransferMatrix <: AbstractTransferMatrix
-    const B::Union{AdjointMPSTensor, AdjointLeftIsometricMPSTensor, AdjointRightIsometricMPSTensor}
-    const A::Union{MPSTensor, LeftIsometricMPSTensor, RightIsometricMPSTensor}
+mutable struct TransferMatrix{TA, TB} <: AbstractTransferMatrix where {TA<:Union{MPSTensor, LeftIsometricTensor, RightIsometricTensor}, TB<:Union{AdjointMPSTensor, AdjointLeftIsometricTensor, AdjointRightIsometricTensor}}
+    A::TA
+    B::TB
 
-    function TransferMatrix(B::Union{AdjointMPSTensor, AdjointLeftIsometricMPSTensor, AdjointRightIsometricMPSTensor}, A::Union{MPSTensor, LeftIsometricMPSTensor, RightIsometricMPSTensor})
-        return new(B, A)
+    function TransferMatrix{TA, TB}(A::TA, B::TB) where {TA<:Union{MPSTensor, LeftIsometricTensor, RightIsometricTensor}, TB<:Union{AdjointMPSTensor, AdjointLeftIsometricTensor, AdjointRightIsometricTensor}}
+        space(A, 2) == space(B, 3) || throw(SpaceMismatch("$(space(A, 2)) ≠ $(space(B, 3))"))
+        return new{TA, TB}(A, B)
     end
-    function TransferMatrix(A::Union{MPSTensor, LeftIsometricMPSTensor, RightIsometricMPSTensor}, B::Union{AdjointMPSTensor, AdjointLeftIsometricMPSTensor, AdjointRightIsometricMPSTensor})
-        return new(B, A)
-    end
+    TransferMatrix(A::Union{MPSTensor, LeftIsometricTensor, RightIsometricTensor}, B::Union{AdjointMPSTensor, AdjointLeftIsometricTensor, AdjointRightIsometricTensor}) = TransferMatrix{typeof(A), typeof(B)}(A, B)
+end
+
+function Base.show(io::IO, T::TransferMatrix{TA, TB}) where {TA, TB}
+    # data type
+    println(io, "TransferMatrix{$TA, $TB}:")
+    println(io)
+
+    # graphic presentation
+    println(io, " —— B ——")
+    println(io, repeat(" ", 4) * "|")
+    println(io, " —— A ——")
+    println(io)
+
+    # local tensors
+    println(io, "A:")
+    show(io, T.A)
+    println(io)
+    println(io)
+    println(io, "B:")
+    show(io, T.B)
+    println(io)
 end

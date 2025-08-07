@@ -3,76 +3,76 @@
 
 The right or left variational environment tensors.
 """
-abstract type AbstractEnvironmentTensor{N} <: AbstractTensorWrapper end
+abstract type AbstractEnvironmentTensor <: AbstractTensorWrapper end
 
 """
-    struct LeftEnvironmentTensor{N} <: AbstractEnvironmentTensor{N}
+    struct LeftEnvironmentTensor{N} <: AbstractEnvironmentTensor
         A::AbstractTensorMap
     end
 
-Wrapper type for rank-N variational left environment tensor.
+Wrapper type for N-leg left environment tensor.
 
 Convention (' marks codomain):
 
      __
-    |  | —— N'
-    |  |
-    |  | —— (N-1)
-    |FL|    ⋮
     |  | —— 2
     |  |
-    |  | —— 1
+    |  | —— 3
+    |FL|    ⋮
+    |  | —— N
+    |  |
+    |  | —— 1'
      ‾‾
 
 # Constructors
-    LeftEnvironmentTensor{N}(::AbstractTensorMap)
     LeftEnvironmentTensor(::AbstractTensorMap)
+    LeftEnvironmentTensor{N}(::AbstractTensorMap)
 """
-struct LeftEnvironmentTensor{N} <: AbstractEnvironmentTensor{N}
+struct LeftEnvironmentTensor{N} <: AbstractEnvironmentTensor
     A::AbstractTensorMap
 
-    function LeftEnvironmentTensor{N}(A::AbstractTensorMap) where N
-        (length(codomain(A)) == 1 && length(domain(A)) == N-1) || throw(ArgumentError("The space $(space(A)) does not conform to `LeftEnvironmentTensor` space"))
+    function LeftEnvironmentTensor(A::AbstractTensorMap)
+        (length(codomain(A)) == 1 && length(domain(A)) > 0) || throw(ArgumentError("The codomain $(codomain(A)) does not conform to `LeftEnvironmentTensor` codomain"))
+        N = length(domain(A)) + 1
         return new{N}(A)
     end
-    function LeftEnvironmentTensor(A::AbstractTensorMap)
-        length(codomain(A)) == 1 || throw(ArgumentError("The codomain $(codomain(A)) does not conform to `LeftEnvironmentTensor` codomain"))
-        N = length(domain(A)) + 1
+    function LeftEnvironmentTensor{N}(A::AbstractTensorMap) where N
+        (length(codomain(A)) == 1 && length(domain(A)) == N-1 > 0) || throw(ArgumentError("The space $(space(A)) does not conform to `LeftEnvironmentTensor{$N}` space"))
         return new{N}(A)
     end
 end
 
 """
-    struct RightEnvironmentTensor{N} <: AbstractEnvironmentTensor{N}
+    struct RightEnvironmentTensor{N} <: AbstractEnvironmentTensor
         A::AbstractTensorMap
     end
 
-Wrapper type for rank-N variational right environment tensor.
+Wrapper type for N-leg right environment tensor.
 
 Convention (' marks codomain):
                __
-        N  —— |  |
-              |  |
-    (N-1)' —— |  |
-        ⋮     |FR|
-        2' —— |  |
-              |  |
         1' —— |  |
+              |  |
+        2' —— |  |
+        ⋮     |FR|
+    (N-1)' —— |  |
+              |  |
+         N —— |  |
                ‾‾
 # Constructors
-    RightEnvironmentTensor{N}(::AbstractTensorMap)
     RightEnvironmentTensor(::AbstractTensorMap)
+    RightEnvironmentTensor{N}(::AbstractTensorMap)
 """
-struct RightEnvironmentTensor{N} <: AbstractEnvironmentTensor{N}
+struct RightEnvironmentTensor{N} <: AbstractEnvironmentTensor
     A::AbstractTensorMap
 
-    function RightEnvironmentTensor{N}(A::AbstractTensorMap) where N
-        (length(domain(A)) == 1 && length(codomain(A)) == N-1) || throw(ArgumentError("The space $(space(A)) does not conform to `RightEnvironmentTensor` space"))
+    function RightEnvironmentTensor(A::AbstractTensorMap)
+        (length(domain(A)) == 1 && length(codomain(A) > 0)) || throw(ArgumentError("The codomain $(codomain(A)) does not conform to `RightEnvironmentTensor` codomain"))
+        N = length(codomain(A)) + 1
         return new{N}(A)
     end
-    function RightEnvironmentTensor(A::AbstractTensorMap)
-        length(domain(A)) == 1 || throw(ArgumentError("The codomain $(codomain(A)) does not conform to `RightEnvironmentTensor` codomain"))
-        N = length(codomain(A)) + 1
+    function RightEnvironmentTensor{N}(A::AbstractTensorMap) where N
+        (length(domain(A)) == 1 && length(codomain(A)) == N-1 > 0) || throw(ArgumentError("The space $(space(A)) does not conform to `RightEnvironmentTensor{$N}` space"))
         return new{N}(A)
     end
 end

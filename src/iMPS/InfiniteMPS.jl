@@ -34,14 +34,14 @@ function Base.show(io::IO, mps::InfiniteMPS{L, T}) where {L, T}
     println(io, "InfiniteMPS{$L, $T}:")
     println(io)
 
-    # schematic diagram: line 1
+    # graphic presentation: line 1
     print(io, repeat(" ", 3) * "|")
     for l in 1:L-1
         print(io, repeat(" ", 3 + length(string(l))) * "|")
     end
     println(io)
 
-    # schematic diagram: line 2
+    # graphic presentation: line 2
     for l in 1:L
         print(io, " — A$l")
     end

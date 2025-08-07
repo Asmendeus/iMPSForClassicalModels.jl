@@ -3,7 +3,7 @@
     function isLeftIsometric(A::AbstractMPSTensor; tol::Float64=1e-8)
 
 # Return
--`::Bool`: whether the 3-leg MPS tensor `A` is left orthogonal
+-`::Bool`: whether the R-leg MPS tensor `A` is left orthogonal
 """
 function isLeftIsometric(A::AbstractTensorMap; tol::Float64=Defaults.tol_norm)::Bool
     if length(codomain(A)) == 2 && length(domain(A)) == 1
@@ -25,7 +25,7 @@ end
     function isRightIsometric(A::AbstractMPSTensor; tol::Float64=1e-8)
 
 # Return
--`::Bool`: whether the 3-leg MPS tensor `A` is right orthogonal
+-`::Bool`: whether the R-leg MPS tensor `A` is right orthogonal
 """
 function isRightIsometric(A::AbstractTensorMap; tol::Float64=Defaults.tol_norm)::Bool
     if length(codomain(A)) == 2 && length(domain(A)) == 1
@@ -59,19 +59,19 @@ Propagate `kwargs` to the TensorKit functions.
 function leftorth(A::MPSTensor; trunc=notrunc(), kwargs...)
      if trunc == notrunc()
           Q, R = leftorth(A.A, ((1, 2), (3,)); kwargs...)
-          return LeftIsometricMPSTensor(Q; check=false), R
+          return LeftIsometricTensor(Q; check=false), R
      else
           u, s, vd, _ =  tsvd(A, ((1, 2), (3,)); trunc=trunc, kwargs...)
-          return LeftIsometricMPSTensor(u; check=false), s * vd
+          return LeftIsometricTensor(u; check=false), s * vd
      end
 end
 function leftorth(A::AdjointMPSTensor; trunc=notrunc(), kwargs...)
      if trunc == notrunc()
           Q, R = leftorth(A.A, ((2, 3), (1,)); kwargs...)
-          return AdjointLeftIsometricMPSTensor(permute(Q, (3,), (1, 2)); check=false), R
+          return AdjointLeftIsometricTensor(permute(Q, (3,), (1, 2)); check=false), R
      else
           u, s, vd, _ =  tsvd(A, ((2, 3), (1,)); trunc=trunc, kwargs...)
-          return AdjointLeftIsometricMPSTensor(permute(u, (3,), (1, 2)); check=false), s * vd
+          return AdjointLeftIsometricTensor(permute(u, (3,), (1, 2)); check=false), s * vd
      end
 end
 
@@ -92,18 +92,18 @@ Propagate `kwargs` to the TensorKit functions.
 function rightorth(A::MPSTensor; trunc=notrunc(), kwargs...)
      if trunc == notrunc()
           L, Q = rightorth(A.A, ((1,), (2, 3)); kwargs...)
-          return L, RightIsometricMPSTensor(permute(Q, (1, 2), (3, )); check=false)
+          return L, RightIsometricTensor(permute(Q, (1, 2), (3, )); check=false)
      else
           u, s, vd, _ = tsvd(A, ((1,), (2, 3)); trunc=trunc, kwargs...)
-          return u * s, RightIsometricMPSTensor(permute(vd, (1, 2), (3, )); check=false)
+          return u * s, RightIsometricTensor(permute(vd, (1, 2), (3, )); check=false)
      end
 end
 function rightorth(A::AdjointMPSTensor; trunc=notrunc(), kwargs...)
      if trunc == notrunc()
           L, Q = rightorth(A.A, ((2,), (3, 1)); kwargs...)
-          return L, AdjointRightIsometricMPSTensor(permute(Q, (3,), (1, 2)); check=false)
+          return L, AdjointRightIsometricTensor(permute(Q, (3,), (1, 2)); check=false)
      else
           u, s, vd, _ = tsvd(A, ((2,), (3, 1)); trunc=trunc, kwargs...)
-          return u * s, AdjointRightIsometricMPSTensor(permute(vd, (3,), (1, 2)); check=false)
+          return u * s, AdjointRightIsometricTensor(permute(vd, (3,), (1, 2)); check=false)
      end
 end
