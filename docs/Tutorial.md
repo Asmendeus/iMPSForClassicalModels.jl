@@ -60,7 +60,7 @@ Here $\delta$ is a 5-leg identity tensor.
 
 ### How to solve a partition function tensor network
 
-To solve a partition function tensor network, we can consider a variational boundary iMPS at its lower  boundary at infinity as follow
+To solve a partition function tensor network, we can consider a variational boundary iMPS at its upper  boundary at infinity as follow
 
 ![BoundaryMPS](fig/BoundaryMPS.png "Boundary MPS")
 
