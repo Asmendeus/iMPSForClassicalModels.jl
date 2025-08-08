@@ -26,6 +26,11 @@ mutable struct BondEnvironment{N} <: AbstractEnvironment{N}
     FL::LeftEnvironmentTensor{N}
     FR::RightEnvironmentTensor{N}
 
-    BondEnvironment{N}(FL::LeftEnvironmentTensor{N}, FR::RightEnvironmentTensor{N}) where N = new{N}(FL, FR)
-    BondEnvironment(FL::LeftEnvironmentTensor{N}, FR::RightEnvironmentTensor{N}) where N = new{N}(FL, FR)
+    function BondEnvironment{N}(FL::LeftEnvironmentTensor{N}, FR::RightEnvironmentTensor{N}) where N
+        aspace_FL = otimes([space(FL, i) for i in 2:N-1]...)
+        aspace_FR = otimes([space(FR, i) for i in N-1:-1:2]...)
+        aspace_FL == aspace_FR || throw(SpaceMismatch("Mismatched environment tensors' auxiliary spaces: $(aspace_FL) ≠ $(aspace_FR))"))
+        new{N}(FL, FR)
+    end
+    BondEnvironment(FL::LeftEnvironmentTensor{N}, FR::RightEnvironmentTensor{N}) where N = BondEnvironment{N}(FL, FR)
 end

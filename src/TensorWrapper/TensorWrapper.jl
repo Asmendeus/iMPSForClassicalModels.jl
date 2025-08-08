@@ -138,14 +138,14 @@ function _tsvd_try(t::AbstractTensorMap;
      end
 end
 function _tsvd_try(t::AbstractTensorMap,
-     (p₁, p₂)::Index2Tuple; kwargs...)
-     try
-         return tsvd!(permute(t, (p₁, p₂); copy=true); kwargs...)
-     catch
-         @assert get(kwargs, :alg, SDD()) == SDD()
-         @warn "SDD() failed, use SVD() instead."
-         trunc = get(kwargs, :trunc, TensorKit.NoTruncation())
-         p = get(kwargs, :p, 2)
-         return tsvd!(permute(t, (p₁, p₂); copy=true); trunc=trunc, p=p, alg=SVD())
-     end
- end
+    (p₁, p₂)::Index2Tuple; kwargs...)
+    try
+        return tsvd!(permute(t, (p₁, p₂); copy=true); kwargs...)
+    catch
+        @assert get(kwargs, :alg, SDD()) == SDD()
+        @warn "SDD() failed, use SVD() instead."
+        trunc = get(kwargs, :trunc, TensorKit.NoTruncation())
+        p = get(kwargs, :p, 2)
+        return tsvd!(permute(t, (p₁, p₂); copy=true); trunc=trunc, p=p, alg=SVD())
+    end
+end

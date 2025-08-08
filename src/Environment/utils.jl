@@ -1,19 +1,12 @@
-function Environment(B::AbstractVector{<:AbstractTensorWrapper}, O::AbstractVector{<:AbstractTensorWrapper}, A::AbstractVector{<:AbstractTensorWrapper})
-    if Union{eltype(A), eltype(B), eltype(O)} <: Union{LeftIsometricTensor, AdjointLeftIsometricTensor, MPOTensor}
-        return LeftEnvironment(B, O, A)
-    elseif Union{eltype(A), eltype(B), eltype(O)} <: Union{RightIsometricTensor, AdjointRightIsometricTensor, MPOTensor}
-        return RightEnvironment(B, O, A)
-    else
-        throw(ArgumentError("Unsupported combinations of types (::$(typeof(B)), ::$(typeof(O))), ::$(typeof(A))"))
-    end
-end
-
-function Environment(B::AbstractVector{<:AbstractTensorWrapper}, O::AbstractMatrix{<:AbstractTensorWrapper}, A::AbstractVector{<:AbstractTensorWrapper})
-    if Union{eltype(A), eltype(B), eltype(O)} <: Union{LeftIsometricTensor, AdjointLeftIsometricTensor, MPOTensor}
-        return MultiLeftEnvironment(B, O, A)
-    elseif Union{eltype(A), eltype(B), eltype(O)} <: Union{RightIsometricTensor, AdjointRightIsometricTensor, MPOTensor}
-        return MultiRightEnvironment(B, O, A)
-    else
-        throw(ArgumentError("Unsupported combinations of types (::$(typeof(B)), ::$(typeof(O))), ::$(typeof(A))"))
-    end
-end
+"""
+    Environment(FL::LeftEnvironmentTensor{N}, FR::RightEnvironmentTensor{N}) -> BondEnvironment{N}(FL, FR)
+    Environment(FL::LeftEnvironmentTensor{3}, O::MPOTensor, FR::RightEnvironmentTensor{3}) -> CenterEnvironment(FL, O, FR)
+    Environment(FL::LeftEnvironmentTensor{N}, O::AbstractVector{<:MPOTensor}, FR::RightEnvironmentTensor{N}) -> MultirowCenterEnvironment(FL, O, FR)
+    Environment(AL::AbstractVector{<:LeftIsometricTensor{R}}, O::AbstractVector{<:MPOTensor}, BL::AbstractVector{<:AdjointLeftIsometricTensor{R}}) -> LeftEnvironment(AL, O, BL)
+    Environment(AL::LeftIsometricTensor{R}, O::MPOTensor, BL::AdjointLeftIsometricTensor{R}) -> LeftEnvironment(AL, O, BL)
+"""
+Environment(FL::LeftEnvironmentTensor{N}, FR::RightEnvironmentTensor{N}) where N = BondEnvironment(FL, FR)
+Environment(FL::LeftEnvironmentTensor{3}, O::MPOTensor, FR::RightEnvironmentTensor{3}) = CenterEnvironment(FL, O, FR)
+Environment(FL::LeftEnvironmentTensor{N}, O::AbstractVector{<:MPOTensor}, FR::RightEnvironmentTensor{N}) where N = MultirowCenterEnvironment(FL, O, FR)
+Environment(AL::AbstractVector{<:LeftIsometricTensor{R}}, O::AbstractVector{<:MPOTensor}, BL::AbstractVector{<:AdjointLeftIsometricTensor{R}}) where R = LeftEnvironment(AL, O, BL)
+Environment(AL::LeftIsometricTensor{R}, O::MPOTensor, BL::AdjointLeftIsometricTensor{R}) where R = LeftEnvironment(AL, O, BL)

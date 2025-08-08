@@ -1,62 +1,103 @@
 """
+    function isAdjoint(::AbstractTensorWrapperper)::Bool
+
+Whether the tensor wrapper is an adjoint wrapper
+"""
+isAdjoint(::Union{LocalTensor, LeftIsometricTensor, RightIsometricTensor, LeftEnvironmentTensor, RightEnvironmentTensor}) = false
+isAdjoint(::Union{AdjointLocalTensor, AdjointLeftIsometricTensor, AdjointRightIsometricTensor}) = true
+
+"""
+    function isLeftIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=1e-8)
     function isLeftIsometric(A::AbstractLocalTensor; tol::Float64=1e-8)
 
 # Return
--`::Bool`: whether the R-leg MPS tensor `A` is left orthogonal
+-`::Bool`: whether the R-leg local tensor `A` is left orthogonal
 """
-function isLeftIsometric(A::AbstractLocalTensor; tol::Float64=Defaults.tol_norm)::Bool
-    if A isa Union{LocalTensor{3}, LeftIsometricTensor{3}, RightIsometricTensor{3}}
-        @tensor E[-1; -2] := A.A[1 2 -2] * A.A'[-1 1 2]
+function isLeftIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=Defaults.tol_norm)
+    if numout(A) == 1 && numin(A) == 1 && isadjoint == false
+        # Union{BondTensor, LeftIsometricBondTensor, RightIsometricBondTensor}
+        @tensor E[-1; -2] := A[1 -2] * A'[-1 1]
         return norm(E - id(domain(A))) < tol
-    elseif A isa Union{AdjointLocalTensor{3}, AdjointLeftIsometricTensor{3}, AdjointRightIsometricTensor{3}}
-        @tensor E[-1; -2] := A.A'[1 2 -2] * A.A[-1 1 2]
+    elseif numout(A) == 1 && numin(A) == 1 && isadjoint == true
+        # Union{AdjointBondTensor, AdjointLeftIsometricBondTensor, AdjointRightIsometricBondTensor}
+        @tensor E[-1; -2] := A'[1 -2] * A[-1 1]
         return norm(E - id(codomain(A))) < tol
-    elseif A isa Union{LocalTensor{4}, LeftIsometricTensor{4}, RightIsometricTensor{4}}
-        @tensor E[-1; -2] := A.A[1 2 3 -2] * A.A'[3 -1 1 2]
+    elseif numout(A) == 2 && numin(A) == 1 && isadjoint == false
+        # Union{MPSTensor, LeftIsometricMPSTensor, RightIsometricMPSTensor}
+        @tensor E[-1; -2] := A[1 2 -2] * A'[-1 1 2]
+        return norm(E - id(domain(A))) < tol
+    elseif numout(A) == 1 && numin(A) == 2 && isadjoint == true
+        # Union{AdjointMPSTensor, AdjointLeftIsometricMPSTensor, AdjointRightIsometricMPSTensor}
+        @tensor E[-1; -2] := A'[1 2 -2] * A[-1 1 2]
+        return norm(E - id(codomain(A))) < tol
+    elseif numout(A) == 2 && numin(A) == 2 && isadjoint == false
+        # Union{MPOTensor, LeftIsometricMPOTensor, RightIsometricMPOTensor}
+        @tensor E[-1; -2] := A[1 2 3 -2] * A'[3 -1 1 2]
         return norm(E - id(domain(A, 2))) < tol
-    elseif A isa Union{AdjointLocalTensor{4}, AdjointLeftIsometricTensor{4}, AdjointRightIsometricTensor{4}}
-        @tensor E[-1; -2] := A.A'[1 2 3 -2] * A.A[3 -1 1 2]
+    elseif numout(A) == 2 && numin(A) == 2 && isadjoint == true
+        # Union{AdjointMPOTensor, AdjointLeftIsometricMPOTensor, AdjointRightIsometricMPOTensor}
+        @tensor E[-1; -2] := A'[1 2 3 -2] * A[3 -1 1 2]
         return norm(E - id(codomain(A, 2))) < tol
     else
-        # R == 2 || R > 4
+        # R > 4
         throw(ArgumentError("Behavior not yet defined"))
     end
 end
+function isLeftIsometric(A::AbstractLocalTensor; tol::Float64=Defaults.tol_norm)::Bool
+    return isLeftIsometric(A.A, isAdjoint(A); tol=tol)
+end
+
 
 """
+    function isRightIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=1e-8)
     function isRightIsometric(A::AbstractLocalTensor; tol::Float64=1e-8)
 
 # Return
--`::Bool`: whether the R-leg MPS tensor `A` is right orthogonal
+-`::Bool`: whether the R-leg local tensor `A` is right orthogonal
 """
-function isRightIsometric(A::AbstractLocalTensor; tol::Float64=Defaults.tol_norm)::Bool
-    if A isa Union{LocalTensor{3}, LeftIsometricTensor{3}, RightIsometricTensor{3}}
-        @tensor E[-1; -2] := A.A[-1 1 2] * A.A'[2 -2 1]
+function isRightIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=1e-8)
+    if numout(A) == 1 && numin(A) == 1 && isadjoint == false
+        # Union{BondTensor, LeftIsometricBondTensor, RightIsometricBondTensor}
+        @tensor E[-1; -2] := A[-1 1] * A'[1 -2]
         return norm(E - id(codomain(A, 1))) < tol
-    elseif A isa Union{AdjointLocalTensor{3}, AdjointLeftIsometricTensor{3}, AdjointRightIsometricTensor{3}}
-        @tensor E[-1; -2] := A.A'[-1 1 2] * A.A[2 -2 1]
+    elseif numout(A) == 1 && numin(A) == 1 && isadjoint == true
+        # Union{AdjointBondTensor, AdjointLeftIsometricBondTensor, AdjointRightIsometricBondTensor}
+        @tensor E[-1; -2] := A'[-1 1] * A[1 -2]
         return norm(E - id(domain(A, 1))) < tol
-    elseif A isa Union{LocalTensor{4}, LeftIsometricTensor{4}, RightIsometricTensor{4}}
-        @tensor E[-1; -2] := A.A[-1 1 2 3] * A.A'[2 3 -2 1]
+    elseif numout(A) == 2 && numin(A) == 1 && isadjoint == false
+        # Union{MPSTensor, LeftIsometricMPSTensor, RightIsometricMPSTensor}
+        @tensor E[-1; -2] := A[-1 1 2] * A'[2 -2 1]
         return norm(E - id(codomain(A, 1))) < tol
-    elseif A isa Union{AdjointLocalTensor{4}, AdjointLeftIsometricTensor{4}, AdjointRightIsometricTensor{4}}
-        @tensor E[-1; -2] := A.A'[-1 1 2 3] * A.A[2 3 -2 1]
+    elseif numout(A) == 1 && numin(A) == 2 && isadjoint == true
+        # Union{AdjointMPSTensor, AdjointLeftIsometricMPSTensor, AdjointRightIsometricMPSTensor}
+        @tensor E[-1; -2] := A'[-1 1 2] * A[2 -2 1]
+        return norm(E - id(domain(A, 1))) < tol
+    elseif numout(A) == 2 && numin(A) == 2 && isadjoint == false
+        # Union{MPOTensor, LeftIsometricMPOTensor, RightIsometricMPOTensor}
+        @tensor E[-1; -2] := A[-1 1 2 3] * A'[2 3 -2 1]
+        return norm(E - id(codomain(A, 1))) < tol
+    elseif numout(A) == 2 && numin(A) == 2 && isadjoint == true
+        # Union{AdjointMPOTensor, AdjointLeftIsometricMPOTensor, AdjointRightIsometricMPOTensor}
+        @tensor E[-1; -2] := A'[-1 1 2 3] * A[2 3 -2 1]
         return norm(E - id(domain(A, 1))) < tol
     else
-        # R == 2 || R > 4
+        # R > 4
         throw(ArgumentError("Behavior not yet defined"))
     end
+end
+function isRightIsometric(A::AbstractLocalTensor; tol::Float64=Defaults.tol_norm)::Bool
+    return isRightIsometric(A.A, isAdjoint(A); tol=tol)
 end
 
 """
      leftorth(A::LocalTensor{R₁}; trunc = notrunc(), kwargs...)
      leftorth(A::AdjointLocalTensor{R₁}; trunc = notrunc(), kwargs...)
 
-Left canonicalize a on-site MPS tensor.
+Left canonicalize a local tensor.
 
 # Return
 -`::LeftIsometricTensor{R₁}`: left isometric tensor
--`::LocalTensor{2}`: bond tensor
+-`::BondTensor`: bond tensor
 
 If `trunc = notrunc()`, use `TensorKit.leftorth`, otherwise, use `TensorKit.tsvd`.
 Propagate `kwargs` to the TensorKit functions.
@@ -102,10 +143,10 @@ end
     rightorth{R₂}(A::LocalTensor; trunc = notrunc(), kwargs...)
     rightorth{R₂}(A::AdjointLocalTensor; trunc = notrunc(), kwargs...)
 
-Right canonicalize a on-site MPS tensor.
+Right canonicalize a local tensor.
 
 # Return
--`::LocalTensor{2}`: bond tensor
+-`::BondTensor`: bond tensor
 -`::RightIsometricTensor{R₂}`: right isometric tensor
 
 If `trunc = notrunc()`, use `TensorKit.rightorth`, otherwise, use `TensorKit.tsvd`.
