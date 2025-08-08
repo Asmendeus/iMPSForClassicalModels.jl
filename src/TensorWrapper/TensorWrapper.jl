@@ -9,7 +9,7 @@ abstract type AbstractTensorWrapper end
 
 # some common functions for wrapper type
 Base.convert(::Type{T}, A::AbstractTensorMap) where {T<:AbstractTensorWrapper} = T(A)
-for func in (:dim, :rank, :space, :domain, :codomain, :eltype, :norm, :scalartype, :data, :numin, :numout, :numind)
+for func in (:dim, :rank, :domain, :codomain, :space, :eltype, :norm, :scalartype, :data, :numin, :numout, :numind)
      # Tensor -> Number
      @eval $func(obj::AbstractTensorWrapper, args...) = $func(obj.A, args...)
 end
@@ -77,7 +77,7 @@ function add!!(A::AbstractTensorWrapper,
      B::AbstractTensorWrapper,
      β::Number = one(scalartype(B)),
      α::Number = one(scalartype(A))
-     ) 
+     )
      T = promote_type(scalartype(A.A), scalartype(B.A), typeof(α), typeof(β))
      if T <: scalartype(A.A)
           return axpby!(β, B, α, A)
@@ -87,8 +87,8 @@ function add!!(A::AbstractTensorWrapper,
 end
 function zerovector(A::T, ::Type{S}) where {S<:Number, T<:AbstractTensorWrapper}
      return convert(T, zerovector(A.A, S))
-end  
-function zerovector!(A::AbstractTensorWrapper) 
+end
+function zerovector!(A::AbstractTensorWrapper)
      zerovector!(A.A)
      return A
 end
@@ -108,8 +108,8 @@ end
      tsvd(A::AbstractTensorWrapper,
           p₁::NTuple{N₁,Int64},
           p₂::NTuple{N₂,Int64};
-          kwargs...) 
-          -> u::AbstractTensorMap, s::AbstractTensorMap, vd::AbstractTensorMap, info::BondInfo  
+          kwargs...)
+          -> u::AbstractTensorMap, s::AbstractTensorMap, vd::AbstractTensorMap, info::BondInfo
 
 Wrap TensorKit.tsvd, return `BondInfo` struct instead of truncation error `ϵ`.
 """

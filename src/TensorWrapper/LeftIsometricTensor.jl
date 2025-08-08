@@ -1,5 +1,5 @@
 """
-    struct LeftIsometricTensor{R} <: AbstractMPSTensor
+    struct LeftIsometricTensor{R} <: AbstractMPSTensor{R}
         A::AbstractTensorMap
     end
 
@@ -23,17 +23,17 @@ Left isometry means
     LeftIsometricTensor(::AbstractTensorMap; tol::Float64=1e-8, check::Bool=true)
     LeftIsometricTensor{R}(::AbstractTensorMap; tol::Float64=1e-8, check::Bool=true)
 """
-struct LeftIsometricTensor{R} <: AbstractMPSTensor
+struct LeftIsometricTensor{R} <: AbstractMPSTensor{R}
     A::AbstractTensorMap
 
     function LeftIsometricTensor(A::AbstractTensorMap; tol::Float64=Defaults.tol_norm, check::Bool=true)
-        (length(codomain(A)) == 2 && length(domain(A)) > 0) || throw(ArgumentError("The space $(space(A)) does not conform to `LeftIsometricTensor` space"))
+        (numout(A) == 2 && numin(A) > 0) || throw(ArgumentError("The space $(space(A)) does not conform to `LeftIsometricTensor` space"))
         (check && !isLeftIsometric(A; tol=tol)) && throw(ArgumentError("The tensor is not left isometric"))
-        R = 2 + length(domain(A))
+        R = numind(A)
         return new{R}(A)
     end
-    function LeftIsometricTensor{R}(A::AbstractTensorMap; tol::Float64=Defaults.tol_norm, check::Bool=true)
-        (length(codomain(A)) == 2 && length(domain(A)) == R-2 > 0) || throw(ArgumentError("The space $(space(A)) does not conform to `LeftIsometricTensor{$R}` space"))
+    function LeftIsometricTensor{R}(A::AbstractTensorMap; tol::Float64=Defaults.tol_norm, check::Bool=true) where R
+        (numout(A) == 2 && numin(A) == R-2 > 0) || throw(ArgumentError("The space $(space(A)) does not conform to `LeftIsometricTensor{$R}` space"))
         (check && !isLeftIsometric(A; tol=tol)) && throw(ArgumentError("The tensor is not left isometric"))
         return new{R}(A)
     end
@@ -41,7 +41,7 @@ end
 
 # ============ Adjoint ============
 """
-    struct AdjointLeftIsometricTensor{R} <: AbstractMPSTensor
+    struct AdjointLeftIsometricTensor{R} <: AbstractMPSTensor{R}
         A::AbstractTensorMap
     end
 
@@ -57,25 +57,25 @@ Convention (' marks codomain):
 
 Left isometry means
 
-     —— BL* ——   |
+     -- BL* --   |
     |   ||     = I    (identity matrix)
-     —— BL  ——   |
+     -- BL  --   |
 
-# Constructor(s)
+# Constructors
     AdjointLeftIsometricTensor(::AbstractTensorMap; tol::Float64=1e-8, check::Bool=true)
     AdjointLeftIsometricTensor{R}(::AbstractTensorMap; tol::Float64=1e-8, check::Bool=true)
 """
-struct AdjointLeftIsometricTensor{R} <: AbstractMPSTensor
+struct AdjointLeftIsometricTensor{R} <: AbstractMPSTensor{R}
     A::AbstractTensorMap
 
     function AdjointLeftIsometricTensor(A::AbstractTensorMap; tol::Float64=Defaults.tol_norm, check::Bool=true)
-        (length(domain(A)) == 2 && length(codomain(A)) > 0) || throw(ArgumentError("The space $(space(A)) does not conform to `AdjointLeftIsometricTensor` space"))
+        (numin(A) == 2 && numout(A) > 0) || throw(ArgumentError("The space $(space(A)) does not conform to `AdjointLeftIsometricTensor` space"))
         (check && !isLeftIsometric(A; tol=tol)) && throw(ArgumentError("The tensor is not left isometric"))
-        R = 2 + length(codomain(A))
+        R = numind(A)
         return new{R}(A)
     end
-    function AdjointLeftIsometricTensor{R}(A::AbstractTensorMap; tol::Float64=Defaults.tol_norm, check::Bool=true)
-        (length(domain(A)) == 2 && length(codomain(A)) == R-2 > 0) || throw(ArgumentError("The space $(space(A)) does not conform to `AdjointLeftIsometricTensor{$R}` space"))
+    function AdjointLeftIsometricTensor{R}(A::AbstractTensorMap; tol::Float64=Defaults.tol_norm, check::Bool=true) where R
+        (numin(A) == 2 && numout(A) == R-2 > 0) || throw(ArgumentError("The space $(space(A)) does not conform to `AdjointLeftIsometricTensor{$R}` space"))
         (check && !isLeftIsometric(A; tol=tol)) && throw(ArgumentError("The tensor is not left isometric"))
         return new{R}(A)
     end

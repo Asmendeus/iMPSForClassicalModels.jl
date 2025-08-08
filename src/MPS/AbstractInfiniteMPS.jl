@@ -10,3 +10,6 @@ size(::AbstractInfiniteMPS{L}) where L = (L,)
 for func in (:getindex, :lastindex, :setindex!, :iterate, :keys, :isassigned)
      @eval Base.$func(obj::AbstractInfiniteMPS, args...) = $func(obj.A, args...)
 end
+
+
+abstract type DenseInfiniteMPS{L} <: AbstractInfiniteMPS{L} end

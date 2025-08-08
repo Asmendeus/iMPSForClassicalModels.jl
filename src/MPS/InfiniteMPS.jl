@@ -6,7 +6,7 @@
 Concrete type of iMPS, where `L` is the cell size, `T == Float64` or `ComplexF64` is the number type of local tensors.
 """
 
-mutable struct InfiniteMPS{L, T} <: AbstractInfiniteMPS{L}
+mutable struct InfiniteMPS{L, T} <: DenseInfiniteMPS{L}
     const A::AbstractVector{MPSTensor}
 
     function InfiniteMPS{L, T}() where {L, T}

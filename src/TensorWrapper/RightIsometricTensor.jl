@@ -1,5 +1,5 @@
 """
-    struct RightIsometricTensor{R} <: AbstractMPSTensor
+    struct RightIsometricTensor{R} <: AbstractMPSTensor{R}
         A::AbstractTensorMap
     end
 
@@ -23,17 +23,17 @@ Right isometry means
     RightIsometricTensor(::AbstractTensorMap; tol::Float64=1e-8, check::Bool=true)
     RightIsometricTensor{R}(::AbstractTensorMap; tol::Float64=1e-8, check::Bool=true)
 """
-struct RightIsometricTensor <: AbstractMPSTensor
+struct RightIsometricTensor{R} <: AbstractMPSTensor{R}
     A::AbstractTensorMap
 
     function RightIsometricTensor(A::AbstractTensorMap; tol::Float64=Defaults.tol_norm, check::Bool=true)
-        (length(codomain(A)) == 2 && length(domain(A)) > 0) || throw(ArgumentError("The space $(space(A)) does not conform to `RightIsometricTensor` space"))
+        (numout(A) == 2 && numin(A)> 0) || throw(ArgumentError("The space $(space(A)) does not conform to `RightIsometricTensor` space"))
         (check && !isRightIsometric(A; tol=tol)) && throw(ArgumentError("The tensor is not right isometric"))
-        R = 2 + length(domain(A))
+        R = numind(A)
         return new{R}(A)
     end
-    function RightIsometricTensor{R}(A::AbstractTensorMap; tol::Float64=Defaults.tol_norm, check::Bool=true)
-        (length(codomain(A)) == 2 && length(domain(A)) == R-2 > 0) || throw(ArgumentError("The space $(space(A)) does not conform to `RightIsometricTensor{$R}` space"))
+    function RightIsometricTensor{R}(A::AbstractTensorMap; tol::Float64=Defaults.tol_norm, check::Bool=true) where R
+        (numout(A) == 2 && numin(A)== R-2 > 0) || throw(ArgumentError("The space $(space(A)) does not conform to `RightIsometricTensor{$R}` space"))
         (check && !isRightIsometric(A; tol=tol)) && throw(ArgumentError("The tensor is not right isometric"))
         return new{R}(A)
     end
@@ -41,7 +41,7 @@ end
 
 # ============ Adjoint ============
 """
-    struct AdjointRightIsometricTensor{R} <: AbstractMPSTensor
+    struct AdjointRightIsometricTensor{R} <: AbstractMPSTensor{R}
         A::AbstractTensorMap
     end
 
@@ -61,21 +61,21 @@ Right isometry means
         ||    | = I    (identity matrix)
      -- BR  --    |
 
-# Constructor(s)
+# Constructors
     AdjointRightIsometricTensor(::AbstractTensorMap; tol::Float64=1e-8, check::Bool=true)
     AdjointRightIsometricTensor{R}(::AbstractTensorMap; tol::Float64=1e-8, check::Bool=true)
 """
-struct AdjointRightIsometricTensor{R} <: AbstractMPSTensor
+struct AdjointRightIsometricTensor{R} <: AbstractMPSTensor{R}
     A::AbstractTensorMap
 
     function AdjointRightIsometricTensor(A::AbstractTensorMap; tol::Float64=Defaults.tol_norm, check::Bool=true)
-        (length(domain(A)) == 2 && length(codomain(A)) > 0) || throw(ArgumentError("The space $(space(A)) does not conform to `AdjointRightIsometricTensor` space"))
+        (numin(A)== 2 && numout(A) > 0) || throw(ArgumentError("The space $(space(A)) does not conform to `AdjointRightIsometricTensor` space"))
         (check && !isRightIsometric(A; tol=tol)) && throw(ArgumentError("The tensor is not right isometric"))
-        R = 2 + length(codomain(A))
+        R = numind(A)
         return new{R}(A)
     end
-    function AdjointRightIsometricTensor{R}(A::AbstractTensorMap; tol::Float64=Defaults.tol_norm, check::Bool=true)
-        (length(domain(A)) == 2 && length(codomain(A)) == R-2 > 0) || throw(ArgumentError("The space $(space(A)) does not conform to `AdjointRightIsometricTensor{$R}` space"))
+    function AdjointRightIsometricTensor{R}(A::AbstractTensorMap; tol::Float64=Defaults.tol_norm, check::Bool=true) where R
+        (numin(A)== 2 && numout(A) == R-2 > 0) || throw(ArgumentError("The space $(space(A)) does not conform to `AdjointRightIsometricTensor{$R}` space"))
         (check && !isRightIsometric(A; tol=tol)) && throw(ArgumentError("The tensor is not right isometric"))
         return new{R}(A)
     end

@@ -1,12 +1,13 @@
 """
-    abstract type AbstractEnvironmentTensor <: AbstractTensorWrapper
+    abstract type AbstractEnvironmentTensor{N} <: AbstractTensorWrapper
 
-The right or left variational environment tensors.
+N-leg environment tensors.
 """
-abstract type AbstractEnvironmentTensor <: AbstractTensorWrapper end
+abstract type AbstractEnvironmentTensor{N} <: AbstractTensorWrapper end
+numind(::AbstractEnvironmentTensor{N}) where N = N
 
 """
-    struct LeftEnvironmentTensor{N} <: AbstractEnvironmentTensor
+    struct LeftEnvironmentTensor{N} <: AbstractEnvironmentTensor{N}
         A::AbstractTensorMap
     end
 
@@ -15,35 +16,35 @@ Wrapper type for N-leg left environment tensor.
 Convention (' marks codomain):
 
      __
+    |  | -- N
+    |  |
+    |  | —— N-1
+    |FL|    ⋮
     |  | —— 2
     |  |
-    |  | —— 3
-    |FL|    ⋮
-    |  | —— N
-    |  |
-    |  | —— 1'
+    |  | -- 1'
      ‾‾
 
 # Constructors
     LeftEnvironmentTensor(::AbstractTensorMap)
     LeftEnvironmentTensor{N}(::AbstractTensorMap)
 """
-struct LeftEnvironmentTensor{N} <: AbstractEnvironmentTensor
+struct LeftEnvironmentTensor{N} <: AbstractEnvironmentTensor{N}
     A::AbstractTensorMap
 
     function LeftEnvironmentTensor(A::AbstractTensorMap)
-        (length(codomain(A)) == 1 && length(domain(A)) > 0) || throw(ArgumentError("The codomain $(codomain(A)) does not conform to `LeftEnvironmentTensor` codomain"))
-        N = length(domain(A)) + 1
+        (numout(A) == 1 && numin(A) > 0) || throw(ArgumentError("The space $(space(A)) does not conform to `LeftEnvironmentTensor` space"))
+        N = numind(A)
         return new{N}(A)
     end
     function LeftEnvironmentTensor{N}(A::AbstractTensorMap) where N
-        (length(codomain(A)) == 1 && length(domain(A)) == N-1 > 0) || throw(ArgumentError("The space $(space(A)) does not conform to `LeftEnvironmentTensor{$N}` space"))
+        (numout(A) == 1 && numin(A) == N-1 > 0) || throw(ArgumentError("The space $(space(A)) does not conform to `LeftEnvironmentTensor{$N}` space"))
         return new{N}(A)
     end
 end
 
 """
-    struct RightEnvironmentTensor{N} <: AbstractEnvironmentTensor
+    struct RightEnvironmentTensor{N} <: AbstractEnvironmentTensor{N}
         A::AbstractTensorMap
     end
 
@@ -51,28 +52,28 @@ Wrapper type for N-leg right environment tensor.
 
 Convention (' marks codomain):
                __
-        1' —— |  |
+        1' -- |  |
               |  |
         2' —— |  |
         ⋮     |FR|
     (N-1)' —— |  |
               |  |
-         N —— |  |
+         N -- |  |
                ‾‾
 # Constructors
     RightEnvironmentTensor(::AbstractTensorMap)
     RightEnvironmentTensor{N}(::AbstractTensorMap)
 """
-struct RightEnvironmentTensor{N} <: AbstractEnvironmentTensor
+struct RightEnvironmentTensor{N} <: AbstractEnvironmentTensor{N}
     A::AbstractTensorMap
 
     function RightEnvironmentTensor(A::AbstractTensorMap)
-        (length(domain(A)) == 1 && length(codomain(A) > 0)) || throw(ArgumentError("The codomain $(codomain(A)) does not conform to `RightEnvironmentTensor` codomain"))
-        N = length(codomain(A)) + 1
+        (numin(A) == 1 && numout(A) > 0) || throw(ArgumentError("The space $(space(A)) does not conform to `RightEnvironmentTensor` space"))
+        N = numind(A)
         return new{N}(A)
     end
     function RightEnvironmentTensor{N}(A::AbstractTensorMap) where N
-        (length(domain(A)) == 1 && length(codomain(A)) == N-1 > 0) || throw(ArgumentError("The space $(space(A)) does not conform to `RightEnvironmentTensor{$N}` space"))
+        (numin(A) == 1 && numout(A) == N-1 > 0) || throw(ArgumentError("The space $(space(A)) does not conform to `RightEnvironmentTensor{$N}` space"))
         return new{N}(A)
     end
 end

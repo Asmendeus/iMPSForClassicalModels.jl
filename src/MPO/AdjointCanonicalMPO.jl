@@ -1,6 +1,6 @@
 """
-AL
 AC
-AR
 C
+AL
+AR
 """

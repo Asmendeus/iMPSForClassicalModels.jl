@@ -1,6 +1,6 @@
 """
-     abstract type AbstractTransferMatrix
+     abstract type AbstractTransferMatrix{L}
 
 Wrapper type for transfer matrix.
 """
-abstract type AbstractTransferMatrix end
+abstract type AbstractTransferMatrix{L} end

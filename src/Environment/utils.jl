@@ -4,7 +4,7 @@ function Environment(B::AbstractVector{<:AbstractTensorWrapper}, O::AbstractVect
     elseif Union{eltype(A), eltype(B), eltype(O)} <: Union{RightIsometricTensor, AdjointRightIsometricTensor, MPOTensor}
         return RightEnvironment(B, O, A)
     else
-        throw(ArgumentError("unsupported combinations of types (::$(typeof(B)), ::$(typeof(O))), ::$(typeof(A))"))
+        throw(ArgumentError("Unsupported combinations of types (::$(typeof(B)), ::$(typeof(O))), ::$(typeof(A))"))
     end
 end
 
@@ -14,6 +14,6 @@ function Environment(B::AbstractVector{<:AbstractTensorWrapper}, O::AbstractMatr
     elseif Union{eltype(A), eltype(B), eltype(O)} <: Union{RightIsometricTensor, AdjointRightIsometricTensor, MPOTensor}
         return MultiRightEnvironment(B, O, A)
     else
-        throw(ArgumentError("unsupported combinations of types (::$(typeof(B)), ::$(typeof(O))), ::$(typeof(A))"))
+        throw(ArgumentError("Unsupported combinations of types (::$(typeof(B)), ::$(typeof(O))), ::$(typeof(A))"))
     end
 end

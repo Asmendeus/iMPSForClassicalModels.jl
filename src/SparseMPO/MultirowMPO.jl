@@ -1,25 +1,25 @@
 """
-    mutable struct MultirowInfiniteMPO{L, W, T} <: AbstractInfiniteMPO{L, W}
+    mutable struct MultirowMPO{L, W, T} <: AbstractInfiniteMPS{L}
         const O::AbstractMatrix{AbstractTensorMap}
      end
 
 Concrete type of iMPO, where `L` is the cell length and `W` is the cell width, `T == Float64` or `ComplexF64` is the number type of local tensors.
 """
-mutable struct MultirowInfiniteMPO{L, W, T} <: AbstractInfiniteMPO{L, W}
+mutable struct MultirowMPO{L, W, T} <: AbstractInfiniteMPS{L}
     const O::AbstractMatrix{AbstractTensorMap}
 
-    function MultirowInfiniteMPO{L, W, T}() where {L, W, T}
+    function MultirowMPO{L, W, T}() where {L, W, T}
         O = Matrix{AbstractTensorMap}(undef, L, W)
         return new{L, W, T}(O)
     end
-    MultirowInfiniteMPO(L::Int, W::Int, T::Type{<:Union{Float64, ComplexF64}}=Float64)=MultirowInfiniteMPO{L, W, T}()
+    MultirowMPO(L::Int, W::Int, T::Type{<:Union{Float64, ComplexF64}}=Float64)=MultirowMPO{L, W, T}()
 
-    function MultirowInfiniteMPO{L, W, T}(O::AbstractMatrix{<:AbstractTensorMap}) where {L, W, T}
-        size(A) == (L, W) || throw(ArgumentError("The MultirowInfiniteMPO size `(L, W)` does not match the size of the local tensor matrix"))
+    function MultirowMPO{L, W, T}(O::AbstractMatrix{<:AbstractTensorMap}) where {L, W, T}
+        size(A) == (L, W) || throw(ArgumentError("The MultirowMPO size `(L, W)` does not match the size of the local tensor matrix"))
         T ∈ [Float64, ComplexF64] || throw(ArgumentError("Unsupported data types"))
         return new{L, W, T}(O)
     end
-    function MultirowInfiniteMPO(O::AbstractMatrix{<:AbstractTensorMap})
+    function MultirowMPO(O::AbstractMatrix{<:AbstractTensorMap})
         L, W = size(O)
         T = mapreduce(eltype, promote_type, O)
         return new{L, W, T}(O)
@@ -27,18 +27,18 @@ mutable struct MultirowInfiniteMPO{L, W, T} <: AbstractInfiniteMPO{L, W}
 
 end
 
-const miMPO = MultirowInfiniteMPO
+const miMPO = MultirowMPO
 
-function MultirowInfiniteMPO(mpo::InfiniteMPO{L, T}) where {L, T}
-    return MultirowInfiniteMPO{L, 1, T}([e for _ in 1:1, e in mpo.O])
+function MultirowMPO(mpo::InfiniteMPO{L, T}) where {L, T}
+    return MultirowMPO{L, 1, T}([e for _ in 1:1, e in mpo.O])
 end
-function InfiniteMPO(mpo::MultirowInfiniteMPO{L, 1, T}) where {L, T}
+function InfiniteMPO(mpo::MultirowMPO{L, 1, T}) where {L, T}
     return InfiniteMPO{L, T}(vec(mpo.O))
 end
 
-function Base.show(io::IO, mpo::MultirowInfiniteMPO{L, W, T}) where {L, W, T}
+function Base.show(io::IO, mpo::MultirowMPO{L, W, T}) where {L, W, T}
     # data type
-    println(io, "MultirowInfiniteMPO{$L, $W, $T}:")
+    println(io, "MultirowMPO{$L, $W, $T}:")
     println(io)
 
     # graphic presentation: line 1
