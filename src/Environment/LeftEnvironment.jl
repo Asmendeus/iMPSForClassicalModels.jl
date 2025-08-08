@@ -1,7 +1,7 @@
 """
     mutable struct LeftEnvironment{L, R₁, R₂} <: AbstractEnvironment{3}
         const AL::AbstractVector{LeftIsometricTensor{R₁}}
-        const O::AbstractVector{MPSTensor{R₂}}
+        const O::AbstractVector{LocalTensor{R₂}}
         const BL::AbstractVector{AdjointLeftIsometricTensor{R₁}}
     end
 
@@ -16,13 +16,13 @@ Graphic presentation:
     —— BL1 —— ... —— BLL ——     —— BL1 —— ... —— BLL ——
 
 # Constructors
-    LeftEnvironment{R₁, R₂, L}(AL::AbstractVector{<:LeftIsometricTensor{R₁}}, O::AbstractVector{<:MPSTensor{R₂}}, BL::AbstractVector{<:AdjointLeftIsometricTensor{R₁}})
-    LeftEnvironment(AL::AbstractVector{<:LeftIsometricTensor}, O::AbstractVector{<:MPSTensor{R₂}}, BL::AbstractVector{<:AdjointLeftIsometricTensor})
+    LeftEnvironment{R₁, R₂, L}(AL::AbstractVector{<:LeftIsometricTensor{R₁}}, O::AbstractVector{<:LocalTensor{R₂}}, BL::AbstractVector{<:AdjointLeftIsometricTensor{R₁}})
+    LeftEnvironment(AL::AbstractVector{<:LeftIsometricTensor}, O::AbstractVector{<:LocalTensor{R₂}}, BL::AbstractVector{<:AdjointLeftIsometricTensor})
     LeftEnvironment(AL::LeftIsometricTensor, O::MPOTensor, BL::AdjointLeftIsometricTensor)
 """
 mutable struct LeftEnvironment{L, R₁, R₂} <: AbstractEnvironment{3}
     const AL::AbstractVector{LeftIsometricTensor{R₁}}
-    const O::AbstractVector{MPSTensor{R₂}}
+    const O::AbstractVector{LocalTensor{R₂}}
     const BL::AbstractVector{AdjointLeftIsometricTensor{R₁}}
 
     LeftEnvironment{L}(AL::AbstractVector{<:LeftIsometricTensor}, O::AbstractVector{<:MPOTensor}, BL::AbstractVector{<:AdjointLeftIsometricTensor}) where L = new{L}(AL, O, BL)

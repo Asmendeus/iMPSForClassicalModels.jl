@@ -1,5 +1,5 @@
 """
-    struct RightIsometricTensor{R} <: AbstractMPSTensor{R}
+    struct RightIsometricTensor{R} <: AbstractLocalTensor{R}
         A::AbstractTensorMap
     end
 
@@ -23,7 +23,7 @@ Right isometry means
     RightIsometricTensor(::AbstractTensorMap; tol::Float64=1e-8, check::Bool=true)
     RightIsometricTensor{R}(::AbstractTensorMap; tol::Float64=1e-8, check::Bool=true)
 """
-struct RightIsometricTensor{R} <: AbstractMPSTensor{R}
+struct RightIsometricTensor{R} <: AbstractLocalTensor{R}
     A::AbstractTensorMap
 
     function RightIsometricTensor(A::AbstractTensorMap; tol::Float64=Defaults.tol_norm, check::Bool=true)
@@ -41,7 +41,7 @@ end
 
 # ============ Adjoint ============
 """
-    struct AdjointRightIsometricTensor{R} <: AbstractMPSTensor{R}
+    struct AdjointRightIsometricTensor{R} <: AbstractLocalTensor{R}
         A::AbstractTensorMap
     end
 
@@ -65,7 +65,7 @@ Right isometry means
     AdjointRightIsometricTensor(::AbstractTensorMap; tol::Float64=1e-8, check::Bool=true)
     AdjointRightIsometricTensor{R}(::AbstractTensorMap; tol::Float64=1e-8, check::Bool=true)
 """
-struct AdjointRightIsometricTensor{R} <: AbstractMPSTensor{R}
+struct AdjointRightIsometricTensor{R} <: AbstractLocalTensor{R}
     A::AbstractTensorMap
 
     function AdjointRightIsometricTensor(A::AbstractTensorMap; tol::Float64=Defaults.tol_norm, check::Bool=true)

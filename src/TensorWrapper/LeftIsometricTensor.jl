@@ -1,5 +1,5 @@
 """
-    struct LeftIsometricTensor{R} <: AbstractMPSTensor{R}
+    struct LeftIsometricTensor{R} <: AbstractLocalTensor{R}
         A::AbstractTensorMap
     end
 
@@ -23,7 +23,7 @@ Left isometry means
     LeftIsometricTensor(::AbstractTensorMap; tol::Float64=1e-8, check::Bool=true)
     LeftIsometricTensor{R}(::AbstractTensorMap; tol::Float64=1e-8, check::Bool=true)
 """
-struct LeftIsometricTensor{R} <: AbstractMPSTensor{R}
+struct LeftIsometricTensor{R} <: AbstractLocalTensor{R}
     A::AbstractTensorMap
 
     function LeftIsometricTensor(A::AbstractTensorMap; tol::Float64=Defaults.tol_norm, check::Bool=true)
@@ -39,9 +39,13 @@ struct LeftIsometricTensor{R} <: AbstractMPSTensor{R}
     end
 end
 
+const LeftIsometricMPSTensor = LeftIsometricTensor{3}
+const LeftIsometricMPOTensor = LeftIsometricTensor{4}
+const LeftIsometricMPSOrMPOTensor = Union{LeftIsometricMPSTensor, LeftIsometricMPOTensor}
+
 # ============ Adjoint ============
 """
-    struct AdjointLeftIsometricTensor{R} <: AbstractMPSTensor{R}
+    struct AdjointLeftIsometricTensor{R} <: AbstractLocalTensor{R}
         A::AbstractTensorMap
     end
 
@@ -65,7 +69,7 @@ Left isometry means
     AdjointLeftIsometricTensor(::AbstractTensorMap; tol::Float64=1e-8, check::Bool=true)
     AdjointLeftIsometricTensor{R}(::AbstractTensorMap; tol::Float64=1e-8, check::Bool=true)
 """
-struct AdjointLeftIsometricTensor{R} <: AbstractMPSTensor{R}
+struct AdjointLeftIsometricTensor{R} <: AbstractLocalTensor{R}
     A::AbstractTensorMap
 
     function AdjointLeftIsometricTensor(A::AbstractTensorMap; tol::Float64=Defaults.tol_norm, check::Bool=true)
@@ -82,3 +86,7 @@ struct AdjointLeftIsometricTensor{R} <: AbstractMPSTensor{R}
 end
 adjoint(A::LeftIsometricTensor) = AdjointLeftIsometricTensor(A.A')
 adjoint(A::AdjointLeftIsometricTensor)::LeftIsometricTensor = A.A'
+
+const AdjointLeftIsometricMPSTensor = AdjointLeftIsometricTensor{3}
+const AdjointLeftIsometricMPOTensor = AdjointLeftIsometricTensor{4}
+const AdjointLeftIsometricMPSOrMPOTensor = Union{AdjointLeftIsometricMPSTensor, AdjointLeftIsometricMPOTensor}

@@ -17,11 +17,15 @@ include("utils/Info.jl")
 # Tensor wrapper
 export AbstractTensorWrapper
 include("TensorWrapper/TensorWrapper.jl")
-export AbstractMPSTensor, MPSTensor, AdjointMPSTensor
-include("TensorWrapper/MPSTensor.jl")
-export LeftIsometricTensor, AdjointLeftIsometricTensor
+export AbstractLocalTensor, AbstractBondTensor, AbstractMPSTensor, AbstractMPOTensor, AbstractMPSOrMPOTensor
+export LocalTensor, BondTensor, MPSTensor, MPOTensor, MPSOrMPOTensor
+export AdjointLocalTensor, AdjointBondTensor, AdjointMPSTensor, AdjointMPOTensor, AdjointMPSOrMPOTensor
+include("TensorWrapper/LocalTensor.jl")
+export LeftIsometricTensor, LeftIsometricMPSTensor, LeftIsometricMPOTensor, LeftIsometricMPSOrMPOTensor
+export AdjointLeftIsometricTensor, AdjointLeftIsometricMPSTensor, AdjointLeftIsometricMPOTensor, AdjointLeftIsometricMPSOrMPOTensor
 include("TensorWrapper/LeftIsometricTensor.jl")
-export RightIsometricTensor, AdjointRightIsometricTensor
+export RightIsometricTensor, RightIsometricMPSTensor, RightIsometricMPOTensor, RightIsometricMPSOrMPOTensor
+export AdjointRightIsometricTensor, AdjointRightIsometricMPSTensor, AdjointRightIsometricMPOTensor, AdjointRightIsometricMPSOrMPOTensor
 include("TensorWrapper/RightIsometricTensor.jl")
 export AbstractEnvironmentTensor, LeftEnvironmentTensor, RightEnvironmentTensor
 include("TensorWrapper/EnvironmentTensor.jl")
@@ -38,6 +42,9 @@ include("TransferMatrix/TransferMatrix.jl")
 # Environment
 export AbstractEnvironment
 include("Environment/AbstractEnvironment.jl")
+export BondEnvironment
+include("Environment/BondEnvironment.jl")
+
 
 # Impurity tensor
 

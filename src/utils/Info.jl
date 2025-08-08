@@ -14,7 +14,7 @@ Type for storing the information of a bond.
 Outer constructor via giving the `s` tensor and `ϵ` form `tsvd`.
 
      BondInfo(A::AbstractTensorMap, direction::Symbol)
-     BondInfo(A::MPSTensor, direction::Symbol)
+     BondInfo(A::LocalTensor, direction::Symbol)
 
 Outer constructor via giving a tensor `A` and `direction = :L` or `:R`. We cannot get truncation error and singular values hence `TrunErr` and `SE` are set to `0.0` and `NaN`, respectively.
 """
