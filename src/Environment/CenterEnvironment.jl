@@ -1,7 +1,7 @@
 """
     mutable struct CenterEnvironment{N} <: AbstractEnvironment{N}
         FL::LeftEnvironmentTensor{N}
-        O::AbstractVector{MPOTensor}
+        const O::AbstractVector{MPOTensor}
         FR::RightEnvironmentTensor{N}
     end
 

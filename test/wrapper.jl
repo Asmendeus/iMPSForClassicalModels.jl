@@ -2,6 +2,7 @@ using Test, iMPSForClassicalModels
 
 tol = 1e-8
 
+D = 6   # bond dimension
 DL = 6  # left bond dimension
 DR = 8  # right bond dimension
 
@@ -11,7 +12,11 @@ d2 = 5    # second layer  MPO tensor's auxiliary bond dimension
 
 # MPS: -- A --
 #         |
-A = MPSTensor(TensorMap(rand, ℝ^DL⊗ℝ^dp, ℝ^DL))
+A = MPSTensor(TensorMap(rand, ℝ^D⊗ℝ^dp, ℝ^D))
+# MPS: -- A1 -- A2 --
+#         |     |
+A1 = MPSTensor(TensorMap(rand, ℝ^DL⊗ℝ^dp, ℝ^DR))
+A2 = MPSTensor(TensorMap(rand, ℝ^DR⊗ℝ^dp, ℝ^DL))
 
 # MPO:    |
 #      -- O --
@@ -68,7 +73,9 @@ LC, CR, _ = rightorth(C)
 
 # TransferMatrix
 trans_AB = TransferMatrix(A, B)
+trans_AB = TransferMatrix([A1, A2], [A1', A2'])
 trans_OO = TransferMatrix(O, O')
+trans_OO = TransferMatrix([O, O], [O', O'])
 
 # Environment
 leftEnv1 = environment(AL, O, BL)

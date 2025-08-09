@@ -1,8 +1,8 @@
 """
     mutable struct IsometricEnvironment{N, R} <: AbstractEnvironment{N}
-        const A::LocalTensor{R}
+        A::LocalTensor{R}
         const O::AbstractVector{MPOTensor}
-        const B::AdjointLocalTensor{R}
+        B::AdjointLocalTensor{R}
     end
 
 Wrapper type for left environment tensor's generating environment.

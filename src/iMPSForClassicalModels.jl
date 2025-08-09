@@ -27,12 +27,15 @@ include("TensorWrapper/EnvironmentTensor.jl")
 export isAdjoint, isLeftIsometric, isRightIsometric, leftorth, rightorth
 include("TensorWrapper/utils.jl")
 
+# Transfer matrix
+export AbstractTransferMatrix, AbstractMPSTransferMatrix, AbstractMPOTransferMatrix
+include("TransferMatrix/AbstractTransferMatrix.jl")
+export TransferMatrix, MPSTransferMatrix, MPOTransferMatrix
+include("TransferMatrix/TransferMatrix.jl")
+
 # Environment
 export AbstractEnvironment
 include("Environment/AbstractEnvironment.jl")
-export AbstractTransferMatrix, AbstractMPSTransferMatrix, AbstractMPOTransferMatrix
-export TransferMatrix, MPSTransferMatrix, MPOTransferMatrix
-include("Environment/TransferMatrix.jl")
 export IsometricEnvironment, IsometricMPSEnvironment, IsometricMPOEnvironment
 include("Environment/IsometricEnvironment.jl")
 export BondEnvironment, CenterEnvironment
