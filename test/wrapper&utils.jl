@@ -94,11 +94,24 @@ bondEnv1 = Environment(FL1, FR1)
 bondEnv2 = Environment(FL2, FR2)
 
 centerEnv = Environment(FL1, O1, FR1)
-multirowCenterEnv = Environment(FL2, [O1, O2], FR2)
 
 leftEnv1 = Environment(AL, O, BL)
 leftEnv2 = Environment([AL1, AL2], [O1, O1], [BL1, BL2])
 leftEnv3 = Environment(OL, O, OL')
+
+rightEnv1 = Environment(AR, O, BR)
+rightEnv2 = Environment([AR1, AR2], [O1, O1], [BR1, BR2])
+rightEnv3 = Environment(OR, O, OR')
+
+multirowCenterEnv = Environment(FL2, [O1, O2], FR2)
+
+multirowLeftEnv1 = Environment([AL1, AL2], [O1 O1; O2 O2], [BL1, BL2])
+multirowLeftEnv2 = Environment(AL1, [O1; O2], BL1)
+multirowLeftEnv3 = Environment(OL, [O1, O2], OL')
+
+multirowRightEnv1 = Environment([AR1, AR2], [O1 O1; O2 O2], [BR1, BR2])
+multirowRightEnv2 = Environment(AR1, [O1; O2], BR1)
+multirowRightEnv3 = Environment(OR, [O1, O2], OR')
 
 @testset "leftorth & rightorth" begin
     @test isLeftIsometric(AL)

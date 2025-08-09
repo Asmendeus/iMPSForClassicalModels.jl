@@ -46,10 +46,16 @@ export BondEnvironment
 include("Environment/BondEnvironment.jl")
 export CenterEnvironment
 include("Environment/CenterEnvironment.jl")
+export LeftEnvironment, LeftMPSEnvironment, LeftMPOEnvironment
+include("Environment/LeftEnvironment.jl")
+export RightEnvironment, RightMPSEnvironment, RightMPOEnvironment
+include("Environment/RightEnvironment.jl")
 export MultirowCenterEnvironment
 include("Environment/MultirowCenterEnvironment.jl")
-export LeftEnvironment
-include("Environment/LeftEnvironment.jl")
+export MultirowLeftEnvironment, MultirowLeftMPSEnvironment, MultirowLeftMPOEnvironment
+include("Environment/MultirowLeftEnvironment.jl")
+export MultirowRightEnvironment, MultirowRightMPSEnvironment, MultirowRightMPOEnvironment
+include("Environment/MultirowRightEnvironment.jl")
 
 export Environment
 include("Environment/utils.jl")
