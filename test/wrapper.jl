@@ -2,40 +2,33 @@ using Test, iMPSForClassicalModels
 
 tol = 1e-8
 
-DL = 6  # left virtual bond dimension
-DR = 8  # right virtual bond dimension
+DL = 6  # left bond dimension
+DR = 8  # right bond dimension
 
-dp = 3    # physical bond dimension
+dp = 3    # physical dimension
 d1 = 4    # first layer MPO tensor's auxiliary bond dimension
 d2 = 5    # second layer  MPO tensor's auxiliary bond dimension
 
 # MPS: -- A --
 #         |
 A = MPSTensor(TensorMap(rand, ℝ^DL⊗ℝ^dp, ℝ^DL))
-# MPS: -- A1 -- A2 --
-#         |     |
-A1 = MPSTensor(TensorMap(rand, ℝ^DL⊗ℝ^dp, ℝ^DR))
-A2 = MPSTensor(TensorMap(rand, ℝ^DR⊗ℝ^dp, ℝ^DL))
 
 # MPO:    |
 #      -- O --
 #         |
 O = MPOTensor(TensorMap(rand, ℝ^d1⊗ℝ^dp, ℝ^dp⊗ℝ^d1))
-# MultirowMPO:    |     |
-#              —— O1 —— O1 ——
-#                 |     |
-#              —— O2 —— O2 ——
-#                 |     |
+
+# MultirowMPO:    |
+#              —— O1 ——
+#                 |
+#              —— O2 ——
+#                 |
 O1 = MPOTensor(TensorMap(rand, ℝ^d1⊗ℝ^dp, ℝ^dp⊗ℝ^d1))
 O2 = MPOTensor(TensorMap(rand, ℝ^d2⊗ℝ^dp, ℝ^dp⊗ℝ^d2))
 
 # AdjointMPS:    |
 #             —— B ——
 B = AdjointMPSTensor(TensorMap(rand, ℝ^DL, ℝ^DL⊗ℝ^dp))
-# AdjointMPS:    |     |
-#             —— B1 —— B2 ——
-B1 = AdjointMPSTensor(TensorMap(rand, ℝ^DR, ℝ^DL⊗ℝ^dp))
-B2 = AdjointMPSTensor(TensorMap(rand, ℝ^DL, ℝ^DR⊗ℝ^dp))
 
 # BondTensor: -- C --
 C = BondTensor(TensorMap(rand, ℝ^DL, ℝ^DR))
@@ -73,45 +66,22 @@ LB, BR, _ = rightorth(B)
 CL, RC, _ = leftorth(C)
 LC, CR, _ = rightorth(C)
 
-AL1, _, _ = leftorth(A1)
-_, AR1, _ = rightorth(A1)
-BL1, _, _ = leftorth(B1)
-_, BR1, _ = rightorth(B1)
-
-AL2, _, _ = leftorth(A2)
-_, AR2, _ = rightorth(A2)
-BL2, _, _ = leftorth(B2)
-_, BR2, _ = rightorth(B2)
-
 # TransferMatrix
 trans_AB = TransferMatrix(A, B)
-trans_ABL = TransferMatrix(A, BL)
-trans_AsBs = TransferMatrix([A1, A2], [B1, B2])
 trans_OO = TransferMatrix(O, O')
 
 # Environment
-bondEnv1 = Environment(FL1, FR1)
-bondEnv2 = Environment(FL2, FR2)
+leftEnv1 = environment(AL, O, BL)
+leftEnv2 = environment(OL, O, OL')
 
-centerEnv = Environment(FL1, O1, FR1)
+rightEnv1 = environment(AR, O, BR)
+rightEnv2 = environment(OR, O, OR')
 
-leftEnv1 = Environment(AL, O, BL)
-leftEnv2 = Environment([AL1, AL2], [O1, O1], [BL1, BL2])
-leftEnv3 = Environment(OL, O, OL')
+bondEnv1 = environment(FL1, FR1)
+bondEnv2 = environment(FL2, FR2)
 
-rightEnv1 = Environment(AR, O, BR)
-rightEnv2 = Environment([AR1, AR2], [O1, O1], [BR1, BR2])
-rightEnv3 = Environment(OR, O, OR')
-
-multirowCenterEnv = Environment(FL2, [O1, O2], FR2)
-
-multirowLeftEnv1 = Environment([AL1, AL2], [O1 O1; O2 O2], [BL1, BL2])
-multirowLeftEnv2 = Environment(AL1, [O1; O2], BL1)
-multirowLeftEnv3 = Environment(OL, [O1, O2], OL')
-
-multirowRightEnv1 = Environment([AR1, AR2], [O1 O1; O2 O2], [BR1, BR2])
-multirowRightEnv2 = Environment(AR1, [O1; O2], BR1)
-multirowRightEnv3 = Environment(OR, [O1, O2], OR')
+centerEnv1 = environment(FL1, O1, FR1)
+centerEnv2 = environment(FL1, [O1, O2], FR1)
 
 @testset "leftorth & rightorth" begin
     @test isLeftIsometric(AL)

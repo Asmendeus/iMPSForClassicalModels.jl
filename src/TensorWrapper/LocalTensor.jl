@@ -9,7 +9,6 @@ numind(::AbstractLocalTensor{R}) where R = R
 const AbstractBondTensor = AbstractLocalTensor{2}
 const AbstractMPSTensor = AbstractLocalTensor{3}
 const AbstractMPOTensor = AbstractLocalTensor{4}
-const AbstractMPSOrMPOTensor = Union{AbstractMPSTensor, AbstractMPOTensor}
 
 # =================================
 """
@@ -58,7 +57,6 @@ end
 const BondTensor = LocalTensor{2}
 const MPSTensor = LocalTensor{3}
 const MPOTensor = LocalTensor{4}
-const MPSOrMPOTensor = Union{MPSTensor, MPOTensor}
 
 # ============ Adjoint ============
 """
@@ -110,4 +108,3 @@ adjoint(A::AdjointLocalTensor)::LocalTensor = A.A'
 const AdjointBondTensor = AdjointLocalTensor{2}
 const AdjointMPSTensor = AdjointLocalTensor{3}
 const AdjointMPOTensor = AdjointLocalTensor{4}
-const AdjointMPSOrMPOTensor = Union{AdjointMPSTensor, AdjointMPOTensor}

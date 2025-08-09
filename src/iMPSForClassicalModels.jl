@@ -17,56 +17,38 @@ include("utils/Info.jl")
 # Tensor wrapper
 export AbstractTensorWrapper
 include("TensorWrapper/TensorWrapper.jl")
-export AbstractLocalTensor, AbstractBondTensor, AbstractMPSTensor, AbstractMPOTensor, AbstractMPSOrMPOTensor
-export LocalTensor, BondTensor, MPSTensor, MPOTensor, MPSOrMPOTensor
-export AdjointLocalTensor, AdjointBondTensor, AdjointMPSTensor, AdjointMPOTensor, AdjointMPSOrMPOTensor
+export AbstractLocalTensor, AbstractBondTensor, AbstractMPSTensor, AbstractMPOTensor
+export LocalTensor, BondTensor, MPSTensor, MPOTensor
+export AdjointLocalTensor, AdjointBondTensor, AdjointMPSTensor, AdjointMPOTensor
 include("TensorWrapper/LocalTensor.jl")
-export LeftIsometricTensor, LeftIsometricBondTensor, LeftIsometricMPSTensor, LeftIsometricMPOTensor, LeftIsometricMPSOrMPOTensor
-export AdjointLeftIsometricTensor, AdjointLeftIsometricBondTensor, AdjointLeftIsometricMPSTensor, AdjointLeftIsometricMPOTensor, AdjointLeftIsometricMPSOrMPOTensor
-include("TensorWrapper/LeftIsometricTensor.jl")
-export RightIsometricTensor, RightIsometricBondTensor, RightIsometricMPSTensor, RightIsometricMPOTensor, RightIsometricMPSOrMPOTensor
-export AdjointRightIsometricTensor, AdjointRightIsometricBondTensor, AdjointRightIsometricMPSTensor, AdjointRightIsometricMPOTensor, AdjointRightIsometricMPSOrMPOTensor
-include("TensorWrapper/RightIsometricTensor.jl")
 export AbstractEnvironmentTensor, LeftEnvironmentTensor, RightEnvironmentTensor
 include("TensorWrapper/EnvironmentTensor.jl")
 
 export isAdjoint, isLeftIsometric, isRightIsometric, leftorth, rightorth
 include("TensorWrapper/utils.jl")
 
-# Transfer matrix
-export AbstractTransferMatrix, AbstractMPSTransferMatrix, AbstractMPOTransferMatrix, AbstractMPSOrMPOTransferMatrix
-include("TransferMatrix/AbstractTransferMatrix.jl")
-export TransferMatrix, MPSTransferMatrix, MPOTransferMatrix, MPSOrMPOTransferMatrix
-include("TransferMatrix/TransferMatrix.jl")
-
 # Environment
 export AbstractEnvironment
 include("Environment/AbstractEnvironment.jl")
-export BondEnvironment
+export AbstractTransferMatrix, AbstractMPSTransferMatrix, AbstractMPOTransferMatrix
+export TransferMatrix, MPSTransferMatrix, MPOTransferMatrix
+include("Environment/TransferMatrix.jl")
+export IsometricEnvironment, IsometricMPSEnvironment, IsometricMPOEnvironment
+include("Environment/IsometricEnvironment.jl")
+export BondEnvironment, CenterEnvironment
 include("Environment/BondEnvironment.jl")
-export CenterEnvironment
 include("Environment/CenterEnvironment.jl")
-export LeftEnvironment, LeftMPSEnvironment, LeftMPOEnvironment
-include("Environment/LeftEnvironment.jl")
-export RightEnvironment, RightMPSEnvironment, RightMPOEnvironment
-include("Environment/RightEnvironment.jl")
-export MultirowCenterEnvironment
-include("Environment/MultirowCenterEnvironment.jl")
-export MultirowLeftEnvironment, MultirowLeftMPSEnvironment, MultirowLeftMPOEnvironment
-include("Environment/MultirowLeftEnvironment.jl")
-export MultirowRightEnvironment, MultirowRightMPSEnvironment, MultirowRightMPOEnvironment
-include("Environment/MultirowRightEnvironment.jl")
 
-export Environment
-include("Environment/utils.jl")
+export environment
+include("Environment/environment.jl")
+
+# Method
 
 # MPS
 
 # MPO
 
 # Impurity tensor
-
-# Method
 
 # Algorithm
 
