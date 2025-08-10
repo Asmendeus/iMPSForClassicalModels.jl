@@ -7,10 +7,13 @@
 Wrapper type for transfer matrix.
 
 Graphic presentation:
-
-    -- A1 -- ... -- AL --     -- A1 -- ... -- AL --
-       |            |            ||           ||
-    -- B1 -- ... -- BL --     -- B1 -- ... -- BL --
+                                    (a1)           (aL)      bonds with same tag are connected
+                                     |              |
+    -- A[1] -- ... -- A[L] --     -- A[1] -- ... -- A[L] --
+       |              |              |              |
+    -- B[1] -- ... -- B[L] --     -- B[1] -- ... -- B[L] --
+                                     |              |
+                                    (a1)           (aL)
 
 # Constructors
     TransferMatrix{R}(A::AbstractVector{<:LocalTensor{R}}, B::AbstractVector{<:AdjointLocalTensor{R}})
@@ -47,5 +50,5 @@ mutable struct TransferMatrix{L, R} <: AbstractTransferMatrix{L, R}
     TransferMatrix(A::LocalTensor{R}, B::AdjointLocalTensor{R}) where R = TransferMatrix{1, R}([A,], [B,])
 end
 
-const MPSTransferMatrix = TransferMatrix{3}
-const MPOTransferMatrix = TransferMatrix{4}
+const MPSTransferMatrix{L} = TransferMatrix{L, 3}
+const MPOTransferMatrix{L} = TransferMatrix{L, 4}

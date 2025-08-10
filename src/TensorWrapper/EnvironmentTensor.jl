@@ -1,10 +1,9 @@
 """
-    abstract type AbstractEnvironmentTensor{N} <: AbstractTensorWrapper
+    abstract type AbstractEnvironmentTensor{N} <: AbstractTensorWrapper{N}
 
 N-leg environment tensors.
 """
-abstract type AbstractEnvironmentTensor{N} <: AbstractTensorWrapper end
-numind(::AbstractEnvironmentTensor{N}) where N = N
+abstract type AbstractEnvironmentTensor{N} <: AbstractTensorWrapper{N} end
 
 """
     struct LeftEnvironmentTensor{N} <: AbstractEnvironmentTensor{N}

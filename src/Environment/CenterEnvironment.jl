@@ -9,15 +9,15 @@ Wrapper type for center tensor's generating environment.
 
 Graphic presentation:
 
-     __            __
-    |  | --   --  |  |
-    |  |    |     |  |
-    |  | —— O1 —— |  |
-    |FL|    ⋮     |FR|
-    |  | —— OW —— |  |      W = N - 2
-    |  |    |     |  |
-    |  | --    -- |  |
-     ‾‾            ‾‾
+     __              __
+    |  | --   ----- |  |
+    |  |    |       |  |
+    |  | —— O[1] —— |  |
+    |FL|    ⋮       |FR|
+    |  | —— O[W] —— |  |      W = N - 2
+    |  |    |       |  |
+    |  | --   ----- |  |
+     ‾‾              ‾‾
 
 # Constructors
     CenterEnvironment{N}(FL::LeftEnvironmentTensor{N}, O::AbstractVector{<:MPOTensor}, FR::RightEnvironmentTensor{N})

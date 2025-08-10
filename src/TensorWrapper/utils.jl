@@ -7,11 +7,11 @@ isAdjoint(::Union{LocalTensor, LeftEnvironmentTensor, RightEnvironmentTensor}) =
 isAdjoint(::AdjointLocalTensor) = true
 
 """
-    function isLeftIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=1e-8)
-    function isLeftIsometric(A::AbstractLocalTensor; tol::Float64=1e-8)
+    function isLeftIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=Defaults.tol_norm)
+    function isLeftIsometric(A::AbstractLocalTensor; tol::Float64=Defaults.tol_norm)
 
 # Return
--`::Bool`: whether the R-leg local tensor `A` is left orthogonal
+-`::Bool`: whether the R-leg local tensor `A` is left-orthogonal
 """
 function isLeftIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=Defaults.tol_norm)
     if numout(A) == 1 && numin(A) == 1 && isadjoint == false
@@ -22,6 +22,7 @@ function isLeftIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=Def
         # AdjointBondTensor
         @tensor E[-1; -2] := A'[1 -2] * A[-1 1]
         return norm(E - id(codomain(A))) < tol
+    # ==== Retain to improve performance ===={
     elseif numout(A) == 2 && numin(A) == 1 && isadjoint == false
         # MPSTensor
         @tensor E[-1; -2] := A[1 2 -2] * A'[-1 1 2]
@@ -38,9 +39,25 @@ function isLeftIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=Def
         # AdjointMPOTensor
         @tensor E[-1; -2] := A'[1 2 3 -2] * A[3 -1 1 2]
         return norm(E - id(codomain(A, 2))) < tol
+    # ==== Retain to improve performance ====}
+    elseif numout(A) == 2 && isadjoint = false
+        # R ≥ 3
+        R = numind(A)
+        str_legs_A = prod(["$i " for i in 1:R-1]) * "-2"
+        str_legs_A′ = prod(["$i " for i in 3:R-1]) * "-1 1 2"
+        str_expr = "@tensor E[-1; -2] := A[$str_legs_A] * A'[$str_legs_A′]"
+        eval(Meta.parse(str_expr))
+        return norm(E - id(domain(A, R-2))) < tol
+    elseif numin(A) == 2 && isadjoint == true
+        # R ≥ 3
+        R = numind(A)
+        str_legs_A′ = prod(["$i " for i in 1:R-1]) * "-2"
+        str_legs_A = prod(["$i " for i in 3:R-1]) * "-1 1 2"
+        str_expr = "@tensor E[-1; -2] := A'[$str_legs_A′] * A[$str_legs_A]"
+        eval(Meta.parse(str_expr))
+        return norm(E - id(codomain(A, R-2))) < tol
     else
-        # R > 4
-        throw(ArgumentError("Behavior not yet defined"))
+        throw(ArgumentError("Unsupported space: $(space(A))"))
     end
 end
 function isLeftIsometric(A::AbstractLocalTensor; tol::Float64=Defaults.tol_norm)::Bool
@@ -49,13 +66,13 @@ end
 
 
 """
-    function isRightIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=1e-8)
-    function isRightIsometric(A::AbstractLocalTensor; tol::Float64=1e-8)
+    function isRightIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=Defaults.tol_norm)
+    function isRightIsometric(A::AbstractLocalTensor; tol::Float64=Defaults.tol_norm)
 
 # Return
--`::Bool`: whether the R-leg local tensor `A` is right orthogonal
+-`::Bool`: whether the R-leg local tensor `A` is right-orthogonal
 """
-function isRightIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=1e-8)
+function isRightIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=Defaults.tol_norm)
     if numout(A) == 1 && numin(A) == 1 && isadjoint == false
         # BondTensor
         @tensor E[-1; -2] := A[-1 1] * A'[1 -2]
@@ -64,6 +81,7 @@ function isRightIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=1e
         # AdjointBondTensor
         @tensor E[-1; -2] := A'[-1 1] * A[1 -2]
         return norm(E - id(domain(A, 1))) < tol
+    # ==== Retain to improve performance ===={
     elseif numout(A) == 2 && numin(A) == 1 && isadjoint == false
         # MPSTensor
         @tensor E[-1; -2] := A[-1 1 2] * A'[2 -2 1]
@@ -80,9 +98,26 @@ function isRightIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=1e
         # AdjointMPOTensor
         @tensor E[-1; -2] := A'[-1 1 2 3] * A[2 3 -2 1]
         return norm(E - id(domain(A, 1))) < tol
+    # ==== Retain to improve performance ====}
+    elseif numout(A) == 2 && isadjoint == false
+        # R ≥ 3
+        R = numind(A)
+        str_legs_A = "-1" * prod([" $i" for i in 1:R-1])
+        str_legs_A′ = prod(["$i " for i in 2:R-1]) * "-2 1"
+        str_expr = "@tensor E[-1; -2] := A[$str_legs_A] * A'[$str_legs_A′]"
+        eval(Meta.parse(str_expr))
+        return norm(E - id(codomain(A, 1))) < tol
+    elseif numin(A) == 2 && isadjoint == true
+        # R ≥ 3
+        R = numind(A)
+        str_legs_A′ = "-1" * prod([" $i" for i in 1:R-1])
+        str_legs_A = prod(["$i " for i in 2:R-1]) * "-2 1"
+        str_expr = "@tensor E[-1; -2] := A'[$str_legs_A′] * A[$str_legs_A]"
+        eval(Meta.parse(str_expr))
+        return norm(E - id(domain(A, 1))) < tol
     else
         # R > 4
-        throw(ArgumentError("Behavior not yet defined"))
+        throw(ArgumentError("Unsupported space: $(space(A))"))
     end
 end
 function isRightIsometric(A::AbstractLocalTensor; tol::Float64=Defaults.tol_norm)::Bool

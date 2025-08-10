@@ -1,10 +1,9 @@
 """
-    abstract type AbstractLocalTensor{R} <: AbstractTensorWrapper
+    abstract type AbstractLocalTensor{R} <: AbstractTensorWrapper{R}
 
 R-leg local tensor.
 """
-abstract type AbstractLocalTensor{R} <: AbstractTensorWrapper end
-numind(::AbstractLocalTensor{R}) where R = R
+abstract type AbstractLocalTensor{R} <: AbstractTensorWrapper{R} end
 
 const AbstractBondTensor = AbstractLocalTensor{2}
 const AbstractMPSTensor = AbstractLocalTensor{3}

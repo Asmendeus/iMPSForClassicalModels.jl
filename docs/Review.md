@@ -136,21 +136,71 @@ However, due to the exponential growth of the computational cost of the multi-le
 
 ### What is mixed canonical form
 
-...
+In the previous section, we show how the partition function of a 2D classical model can be represented as tensor network structure and introduce variational iMPS at the infinity boundary. Such a boundary iMPS has a uniform form, which means that every local tensor $A$ (or $n$-site unit cell $[A_1,A_2,\cdots,A_n]$) is the same.
 
-The mixed canonical form can also be generalized to the $n$-site case, here we take 2-site as an example.
+Although the state is uniquely defined by the tensor $A$, the converse is not true, as different tensors can give rise to the same physical state. This can be easily seen by noting that the *gauge transform*
 
-...
+![gauge transform](fig/gauge.png "gauge transform")
+
+As is well known from DMRG and other MPS algorithms on finite chains, the use of canonical forms helps to ensure the numerical stability of the resulting algorithms, and this extends to algorithms for infinite systems discussed below. First, we can always find a representation of $|\Psi(A)\rangle$ in terms of a new MPS tensor $A_L$
+
+![left gauge](fig/LeftGauge.png "left gauge")
+
+such that the MPS tensor obeys the following condition
+
+![left orthonormal](fig/LeftOrth.png "left orthonormal")
+
+The representation of an MPS in terms of a tensor $A_L$ is called the *left-orthonormal* form. This gauge condition still leaves room for unitary gauge transformations,
+
+![left gauge 2](fig/LeftGauge2.png "left gauge 2")
+
+Similarly, a *right-orthonormal* form $A_R$ can be found such that
+
+![right orthonormal](fig/RightOrth.png "right orthonormal")
+
+These left- and right-orthonormal forms now allow us to define a mixed gauge for the uniform MPS. The idea is that we choose one site, the 'center site', bring all tensors to the left in the left-orthonormal form, all the tensors to the right in the right-orthonormal form, and define a new tensor $A_C$ on the center site. Diagrammatically, we obtain the following form
+
+![canonical form](fig/CanonicalForm.png "canonical form")
+
+This mixed gauge form has an intuitive interpretation. First of all, we introduce a new tensor $C=LR$, which implements the gauge transform that maps the left-orthonormal tensor into the right-orthonromal one, and which defines the center-site tensor $A_C$:
+
+![mixed gauge](fig/MixedGauge.png "mixed gauge")
+
+This allows us to rewrite the MPS with only the $C$ tensor on a virtual leg, linking the left- and right orthonormal tensors,
+
+![canonical form 2](fig/CanonicalForm2.png "canonical form 2")
+
+The normalization condition $\langle\Psi(A)|\Psi(A)\rangle = 1$ is expressed as $\text{Tr}(CC^\dagger) = \text{Tr}(C^\dagger C) = 1$
+
+In a next step, the tensor $C$ is brought into diagonal form by performing a singular-value decomposition $C=USV^\dagger$, and taking up $U$ and $V^\dagger$ in a new definition of $A_L$ and $A_R$ - remember that we still had the freedom of unitary gauge transformations on the left- and right-canonical form:
+
+![Mixed Gauge 2](fig/MixedGauge2.png "Mixed Gauge 2")
+
+The mixed canonical form can also be generalized to the $n$-site case, here we take 2-site as an example:
+
+![2-ste canonical form](fig/CanonicalForm3.png "2-ste canonical form")
+
+with left- and right-orthonromal properties
+
+![2-site mixed gauge](fig/MixedGauge3.png "2-site mixed gauge")
 
 For the sake of both generality and simplicity, we'll keep analyzing the 2-site case below.
 
 ### How to find mixed canonical form
 
-### How to restore uniform form
+Next we show how to find mixed canonical form of uniform MPS. It is not difficult to see that we actually need to find the following fixed point equations
 
-### Overlap of two iMPS
+![Fixed Point](fig/FixedPoint.png "Fixed Point")
+
+and center bond matrices are $C_{12} = L_{12}R_{12}$ and $C_{21} = L_{21}R_{21}$ with normalization condition $\text{Tr}(C_{12}C^\dagger_{12}) = \text{Tr}(C_{21}C_{21}^\dagger) = 1$. Here, we use an iterative method to solve the following fixed point equations by an Arnoldi eigensolver
+
+![Fixed Point 2](fig/FixedPoint2.png "Fixed Point 2")
+
+Eventually we get fixed point tensors $A_{1L}$, $A_{2L}$, $L_{12}$, $L_{21}$, $A_{1R}$, $A_{2R}$, $R_{12}$, $R_{21}$, and center bond and center tensors are $C_{12} = L_{12}R_{12}$, $C_{21} = L_{21}R_{21}$, $A_{1C} = L_{21}A_1R_{12}$, $A_{2C} = L_{12}A_2R_{21}$
 
 ### Optimal approximation based on tangent space
+
+### Overlap with variational optimization
 
 ### Variational Infinite Time Evolving Block Decimation (ViTEBD)
 

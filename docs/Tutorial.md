@@ -2,8 +2,9 @@
 
 ## 1. Installation
 
+To install it, just press "]" in julia REPL and type
+
 ```
-julia> ]
 pkg> add https://github.com/Asmendeus/iMPSForClassicalModels.jl.git#main
 ```
 

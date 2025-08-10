@@ -8,16 +8,19 @@
 Wrapper type for left environment tensor's generating environment.
 
 Graphic presentation:
-
-    -- A  --    -- A  --
-       |           |
-    —— O1 ——    —— O1 ——
-       |           |
+                      (a)   (bonds `a` are connected)
+                       |
+    -- A -----      -- A -----
+       |               |
+    —— O[1] ——      —— O[1] ——
+       |               |
        ⋮            ⋮
-       |           |
-    —— OW ——    —— OW ——
-       |           |
-    -- B  --    -- B  --
+       |               |
+    —— O[W] ——      —— O[W] ——  W = N - 2
+       |               |
+    -- B -----      -- B -----
+                       |
+                      (a)
 
 # Constructors
     IsometricEnvironment{N, R}(A::LocalTensor{R}, O::AbstractVector{<:MPOTensor}, B::AdjointLocalTensor{R})

@@ -1,11 +1,12 @@
 """
-     abstract type AbstractTensorWrapper
+     abstract type AbstractTensorWrapper{R}
 
-Wrapper type for classifying different tensors.
+Wrapper type for classifying different R-leg tensors.
 
 Note each concrete subtype must have a field `A::AbstractTensorMap` to save the tensor.
 """
-abstract type AbstractTensorWrapper end
+abstract type AbstractTensorWrapper{R} end
+numind(::AbstractTensorWrapper{R}) where R = R
 
 # some common functions for wrapper type
 Base.convert(::Type{T}, A::AbstractTensorMap) where {T<:AbstractTensorWrapper} = T(A)

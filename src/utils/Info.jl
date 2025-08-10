@@ -1,4 +1,63 @@
 """
+    struct SimpleIterationInfo
+        converged::Bool
+        normres::Vector{Float64}
+        numiter::Int64
+        numops::Int64
+    end
+
+Type for storing the information of a simple iterative process.
+"""
+struct SimpleIterationInfo
+    converged::Bool
+    normres::Vector{Float64}
+    numiter::Int64
+    numops::Int64
+end
+
+"""
+     struct LanczosInfo
+          converged::Bool
+          normres::Vector{Float64}
+          numiter::Int64
+          numops::Int64
+     end
+
+Similar to `KrylovKit.ConvergenceInfo` but delete `residuals` to save memory.
+"""
+struct LanczosInfo
+     converged::Bool
+     normres::Vector{Float64}
+     numiter::Int64
+     numops::Int64
+end
+function convert(::Type{LanczosInfo}, Info::KrylovKit.ConvergenceInfo)
+    normres = isa(Info.normres, Float64) ? [Info.normres,] : Info.normres
+    return LanczosInfo(Info.converged > 0, normres, Info.numiter, Info.numops)
+end
+
+"""
+     struct ArnoldiInfo
+          converged::Bool
+          normres::Vector{Float64}
+          numiter::Int64
+          numops::Int64
+     end
+
+Similar to `KrylovKit.ConvergenceInfo` but delete `residuals` to save memory.
+"""
+struct ArnoldiInfo
+     converged::Bool
+     normres::Vector{Float64}
+     numiter::Int64
+     numops::Int64
+end
+function convert(::Type{ArnoldiInfo}, Info::KrylovKit.ConvergenceInfo)
+    normres = isa(Info.normres, Float64) ? [Info.normres,] : Info.normres
+    return ArnoldiInfo(Info.converged > 0, normres, Info.numiter, Info.numops)
+end
+
+"""
      struct BondInfo
           D::Int64
           DD::Int64
@@ -79,3 +138,22 @@ function merge(info1::BondInfo, info2::BondInfo)
 end
 merge(info1::BondInfo, info2::BondInfo, args...) = merge(merge(info1, info2), args...)
 merge(v::AbstractVector{BondInfo}) = reduce(merge, v)
+
+
+"""
+    struct FixedPointInfo{T}
+        info::T
+    end
+
+Type for storing the information of a fixed point solver.
+
+# Constructors
+    FixedPointInfo{T}(info::T) where T <: Union{SimpleIteratorInfo, LanczosInfo, ArnoldiInfo} = new{T}(info)
+    FixedPointInfo(info::T) where T <: Union{SimpleIteratorInfo, LanczosInfo, ArnoldiInfo} = new{T}(info)
+"""
+struct FixedPointInfo{T}
+    info::T
+
+    FixedPointInfo{T}(info::T) where T <: Union{SimpleIteratorInfo, LanczosInfo, ArnoldiInfo} = new{T}(info)
+    FixedPointInfo(info::T) where T <: Union{SimpleIteratorInfo, LanczosInfo, ArnoldiInfo} = new{T}(info)
+end

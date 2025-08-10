@@ -1,8 +1,8 @@
 module iMPSForClassicalModels
 
 using Reexport
-@reexport using TensorKit, TensorKit.TensorOperations, OptimKit, KrylovKit
-@reexport import Base: +, -, *, /, ==, promote_rule, convert, length, size, show, getindex, setindex!, lastindex, keys, similar, merge, merge!, iterate, complex
+@reexport using KrylovKit, TensorKit, TensorKit.TensorOperations, OptimKit
+@reexport import Base: +, -, *, /, ==, iterate, promote_rule, convert, length, size, show, getindex, setindex!, lastindex, keys, similar, merge, merge!, iterate, complex
 @reexport import TensorKit: ×, one, zero, dim, inner, scalar, space, domain, codomain, eltype, scalartype, numin, numout, numind, leftorth, rightorth, leftnull, rightnull, tsvd, adjoint, AdjointTensorMap, normalize!, norm, axpy!, axpby!, add!, add!!, dot, mul!, rmul!, NoTruncation, fuse, zerovector!, zerovector, scale, scale!, scale!!
 @reexport import LinearAlgebra: BLAS, rank, qr, diag, I, diagm
 
@@ -11,8 +11,12 @@ include("utils/Defaults.jl")
 include("utils/TensorMap.jl")
 export trivial, istrivial
 include("utils/trivial.jl")
-export BondInfo
+export SimpleIterationInfo, LanczosInfo, ArnoldiInfo
+export BondInfo, FixedPointInfo
 include("utils/Info.jl")
+export SimpleIteration
+include("utils/SimpleIteration.jl")
+include("utils/iterate.jl")
 
 # Tensor wrapper
 export AbstractTensorWrapper
@@ -46,6 +50,8 @@ export environment
 include("Environment/environment.jl")
 
 # Method
+export pushleft, pushright
+include("Method/push.jl")
 
 # MPS
 
