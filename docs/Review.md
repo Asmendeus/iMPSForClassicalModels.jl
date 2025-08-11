@@ -134,6 +134,12 @@ However, due to the exponential growth of the computational cost of the multi-le
 
 ## 2. iMPS with mixed canonical form
 
+Before this section begins, please understand a key concept: **Fixed Point is all we need**.
+
+In infinite tensor method, the behavior of introducing a variational boundary at infinity always corresponds to a maximum eigenvalue problem, which can be described by either a largest eigenvalue equation or a fixed point equation, the solution is usually the same for both in the cases we discuss.
+
+`iMPSForClassicalModels.jl` provides a simple iterator (see `SimpleIteration`) for solving fixed point equations and use `KrylovKit.ArnoldiIterator` or `KrylovKit.LanczosIterator` for solving the maximum magnitude eigenequation.
+
 ### What is mixed canonical form
 
 In the previous section, we show how the partition function of a 2D classical model can be represented as tensor network structure and introduce variational iMPS at the infinity boundary. Such a boundary iMPS has a uniform form, which means that every local tensor $A$ (or $n$-site unit cell $[A_1,A_2,\cdots,A_n]$) is the same.

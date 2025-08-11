@@ -3,55 +3,33 @@ module iMPSForClassicalModels
 using Reexport
 @reexport using KrylovKit, TensorKit, TensorKit.TensorOperations, OptimKit
 @reexport import Base: +, -, *, /, ==, iterate, promote_rule, convert, length, size, show, getindex, setindex!, lastindex, keys, similar, merge, merge!, iterate, complex
-@reexport import TensorKit: ×, one, zero, dim, inner, scalar, space, domain, codomain, eltype, scalartype, numin, numout, numind, leftorth, rightorth, leftnull, rightnull, tsvd, adjoint, AdjointTensorMap, normalize!, norm, axpy!, axpby!, add!, add!!, dot, mul!, rmul!, NoTruncation, fuse, zerovector!, zerovector, scale, scale!, scale!!
+@reexport import TensorKit: ×, one, zero, dim, inner, scalar, space, domain, codomain, eltype, scalartype, numin, numout, numind, leftorth, rightorth, leftnull, rightnull, tsvd, adjoint, AdjointTensorMap, normalize!, normalize, norm, axpy!, axpby!, add!, add!!, dot, mul!, rmul!, NoTruncation, fuse, zerovector!, zerovector, scale, scale!, scale!!
 @reexport import LinearAlgebra: BLAS, rank, qr, diag, I, diagm
 
 # utils
-include("utils/Defaults.jl")
-include("utils/TensorMap.jl")
 export trivial, istrivial
-include("utils/trivial.jl")
 export SimpleIterationInfo, LanczosInfo, ArnoldiInfo
 export BondInfo, FixedPointInfo
-include("utils/Info.jl")
-export SimpleIteration
-include("utils/SimpleIteration.jl")
-include("utils/iterate.jl")
 
 # Tensor wrapper
 export AbstractTensorWrapper
-include("TensorWrapper/TensorWrapper.jl")
 export AbstractLocalTensor, AbstractBondTensor, AbstractMPSTensor, AbstractMPOTensor
 export LocalTensor, BondTensor, MPSTensor, MPOTensor
 export AdjointLocalTensor, AdjointBondTensor, AdjointMPSTensor, AdjointMPOTensor
-include("TensorWrapper/LocalTensor.jl")
 export AbstractEnvironmentTensor, LeftEnvironmentTensor, RightEnvironmentTensor
-include("TensorWrapper/EnvironmentTensor.jl")
-
 export isAdjoint, isLeftIsometric, isRightIsometric, leftorth, rightorth
-include("TensorWrapper/utils.jl")
-
-# Transfer matrix
-export AbstractTransferMatrix, AbstractMPSTransferMatrix, AbstractMPOTransferMatrix
-include("TransferMatrix/AbstractTransferMatrix.jl")
-export TransferMatrix, MPSTransferMatrix, MPOTransferMatrix
-include("TransferMatrix/TransferMatrix.jl")
 
 # Environment
 export AbstractEnvironment
-include("Environment/AbstractEnvironment.jl")
+export TransferMatrix, MPSTransferMatrix, MPOTransferMatrix
 export IsometricEnvironment, IsometricMPSEnvironment, IsometricMPOEnvironment
-include("Environment/IsometricEnvironment.jl")
 export BondEnvironment, CenterEnvironment
-include("Environment/BondEnvironment.jl")
-include("Environment/CenterEnvironment.jl")
-
 export environment
-include("Environment/environment.jl")
 
 # Method
+export SimpleIteration
 export pushleft, pushright
-include("Method/push.jl")
+export leftFixedPoint, rightFixedPoint, sign_first_element
 
 # MPS
 
@@ -61,4 +39,28 @@ include("Method/push.jl")
 
 # Algorithm
 
-end # module iMPSForClassicalModel
+include("utils/Defaults.jl")
+include("utils/TensorMap.jl")
+include("utils/trivial.jl")
+include("utils/Info.jl")
+
+include("TensorWrapper/TensorWrapper.jl")
+include("TensorWrapper/LocalTensor.jl")
+include("TensorWrapper/EnvironmentTensor.jl")
+include("TensorWrapper/utils.jl")
+
+include("Environment/AbstractEnvironment.jl")
+include("Environment/TransferMatrix.jl")
+include("Environment/IsometricEnvironment.jl")
+include("Environment/BondEnvironment.jl")
+include("Environment/CenterEnvironment.jl")
+include("Environment/environment.jl")
+
+include("Method/SimpleIteration.jl")
+include("Method/iterate.jl")
+include("Method/pushleft.jl")
+include("Method/pushright.jl")
+include("Method/leftFixedPoint.jl")
+include("Method/rightFixedPoint.jl")
+
+end # module iMPSForClassicalModels

@@ -31,6 +31,9 @@ function normalize!(A::AbstractTensorWrapper)
      normalize!(A.A)
      return A
 end
+function normalize(A::AbstractTensorWrapper)
+    return typeof(A)(normalize(A.A))
+end
 
 *(A::AbstractTensorWrapper, B::AbstractTensorWrapper) = A.A * B.A
 
@@ -48,6 +51,8 @@ end
 *(a::Number, A::AbstractTensorWrapper) = A * a
 
 /(A::T, a::Number) where {T<:AbstractTensorWrapper} = convert(T, A.A / a)
+
+norm(A::AbstractTensorWrapper) = norm(A.A)
 
 function mul!(A::T, B::T, α::Number) where {T<:AbstractTensorWrapper}
      mul!(A.A, B.A, α)

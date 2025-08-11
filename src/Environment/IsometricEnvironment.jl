@@ -1,5 +1,7 @@
+#! 改成 vector
+#! 检测用 domain 和 codomain 而不是 space
 """
-    mutable struct IsometricEnvironment{N, R} <: AbstractEnvironment{N}
+    mutable struct IsometricEnvironment{N, L, R} <: AbstractEnvironment{N}
         A::LocalTensor{R}
         const O::AbstractVector{MPOTensor}
         B::AdjointLocalTensor{R}

@@ -1,7 +1,7 @@
 """
     struct SimpleIterationInfo
         converged::Bool
-        normres::Vector{Float64}
+        normres::Union{Vector{Float64}, Vector{Vector{Float64}}}
         numiter::Int64
         numops::Int64
     end
@@ -10,7 +10,7 @@ Type for storing the information of a simple iterative process.
 """
 struct SimpleIterationInfo
     converged::Bool
-    normres::Vector{Float64}
+    normres::Union{Vector{Float64}, Vector{Vector{Float64}}}
     numiter::Int64
     numops::Int64
 end
@@ -148,12 +148,12 @@ merge(v::AbstractVector{BondInfo}) = reduce(merge, v)
 Type for storing the information of a fixed point solver.
 
 # Constructors
-    FixedPointInfo{T}(info::T) where T <: Union{SimpleIteratorInfo, LanczosInfo, ArnoldiInfo} = new{T}(info)
-    FixedPointInfo(info::T) where T <: Union{SimpleIteratorInfo, LanczosInfo, ArnoldiInfo} = new{T}(info)
+    FixedPointInfo{T}(info::T) where T <: Union{SimpleIterationInfo, LanczosInfo, ArnoldiInfo} = new{T}(info)
+    FixedPointInfo(info::T) where T <: Union{SimpleIterationInfo, LanczosInfo, ArnoldiInfo} = new{T}(info)
 """
 struct FixedPointInfo{T}
     info::T
 
-    FixedPointInfo{T}(info::T) where T <: Union{SimpleIteratorInfo, LanczosInfo, ArnoldiInfo} = new{T}(info)
-    FixedPointInfo(info::T) where T <: Union{SimpleIteratorInfo, LanczosInfo, ArnoldiInfo} = new{T}(info)
+    FixedPointInfo{T}(info::T) where T <: Union{SimpleIterationInfo, LanczosInfo, ArnoldiInfo} = new{T}(info)
+    FixedPointInfo(info::T) where T <: Union{SimpleIterationInfo, LanczosInfo, ArnoldiInfo} = new{T}(info)
 end

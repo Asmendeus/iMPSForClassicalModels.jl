@@ -40,7 +40,7 @@ function isLeftIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=Def
         @tensor E[-1; -2] := A'[1 2 3 -2] * A[3 -1 1 2]
         return norm(E - id(codomain(A, 2))) < tol
     # ==== Retain to improve performance ====}
-    elseif numout(A) == 2 && isadjoint = false
+    elseif numout(A) == 2 && isadjoint == false
         # R ≥ 3
         R = numind(A)
         str_legs_A = prod(["$i " for i in 1:R-1]) * "-2"
