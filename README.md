@@ -10,6 +10,24 @@
 * Fastly implement any functions based on MPS/MPO with canonical form;
 * Solve the ground state of a 1D quantum model under thermodynamic limit based on the principle of imaginary time evolution (controlling global quantum numbers is not supported).
 
+## Package structure
+
+```
+### top ###
+MPS/		# iMPS as a variational boundary
+MPO/		# iMPO as a variational boundary
+SparseMPO/	# iMPO corresponding to partition function
+LocalImpurity/	# impurity tensor corresponding to physical quantity
+Algorithm/	# algorithms based on MPS/MPO
+
+### middle ###
+Environment/	# local structure consisting of a few tensors, corresponding to fixed point equations
+Method/		# methods targeting basic tensor or local structure
+
+### ground ###
+TensorWrapper/	# basic tensor type: classify `TensorMap`
+```
+
 ## About tensor for classical model
 
 See [Review.md](docs/Review.md)

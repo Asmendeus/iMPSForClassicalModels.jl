@@ -17,7 +17,7 @@ d = 4
     λm, Lm = eigsolve(x->pushleft(x, A, B), x₀, 1, :LM)
 
     @test abs(λ[1] - λm[1]) < tol
-    @test norm(L - Lm / sign_first_element(Lm)) < tol1
+    @test norm(L[1] - Lm[1] / sign_first_element(Lm[1])) < tol1
 end
 
 @testset "Complex MPOTransferMatrix{2}" begin

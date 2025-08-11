@@ -23,11 +23,11 @@ A2 = MPSTensor(TensorMap(rand, ℝ^DR⊗ℝ^dp, ℝ^DL))
 #         |
 O = MPOTensor(TensorMap(rand, ℝ^d1⊗ℝ^dp, ℝ^dp⊗ℝ^d1))
 
-# MultirowMPO:    |
-#              —— O1 ——
-#                 |
-#              —— O2 ——
-#                 |
+# MultirowMPO:    |     |
+#              —— O1 —— O1 ——
+#                 |     |
+#              —— O2 —— O2 ——
+#                 |     |
 O1 = MPOTensor(TensorMap(rand, ℝ^d1⊗ℝ^dp, ℝ^dp⊗ℝ^d1))
 O2 = MPOTensor(TensorMap(rand, ℝ^d2⊗ℝ^dp, ℝ^dp⊗ℝ^d2))
 
@@ -72,17 +72,15 @@ CL, RC, _ = leftorth(C)
 LC, CR, _ = rightorth(C)
 
 # TransferMatrix
-trans_AB = TransferMatrix(A, B)
-trans_AB = TransferMatrix([A1, A2], [A1', A2'])
-trans_OO = TransferMatrix(O, O')
-trans_OO = TransferMatrix([O, O], [O', O'])
+trans_AB = environment(A, B)
+trans_AB = environment([A1, A2], [A1', A2'])
+trans_OO = environment(O, O')
+trans_OO = environment([O, O], [O', O'])
 
 # Environment
-leftEnv1 = environment(AL, O, BL)
-leftEnv2 = environment(OL, O, OL')
-
-rightEnv1 = environment(AR, O, BR)
-rightEnv2 = environment(OR, O, OR')
+channelEnv1 = environment(AL, O, BL)
+channelEnv2 = environment(OR, O, OR')
+channelEnv3 = environment([A1, A2], [O1 O1; O2 O2], [A1', A2'])
 
 bondEnv1 = environment(FL1, FR1)
 bondEnv2 = environment(FL2, FR2)

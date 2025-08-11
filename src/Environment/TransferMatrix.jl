@@ -32,9 +32,7 @@ mutable struct TransferMatrix{L, R} <: AbstractEnvironment{2}
             pspace_A_l = vcat([codomain(A[l], 2),], [domain(A[l], i) for i in 1:R-3])
             pspace_B_l = vcat([domain(B[l], 2),], [codomain(B[l], i) for i in 1:R-3])
             pspace_A_l == pspace_B_l || throw(SpaceMismatch("Mismatched $(l)-th physical space: $(pspace_A_l) ≠ $(pspace_B_l))"))
-        end
 
-        for l in 1:L
             aspace_Art_l = domain(A[l], R-2)
             aspace_Alt_l = codomain(A[mod(l, L)+1], 1)
             aspace_Art_l == aspace_Alt_l || throw(SpaceMismatch("Mismatched virtual space between $(l)-th and $(mod(l, L)+1)-th local tensors: $(aspace_Art_l) ≠ $(aspace_Alt_l))"))

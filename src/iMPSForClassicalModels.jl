@@ -22,7 +22,7 @@ export isAdjoint, isLeftIsometric, isRightIsometric, leftorth, rightorth
 # Environment
 export AbstractEnvironment
 export TransferMatrix, MPSTransferMatrix, MPOTransferMatrix
-export IsometricEnvironment, IsometricMPSEnvironment, IsometricMPOEnvironment
+export ChannelEnvironment, MPSChannelEnvironment, MPOChannelEnvironment
 export BondEnvironment, CenterEnvironment
 export environment
 
@@ -51,7 +51,7 @@ include("TensorWrapper/utils.jl")
 
 include("Environment/AbstractEnvironment.jl")
 include("Environment/TransferMatrix.jl")
-include("Environment/IsometricEnvironment.jl")
+include("Environment/ChannelEnvironment.jl")
 include("Environment/BondEnvironment.jl")
 include("Environment/CenterEnvironment.jl")
 include("Environment/environment.jl")
