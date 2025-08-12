@@ -1,7 +1,7 @@
 module iMPSForClassicalModels
 
 using Reexport
-@reexport using KrylovKit, TensorKit, TensorKit.TensorOperations, OptimKit
+@reexport using KrylovKit, TensorKit, TensorKit.TensorOperations
 @reexport import Base: +, -, *, /, ==, iterate, promote_rule, convert, length, size, show, getindex, setindex!, lastindex, keys, similar, merge, merge!, iterate, complex
 @reexport import TensorKit: ×, one, zero, dim, inner, scalar, space, domain, codomain, eltype, scalartype, numin, numout, numind, leftorth, rightorth, leftnull, rightnull, tsvd, adjoint, AdjointTensorMap, normalize!, normalize, norm, axpy!, axpby!, add!, add!!, dot, mul!, rmul!, NoTruncation, fuse, zerovector!, zerovector, scale, scale!, scale!!
 @reexport import LinearAlgebra: BLAS, rank, qr, diag, I, diagm
