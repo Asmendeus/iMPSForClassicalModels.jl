@@ -1,5 +1,5 @@
 """
-    struct SparseMPO{L, W} <: AbstractInfiniteMPO{L}
+    struct SparseMPO{W, L} <: AbstractInfiniteMPO{L}
         O::Matrix{MPOTensor}
     end
 
