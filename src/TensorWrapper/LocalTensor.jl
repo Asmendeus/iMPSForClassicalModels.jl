@@ -56,3 +56,43 @@ end
 const BondTensor = LocalTensor{2}
 const MPSTensor = LocalTensor{3}
 const MPOTensor = LocalTensor{4}
+
+
+# ========== BondTensor multiplication ==========
+# Notice A * B = (A' * B')'   if {typeof(A), typeof(B)} = {BondTensor, MPSTensor}
+function Base.:(*)(A::BondTensor, B::LocalTensor{R}) where R
+    if R == 2
+        @tensor E[-1; -2] := A.A[-1 1] * B.A[1 -2]
+    # ==== Retain to improve performance ===={
+    elseif R == 3
+        @tensor E[-1 -2; -3] := A.A[-1 1] * B.A[1 -2 -3]
+    elseif R == 4
+        @tensor E[-1 -2; -3 -4] := A.A[-1 1] * B.A[1 -2 -3 -4]
+    # ==== Retain to improve performance ====}
+    else
+        # R ≥ 3
+        str_domain_E = prod([" -$i" for i in 3:R])
+        str_legs = "1" * prod([" -$i" for i in 2:R])
+        str_expr = "@tensor E[-1 -2;$str_domain_E] := A.A[-1 1] * B.A[$str_legs]"
+        eval(Meta.parse(str_expr))
+    end
+    return typeof(B)(E)
+end
+function Base.:(*)(A::LocalTensor{R}, B::BondTensor) where R
+    if R == 2
+        @tensor E[-1; -2] := A.A[-1 1] * B.A[1 -2]
+    # ==== Retain to improve performance ===={
+    elseif R == 3
+        @tensor E[-1 -2; -3] := A.A[-1 -2 1] * B.A[1 -3]
+    elseif R == 4
+        @tensor E[-1 -2; -3 -4] := A.A[-1 -2 -3 1] * B.A[1 -4]
+    # ==== Retain to improve performance ====}
+    else
+        # R ≥ 3
+        str_domain_E = prod([" -$i" for i in 3:R])
+        str_legs = prod(["-$i " for i in 1:R-1]) * " 1"
+        str_expr = "@tensor E[-1 -2;$str_domain_E] := A.A[$str_legs] * B.A[1 -$R]"
+        eval(Meta.parse(str_expr))
+    end
+    return typeof(A)(E)
+end

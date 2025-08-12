@@ -1,5 +1,5 @@
 """
-    function Base.iterate(f::Function, x₀::Tuple{Float64, V}; tol::Float64=Defaults.tol, maxiter::Int64=Defaults.maxiter) where V
+    function Base.iterate(f::Function, x₀::Tuple{Number, V}; tol::Float64=Defaults.tol, maxiter::Int64=Defaults.maxiter) where V
     function Base.iterate(f::Function, v₀::V; tol::Float64=Defaults.tol, maxiter::Int64=Defaults.maxiter) where V
     function Base.iterate(f::Function, v₀::V, alg::SimpleIteration) where V
 
@@ -9,7 +9,7 @@ where `λ` is normalization coefficient of fixed point with `norm(v) = 1` and `n
 
 # Arguments
 `f::Function`: automorphism from V to V, i.e., for any v∈V, f(v)∈V
-`x₀::Tuple{Float64, V}`: x₀ = (_, v₀)
+`x₀::Tuple{Number, V}`: x₀ = (_, v₀)
 `v₀::V`: initial value
 `alg::SimpleIteration`: wrapper for keyword arguments
 
@@ -27,7 +27,7 @@ where `λ` is normalization coefficient of fixed point with `norm(v) = 1` and `n
 - norm(::V) -> Float64
 - sign_first_element(::V) -> Number
 """
-function Base.iterate(f::Function, x₀::Tuple{Float64, V}; tol::Float64=Defaults.tol, maxiter::Int64=Defaults.maxiter) where V
+function Base.iterate(f::Function, x₀::Tuple{Number, V}; tol::Float64=Defaults.tol, maxiter::Int64=Defaults.maxiter) where V
 
     converged = false
     normres = Float64[]
@@ -72,7 +72,7 @@ function Base.iterate(f::Function, v₀::V, alg::SimpleIteration) where V
 end
 
 """
-    function Base.iterate(f::Vector{<:Function}, x₀::Tuple{Vector{Float64}, Vector{<:V}}, direction::Bool; tol::Vector{Float64}=repeat([Defaults.tol,], length(f)), maxiter::Int64=Defaults.maxiter) where V
+    function Base.iterate(f::Vector{<:Function}, x₀::Tuple{Vector{<:Number}, Vector{<:V}}, direction::Bool; tol::Vector{Float64}=repeat([Defaults.tol,], length(f)), maxiter::Int64=Defaults.maxiter) where V
     function Base.iterate(f::Vector{<:Function}, v₀::Vector{<:V}, direction::Bool; tol::Vector{Float64}=repeat([Defaults.tol,], length(v₀)), maxiter::Int64=Defaults.maxiter) where V
     function Base.iterate(f::Vector{<:Function}, v₀::Vector{<:V}, direction::Bool, alg::SimpleIteration) where V
 
@@ -96,7 +96,7 @@ where `λ` are normalization coefficients of fixed point with `norm(v[i]) = 1` a
 
 # Arguments
 `f::Vector{<:Function}`: automorphisms from V to V, i.e., for any v∈V, f(v)∈V
-`x₀::Tuple{Vector{Float64}, Vector{<:V}}`: x₀ = (_, v₀)
+`x₀::Tuple{Vector{<:Number}, Vector{<:V}}`: x₀ = (_, v₀)
 `v₀::Vector{<:V}`: initial values
 `direction::Bool`: loop direction - true is positive loop and false is reverse loop
 `alg::SimpleIteration`: wrapper for keyword arguments
@@ -115,7 +115,7 @@ where `λ` are normalization coefficients of fixed point with `norm(v[i]) = 1` a
 - norm(::V) -> Float64
 - sign_first_element(::V) -> Number
 """
-function Base.iterate(f::Vector{<:Function}, x₀::Tuple{Vector{Float64}, Vector{<:V}}, direction::Bool; tol::Vector{Float64}=repeat([Defaults.tol,], length(f)), maxiter::Int64=Defaults.maxiter) where V
+function Base.iterate(f::Vector{<:Function}, x₀::Tuple{Vector{<:Number}, Vector{<:V}}, direction::Bool; tol::Vector{Float64}=repeat([Defaults.tol,], length(f)), maxiter::Int64=Defaults.maxiter) where V
 
     (L = length(f)) == length(x₀[2]) == length(tol) || throw(ArgumentError("Mismatched lengths of `f`, `v₀` and `tol`: ($(length(f)), $(length(x₀[2])), $(length(tol)))"))
 

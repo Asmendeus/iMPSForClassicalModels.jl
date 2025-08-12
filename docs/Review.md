@@ -136,7 +136,9 @@ However, due to the exponential growth of the computational cost of the multi-le
 
 Before this section begins, please understand a key concept: **Fixed Point is all we need**.
 
-In infinite tensor method, the behavior of introducing a variational boundary at infinity always corresponds to a maximum eigenvalue problem, which can be described by either a largest eigenvalue equation or a fixed point equation, the solution is usually the same for both in the cases we discuss.
+In infinite tensor method, introduction a variational boundary at infinity is used to transform an infinite environment into a finite environment tensor, which corresponds to a maximum eigenvalue problem. The maximum eigenvalue problem can be described by either a maximum eigenvalue equation or a fixed point equation, the solution is usually the same for both in the cases we discuss.
+
+In addition, we need to solve some variational optimization problems, which correspond to fixed point with zero gradient, and thus can be solved iteratively by fixed point equations as well. It will perform better if some gradient optimization algorithm is used.
 
 `iMPSForClassicalModels.jl` provides a simple iterator (see `SimpleIteration`) for solving fixed point equations and use `KrylovKit.ArnoldiIterator` or `KrylovKit.LanczosIterator` for solving the maximum magnitude eigenequation.
 
@@ -204,9 +206,7 @@ and center bond matrices are $C_{12} = L_{12}R_{12}$ and $C_{21} = L_{21}R_{21}$
 
 Eventually we get fixed point tensors $A_{1L}$, $A_{2L}$, $L_{12}$, $L_{21}$, $A_{1R}$, $A_{2R}$, $R_{12}$, $R_{21}$, and center bond and center tensors are $C_{12} = L_{12}R_{12}$, $C_{21} = L_{21}R_{21}$, $A_{1C} = L_{21}A_1R_{12}$, $A_{2C} = L_{12}A_2R_{21}$
 
-### Optimal approximation based on tangent space
-
-### Overlap with variational optimization
+### Variational optimal approximation
 
 ### Variational Infinite Time Evolving Block Decimation (ViTEBD)
 
