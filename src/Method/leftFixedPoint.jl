@@ -125,7 +125,6 @@ function leftFixedPoint(A::Vector{<:LocalTensor{R}},
             X₀::Vector{<:LeftEnvironmentTensor{2}}=_default_X₀_leftFixedPoint(A),
             alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi()) where R
     if alg isa SimpleIteration
-        
     elseif alg isa KrylovKit.KrylovAlgorithm
     end
 end

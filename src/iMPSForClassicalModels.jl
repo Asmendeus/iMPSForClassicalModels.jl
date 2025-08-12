@@ -46,6 +46,7 @@ include("utils/Info.jl")
 
 include("TensorWrapper/TensorWrapper.jl")
 include("TensorWrapper/LocalTensor.jl")
+include("TensorWrapper/AdjointLocalTensor.jl")
 include("TensorWrapper/EnvironmentTensor.jl")
 include("TensorWrapper/utils.jl")
 
