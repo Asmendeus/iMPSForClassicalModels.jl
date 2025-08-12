@@ -1,5 +1,6 @@
 using Test, iMPSForClassicalModels
 
+tol = 1e-14
 tol1 = 1e-10
 tol2 = 1e-8
 
@@ -11,13 +12,16 @@ d = 4
     B = AdjointMPSTensor(TensorMap(rand, ℝ^D, ℝ^D⊗ℝ^d))
     t = TransferMatrix(A, B)
 
-    λ, L, _ = leftFixedPoint(t)
+    λ1, L1, _ = leftFixedPoint(t, SimpleIteration(; tol=[tol,]))
+    λ2, L2, _ = leftFixedPoint(t, Arnoldi())
 
     x₀ = LeftEnvironmentTensor(TensorMap(rand, ℝ^D, ℝ^D))
     λm, Lm = eigsolve(x->pushleft(x, A, B), x₀, 1, :LM)
 
-    @test abs(λ[1] - λm[1]) < tol
-    @test norm(L[1] - Lm[1] / sign_first_element(Lm[1])) < tol1
+    @test abs(λ1[1] - λ2[1]) < tol1
+    @test norm(L1[1] - L2[1]) < tol1
+    @test abs(λ1[1] - λm[1]) < tol1
+    @test norm(L1[1] - Lm[1] / sign_first_element(Lm[1])) < tol1
 end
 
 @testset "Complex MPOTransferMatrix{2}" begin
@@ -27,7 +31,7 @@ end
     B2 = AdjointMPOTensor(TensorMap(rand, ℂ^d⊗ℂ^D, ℂ^D⊗ℂ^d))
     t = TransferMatrix([A1, A2], [B1, B2])
 
-    λ1, L1, _ = leftFixedPoint(t)
+    λ1, L1, _ = leftFixedPoint(t, SimpleIteration(; tol=[tol, tol]))
     λ2, L2, _ = leftFixedPoint(t, Arnoldi())
 
     x₀ = LeftEnvironmentTensor(TensorMap(rand, ℂ^D, ℂ^D))

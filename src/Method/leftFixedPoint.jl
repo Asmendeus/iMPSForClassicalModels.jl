@@ -1,16 +1,22 @@
 """
-    function leftFixedPoint(args..., kwargs..)
+    function leftFixedPoint(env::S, X₀::T, alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi()) where {S, T}
 
-A series of functions for solving fixed point equations or maximum eigenequations, return `LeftEnvironmentTensor` or `LocalTensor` as fixed point solution tensor.
+A series of functions for solving left/upper fixed point equations or maximum eigenequations.
+
+# Arguments
+`env::S`: environment for solving fixed point equations or maximum eigenequations
+`X₀::T`: initial state
+`alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi()`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
+
 # ===============================================
     function leftFixedPoint(t::TransferMatrix{L, R},
                 X₀::Vector{<:LeftEnvironmentTensor{2}}=_default_X₀_leftFixedPoint(t),
-                alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=SimpleIteration(; tol=repeat([Defaults.tol,], L))) where {L, R}
+                alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi()) where {L, R}
 
 # Arguments
 `t::TransferMatrix{L, R}`: a transfer matrix wrapper
 `X₀::Vector{LeftEnvironmentTensor{2}}=_default_X₀_leftFixedPoint(t)`: initial tensors, guessed solution of fixed point equations
-`alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=SimpleIteration()`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
+`alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi()`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
 
 # Return
 `λ::Vector{<:Number}`: length `L` vector, coefficients of solution tensors of `L` fixed point equations
@@ -39,11 +45,11 @@ A series of functions for solving fixed point equations or maximum eigenequation
          ---- B[l] -- B[l+1] -- ... -- B[L] -- B[1] -- ... -- B[l-1] --                   --
 
     where `(∏_l λ[l])` is the dominant eigenvalues and `X` are the dominant eigenvectors.
-    We can solve only for `l = 1`, and then the complete `λ` and `X` are generated from the fixed point equations above.
+    We solve only for `l = 1`, and then the complete `λ` and `X` are generated from the fixed point equations above.
 """
 function leftFixedPoint(t::TransferMatrix{L, R},
-                X₀::Vector{<:LeftEnvironmentTensor{2}}=_default_X₀_leftFixedPoint(t),
-                alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=SimpleIteration(; tol=repeat([Defaults.tol,], L))) where {L, R}
+            X₀::Vector{<:LeftEnvironmentTensor{2}}=_default_X₀_leftFixedPoint(t),
+            alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi()) where {L, R}
 
     if alg isa SimpleIteration
         func = [x -> pushleft(x, t.A[l], t.B[l]) for l in 1:L]
@@ -59,10 +65,10 @@ function leftFixedPoint(t::TransferMatrix{L, R},
         X[1] = vecs[1]
         X[1] /= sign_first_element(X[1])
         for l in 1:L
-            lp = mod(l, L) + 1
+            l₊ = mod(l, L) + 1
             vec = pushleft(X[l], t.A[l], t.B[l])
             λ[l] = norm(vec) * sign_first_element(vec)
-            X[lp] = vec / λ[l]
+            X[l₊] = vec / λ[l]
         end
 
         if alg isa Lanczos
@@ -112,12 +118,19 @@ end
         X[l]* -- A[l]* -- A[l+1]* -- ... -- A[L]* -- A[1]* -- ... -- A[l-1]* --                    X[l]* --
 
     where `(∏_l λ[l])^2` is the dominant eigenvalues and `X[l]†X[l]` is the dominant eigenvectors of the l-th eigenequation.
-    We can solve only for `l = 1`, and use SVD decomposition `X[l]†X[l] = U S V†` to solve the `X[l] = √S V†`, where U = V and all singular values are positive.
+    We solve only for `l = 1`, and use SVD decomposition `X[l]†X[l] = U S V†` to solve the `X[l] = √S V†`, where U = V and all singular values are positive.
     Then the complete `λ` and `X` are generated from the fixed point equations above.
 """
-function leftFixedPoint(A::Vector{<:LocalTensor{R}};
-            alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=SimpleIteration(),
-            X₀::Vector{<:LeftEnvironmentTensor{2}}=_default_X₀_leftFixedPoint(A)) where R
+function leftFixedPoint(A::Vector{<:LocalTensor{R}},
+            X₀::Vector{<:LeftEnvironmentTensor{2}}=_default_X₀_leftFixedPoint(A),
+            alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi()) where R
+    if alg isa SimpleIteration
+        
+    elseif alg isa KrylovKit.KrylovAlgorithm
+    end
+end
+function leftFixedPoint(A::Vector{<:LocalTensor{R}}, alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}) where R
+    return leftFixedPoint(A, _default_X₀_leftFixedPoint(A), alg)
 end
 
 """
@@ -152,12 +165,15 @@ end
         X[l] --- B[l] --- B[l+1] --- ... -- B[L] --- B[1] --- ... -- B[l-1] ---                    X[l] ---
 
     where `(∏_l λ[l])^2` is the dominant eigenvalues and `X[l]X[l]†` is the dominant eigenvectors of the l-th eigenequation.
-    We can solve only for `l = 1`, and use SVD decomposition `X[l]X[l]† = U S V†` to solve the `X[l] = U √S`, where U = V and all singular values are positive.
+    We solve only for `l = 1`, and use SVD decomposition `X[l]X[l]† = U S V†` to solve the `X[l] = U √S`, where U = V and all singular values are positive.
     Then the complete `λ` and `X` are generated from the fixed point equations above.
 """
-function leftFixedPoint(B::Vector{<:AdjointLocalTensor{R}};
-            alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=SimpleIteration(),
-            X₀::Vector{<:LeftEnvironmentTensor{2}}=_default_X₀_leftFixedPoint(A)) where R
+function leftFixedPoint(B::Vector{<:AdjointLocalTensor{R}},
+            X₀::Vector{<:LeftEnvironmentTensor{2}}=_default_X₀_leftFixedPoint(B),
+            alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi()) where R
+    if alg isa SimpleIteration
+    elseif alg isa KrylovKit.KrylovAlgorithm
+    end
 end
 
 
