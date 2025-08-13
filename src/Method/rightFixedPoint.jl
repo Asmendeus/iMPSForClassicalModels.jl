@@ -26,6 +26,7 @@ A series of functions for solving right fixed point equations or maximum eigeneq
 `λ::Vector{<:Number}`: length `L` vector, coefficients of solution tensors of `L` fixed point equations
 `X::Vector{RightEnvironmentTensor{2}}`: length `L` vector, solution tensors of `L` fixed point equations
 `AR::Vector{LocalTensor{R}}`: rigtht orthogonal local tensors at fixed point
+`info`: information of the algorithm
 
 # Fixed point equations
 
@@ -108,7 +109,8 @@ end
 """
     function rightFixedPoint(B::AbstractVector{<:AdjointLocalTensor{R}},
                 X₀::AbstractVector{<:AdjointBondTensor}=_default_X₀_rightFixedPoint(B),
-                alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi()) where R
+                alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi();
+                kwargs...) where R
 
 # Arguments
 `B::AbstractVector{<:AdjointLocalTensor{R}}`: vector of AdjointLocalTensor{R}
@@ -122,6 +124,7 @@ end
 `λ::Vector{<:Number}`: length `L` vector, coefficients of solution tensors of `L` fixed point equations
 `X::Vector{RightEnvironmentTensor{2}}`: length `L` vector, solution tensors of `L` fixed point equations
 `BR::Vector{AdjointLocalTensor{R}}`: right orthogonal adjoint local tensors at fixed point
+`info`: information of the algorithm
 
 # Fixed point equations
 
@@ -214,6 +217,7 @@ end
 # Return
 `λ::Vector{<:Number}`: length `L` vector, coefficients of solution tensors of `L` fixed point equations
 `X::Vector{RightEnvironmentTensor{2}}`: length `L` vector, solution tensors of `L` fixed point equations
+`info`: information of the algorithm
 
 # Fixed point equations
 
@@ -292,6 +296,7 @@ end
 # Return
 `λ::Vector{<:Number}`: length `L` vector, coefficients of solution tensors of `L` fixed point equations
 `X::Vector{RightEnvironmentTensor{N}}`: length `L` vector, solution tensors of `L` fixed point equations
+`info`: information of the algorithm
 
 # Fixed point equations
 

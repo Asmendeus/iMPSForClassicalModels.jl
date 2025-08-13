@@ -36,7 +36,7 @@ mutable struct CenterEnvironment{N} <: AbstractEnvironment{N}
         (aspace_FL == aspace_OL) || throw(SpaceMismatch("Mismatched auxiliary spaces of left environment tensor and MPO tensor: $(aspace_FL) ≠ $(aspace_OL))"))
 
         aspace_FR = [codomain(FR, i) for i in N-1:-1:2]
-        aspace_OR = [space(O[l], 4) for l in 1:N-2]
+        aspace_OR = [domain(O[l], 2) for l in 1:N-2]
         (aspace_FR == aspace_OR) || throw(SpaceMismatch("Mismatched auxiliary spaces of MPO tensor and right environment tensor: $(aspace_OR) ≠ $(aspace_FR))"))
 
         return new(FL, O, FR)
