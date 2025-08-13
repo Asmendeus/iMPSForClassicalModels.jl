@@ -27,9 +27,9 @@ export BondEnvironment, CenterEnvironment
 export environment
 
 # Method
-export SimpleIteration
-export pushleft, pushright
-export leftFixedPoint, rightFixedPoint, sign_first_element
+export sign_first_element, SimpleIteration
+export pushleft, pushright, pushmid
+export leftFixedPoint, rightFixedPoint, midFixedPoint
 
 # MPS
 
@@ -61,7 +61,9 @@ include("Method/SimpleIteration.jl")
 include("Method/iterate.jl")
 include("Method/pushleft.jl")
 include("Method/pushright.jl")
+include("Method/pushmid.jl")
 include("Method/leftFixedPoint.jl")
 include("Method/rightFixedPoint.jl")
+include("Method/midFixedPoint.jl")
 
 end # module iMPSForClassicalModels
