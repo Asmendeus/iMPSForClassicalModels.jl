@@ -1,10 +1,10 @@
 """
-    function isAdjoint(::AbstractTensorWrapperper)::Bool
+    function isadjoint(::AbstractTensorWrapperper)::Bool
 
 Whether the tensor wrapper is an adjoint wrapper
 """
-isAdjoint(::Union{LocalTensor, LeftEnvironmentTensor, RightEnvironmentTensor}) = false
-isAdjoint(::AdjointLocalTensor) = true
+isadjoint(::Union{LocalTensor, LeftEnvironmentTensor, RightEnvironmentTensor}) = false
+isadjoint(::AdjointLocalTensor) = true
 
 """
     function isLeftIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=Defaults.tol_norm)
@@ -73,7 +73,7 @@ function isLeftIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=Def
     end
 end
 function isLeftIsometric(A::AbstractLocalTensor; tol::Float64=Defaults.tol_norm)::Bool
-    return isLeftIsometric(A.A, isAdjoint(A); tol=tol)
+    return isLeftIsometric(A.A, isadjoint(A); tol=tol)
 end
 
 
@@ -144,7 +144,7 @@ function isRightIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=De
     end
 end
 function isRightIsometric(A::AbstractLocalTensor; tol::Float64=Defaults.tol_norm)::Bool
-    return isRightIsometric(A.A, isAdjoint(A); tol=tol)
+    return isRightIsometric(A.A, isadjoint(A); tol=tol)
 end
 
 """

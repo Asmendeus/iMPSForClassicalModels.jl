@@ -17,7 +17,7 @@ export AbstractLocalTensor, AbstractBondTensor, AbstractMPSTensor, AbstractMPOTe
 export LocalTensor, BondTensor, MPSTensor, MPOTensor
 export AdjointLocalTensor, AdjointBondTensor, AdjointMPSTensor, AdjointMPOTensor
 export AbstractEnvironmentTensor, LeftEnvironmentTensor, RightEnvironmentTensor
-export isAdjoint, isLeftIsometric, isRightIsometric, leftorth, rightorth
+export isadjoint, isLeftIsometric, isRightIsometric, leftorth, rightorth
 
 # Environment
 export AbstractEnvironment
@@ -31,11 +31,11 @@ export sign_first_element, SimpleIteration
 export pushleft, pushright, pushmid
 export leftFixedPoint, rightFixedPoint, midFixedPoint
 
-# MPS
-export AbstractInfiniteMPS
+# iMPS & iMPO
+export AbstractInfiniteMPS, DenseInfiniteMPS, issparse, coef, Center
 
-# MPO
-export AbstractInfiniteMPO, AbstractInfiniteMPSOrMPO
+
+# SparseMPO
 
 # Impurity tensor
 
@@ -69,7 +69,5 @@ include("Method/rightFixedPoint.jl")
 include("Method/midFixedPoint.jl")
 
 include("MPS/AbstractInfiniteMPS.jl")
-
-include("MPO/AbstractInfiniteMPO.jl")
 
 end # module iMPSForClassicalModels
