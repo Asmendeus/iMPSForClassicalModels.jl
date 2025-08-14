@@ -4,7 +4,7 @@
 Abstract type of all iMPO with length `L`, marking the size of cell.
 """
 abstract type AbstractInfiniteMPO{L} end
-const AbstractInfiniteMPSOrMPO{L} = Union{AbstractInfiniteMPSOrMPO{L}, AbstractInfiniteMPO{L}}
+const AbstractInfiniteMPSOrMPO{L} = Union{AbstractInfiniteMPS{L}, AbstractInfiniteMPO{L}}
 
 length(::AbstractInfiniteMPO{L}) where L = L
 for func in (:getindex, :lastindex, :setindex!, :iterate, :keys, :isassigned)

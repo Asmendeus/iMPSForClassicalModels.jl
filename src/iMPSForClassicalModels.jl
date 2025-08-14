@@ -32,8 +32,10 @@ export pushleft, pushright, pushmid
 export leftFixedPoint, rightFixedPoint, midFixedPoint
 
 # MPS
+export AbstractInfiniteMPS
 
 # MPO
+export AbstractInfiniteMPO, AbstractInfiniteMPSOrMPO
 
 # Impurity tensor
 
@@ -65,5 +67,9 @@ include("Method/pushmid.jl")
 include("Method/leftFixedPoint.jl")
 include("Method/rightFixedPoint.jl")
 include("Method/midFixedPoint.jl")
+
+include("MPS/AbstractInfiniteMPS.jl")
+
+include("MPO/AbstractInfiniteMPO.jl")
 
 end # module iMPSForClassicalModels
