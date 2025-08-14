@@ -1,5 +1,12 @@
-function expecatation(ψ::InfiniteMPSOrMPO{W, L, T}, H::SparseMPO{W, L, T}, ψ′::AdjointInfiniteMPSOrMPO{W, L, T}, M::LocalImpurity{W, L, T})
+function expecatation(ψ::DenseInfiniteMPS{L}, H::SparseMPO{W, L}, ψ′::AdjointInfiniteMPS{L}, M::LocalImpurity{W, L};
+            FL₀::AbstractVector{<:LeftEnvironmentTensor{W+2}},
+            FR₀::AbstractVector{<:RightEnvironmentTensor{W+2}},
+            alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi()) where {W, L}
 end
 
-function expecatation(ψ::InfiniteMPSOrMPO{W, L, T}, H::SparseMPO{W, L, T}, ψ′::AdjointInfiniteMPSOrMPO{W, L, T}, M1::LocalImpurity{W, L, T}, M2::LocalImpurity{W, L, T}, r::Int64)
+function expecatation(ψ::DenseInfiniteMPS{L}, H::SparseMPO{W, L}, ψ′::AdjointInfiniteMPS{L},
+            M1::LocalImpurity{W, L}, M2::LocalImpurity{W, L}, r::Int64;
+            FL₀::AbstractVector{<:LeftEnvironmentTensor{W+2}},
+            FR₀::AbstractVector{<:RightEnvironmentTensor{W+2}},
+            alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi()) where {W, L}
 end

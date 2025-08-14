@@ -25,24 +25,25 @@ A series of functions for solving left fixed point equations or maximum eigenequ
 # Return
 `λ::Vector{<:Number}`: length `L` vector, coefficients of solution tensors of `L` fixed point equations
 `X::Vector{LeftEnvironmentTensor{2}}`: length `L` vector, solution tensors of `L` fixed point equations
-`BL::Vector{LocalTensor{R}}`: left orthogonal local tensors at fixed point
+`AL::Vector{LocalTensor{R}}`: left orthogonal local tensors at fixed point
 `info`: information of the algorithm
 
 # Fixed point equations
 
     for l = 1:L, the l-th fixed point equation is
 
-        -- X[l] -- A[l] --  =  λ[l] * -- BL[l] -- X[l+1] --
+        -- X[l] -- A[l] --  =  λ[l] * -- AL[l] -- X[l+1] --
                    |                     |
 
-    where `X[L+1] = X[1]`, and `BL` are left-orthogonal local tensors and `X` are bond tensors normalized with normalization coefficients `λ`.
+    where `X[L+1] = X[1]`, and `AL` are left-orthogonal local tensors and `X` are bond tensors normalized with normalization coefficients `λ`.
+    Notice `X[l] = C_{l-1, l}`, different from `rightFixedPoint`.
     Here we replace the original iterative equations with new equation iterative equations to speed up:
 
          ---- A[l] ----             --
         |     |                    |
         X[l]  |          =  λ[l] * X[l+1]
         |     |                    |
-         ---- BL[l]* --             --
+         ---- AL[l]* --             --
 
 # Maximum eigenequations:
 
@@ -68,25 +69,25 @@ function leftFixedPoint(A::AbstractVector{<:LocalTensor{R}},
     if alg isa SimpleIteration
         func = [x -> pushleft(x, A[l], leftorth((x * A[l])')[1]; kwargs...) for l in 1:L]
         λ, X, info = iterate(func, X₀, true, alg)
-        BL = [leftorth(X[l] * A[l])[1] for l in 1:L]
-        return λ, X, BL, info
+        AL = [leftorth(X[l] * A[l])[1] for l in 1:L]
+        return λ, X, AL, info
     elseif alg isa KrylovKit.KrylovAlgorithm
         func = x -> pushleft(x, A, adjoint.(A))
         vals, vecs, info = eigsolve(func, X₀[1], 1, :LM, alg)
 
         λ = Vector{typeof(vals[1])}(undef, L)
         X = Vector{BondTensor}(undef, L)
-        BL = Vector{LocalTensor{R}}(undef, L)
+        AL = Vector{LocalTensor{R}}(undef, L)
 
         _, s, vd, _ = tsvd(vecs[1].A)
 
         X[1] = BondTensor(sqrt(s) * vd)
         X[1] /= sign_first_element(X[1])
-        # Notice BL[1] and λ[1] need to be re-updated
+        # Notice AL[1] and λ[1] need to be re-updated
         for l in 1:L+1
             l_now = mod(l-1, L) + 1
             l₊ = mod(l, L) + 1
-            BL[l_now], x = leftorth(X[l_now] * A[l_now]; kwargs...)
+            AL[l_now], x = leftorth(X[l_now] * A[l_now]; kwargs...)
             λ[l_now] = norm(x) * sign_first_element(x)
             X[l₊] = x / λ[l_now]
         end
@@ -99,7 +100,7 @@ function leftFixedPoint(A::AbstractVector{<:LocalTensor{R}},
             @warn "$(typeof(alg)) is available but its information type is not defined, please contact the author."
         end
 
-        return λ, X, BL, info
+        return λ, X, AL, info
     end
 end
 function leftFixedPoint(A::AbstractVector{<:LocalTensor{R}}, alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}) where R

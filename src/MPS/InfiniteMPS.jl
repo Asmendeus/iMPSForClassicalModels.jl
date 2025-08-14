@@ -12,7 +12,7 @@ Concrete type of iMPS, where `L` is the cell length, `T == Float64` or `ComplexF
 Length L vector to store the local tensors. Note the vector `A` is immutable while the local tensors in it are mutable.
 
     const Center::Vector{Int64}
-Length 2 vector to label the canonical form. `[a, b]` means left-canonical from `1` to `a-1` and right-canonical from `b+1` to `L`.
+Length 2 vector to label the canonical boundaries. `[a, b]` means left-canonical from `1` to `a-1` and right-canonical from `b+1` to `L`.
 
     c::T
 The global coefficient, i.e. we represented an iMPS with L local tensors and an additional scalar `c`, in order to avoid too large/small local tensors.
@@ -35,15 +35,18 @@ mutable struct InfiniteMPS{L, T<:Union{Float64, ComplexF64}} <: DenseInfiniteMPS
     const Center::Vector{Int64}
     c::T
 
-    function InfiniteMPS{L, T}(A::AbstractVector{<:AbstractMPSTensor}=Vector{MPSTensor}(undef, L), Center::Vector{Int64}=[1, L], c::T=one(T)) where {L, T}
+    function InfiniteMPS{L, T}(A::AbstractVector{<:AbstractMPSTensor}=Vector{MPSTensor}(undef, L), Center::Vector{Int64}=[1, L], c::T=one(T)) where {L, T <: Union{Float64, ComplexF64}}
         L == length(A) || throw(ArgumentError("Mismatched lengths: $L ≠ $(length(A))"))
         length(Center) == 2 || throw(ArgumentError("Illegal length of `Center` $(length(Center)), which should be 2"))
-        1 ≤ Center[1] && Center[2] ≤ L || throw(ArgumentError("Orthogonal boundaries beyond the range of Imps"))
-        T ∈ [Float64, ComplexF64] || throw(ArgumentError("Unsupported data type $T, which should be `Float64` or `ComplexF64`"))
+        1 ≤ Center[1] ≤ Center[2] ≤ L || throw(ArgumentError("Illegal canonical boundary positions: !(1 ≤ $(Center[1]) ≤ $(Center[2]) ≤ $L)"))
 
         if T == ComplexF64  # promote each A
-            for i = 1:L
-                 eltype(A[i]) != T && (A[i] *= one(T))
+            try
+                for i = 1:L
+                    eltype(A[i]) != T && (A[i] *= one(T))
+                end
+            catch
+                nothing
             end
         end
 
@@ -68,19 +71,47 @@ end
 const iMPS = InfiniteMPS
 
 """
-     randInfiniteMPS([::Type{T},] pspace::Vector{VectorSpace}, aspace::Vector{VectorSpace}; kwargs...) -> InfiniteMPS{L, T}
+    randInfiniteMPS(::Type{T}, pspace::AbstractVector{<:VectorSpace}, aspace::AbstractVector{<:VectorSpace}; kwargs...) -> InfiniteMPS{L, T}
 
-Generate a length `L` random MPS with given length `L` vector `pspace` and `aspace`. `T = Float64`(default) or `ComplexF64` is the number type. Note the canonical center is initialized to the first site.
+Generate a length `L` random MPS with given length `L` vector `pspace` and `aspace`. `T = Float64`(default) or `ComplexF64` is the number type. Note the canonical center is initialized to the first site. `kwargs` is propagated to `leftorth` and `rightorth`.
 
-     randInfiniteMPS([::Type{T},] L::Int64, pspace::VectorSpace, apsace::VectorSpace; kwargs...) -> InfiniteMPS{L, T}
+    randInfiniteMPS(::Type{T}, L::Int64, pspace::VectorSpace, apsace::VectorSpace; kwargs...) -> InfiniteMPS{L, T}
 
 Assume the same `pspace` and `aspace`, except for the boundary bond, which is assumed to be trivial.
 
-    randInfiniteMPS([::Type{T},] pdim::Vector{Int64}, adim::Vector{Int64}; kwargs...) -> InfiniteMPS{L, T}
+    randInfiniteMPS(::Type{T}, pdim::AbstractVector{Int64}, adim::AbstractVector{Int64}; kwargs...) -> InfiniteMPS{L, T}
 
 Assume all spaces are trivial space, i.e., ℝ for `T == Float64` and ℂ for `T == ComplexF64`.
 
-    randInfiniteMPS([::Type{T},] L::Int64, pdim::Int64, adim::Int64; kwargs...)
+    randInfiniteMPS(::Type{T}, L::Int64, pdim::Int64, adim::Int64; kwargs...)
 
 Assume the same trivial `pspace` and `aspace`.
 """
+function randInfiniteMPS(::Type{T}, pspace::AbstractVector{<:VectorSpace}, aspace::AbstractVector{<:VectorSpace}; kwargs...) where T <: Union{Float64, ComplexF64}
+
+    (L = length(pspace)) == length(aspace) || throw(ArgumentError("Mismatched lengths of `pspace` and `aspace`: $(length(pspace)) ≠ $(length(aspace))"))
+
+    obj = InfiniteMPS(L, T)
+    for si in 1:L
+        si₊ = mod(si, L) + 1
+        obj[si] = randisometry(T, aspace[si]⊗pspace[si], aspace[si₊])
+    end
+
+    canonicalize!(obj, 1)
+    return normalize!(obj)
+end
+function randInfiniteMPS(::Type{T}, L::Int64, pspace::VectorSpace, aspace::VectorSpace; kwargs...) where T <: Union{Float64, ComplexF64}
+    return randInfiniteMPS(T, repeat([pspace,], L), repeat([aspace,], L); kwargs...)
+end
+function randInfiniteMPS(::Type{T}, pdim::AbstractVector{Int64}, adim::AbstractVector{Int64}; kwargs...) where T <: Union{Float64, ComplexF64}
+    spacetype = T == Float64 ? ℝ : ℂ
+    pspace = map(d -> spacetype^d, pdim)
+    aspace = map(d -> spacetype^d, adim)
+    return randInfiniteMPS(T, pspace, aspace; kwargs...)
+end
+function randInfiniteMPS(::Type{T}, L::Int64, pdim::Int64, adim::Int64; kwargs...) where T <: Union{Float64, ComplexF64}
+    spacetype = T == Float64 ? ℝ : ℂ
+    pspace = repeat([spacetype^pdim,], L)
+    aspace = repeat([spacetype^adim,], L)
+    return randInfiniteMPS(T, pspace, aspace; kwargs...)
+end

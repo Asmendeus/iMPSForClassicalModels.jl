@@ -36,6 +36,7 @@ A series of functions for solving right fixed point equations or maximum eigeneq
            |                                       |
 
     where `X[0] = X[L]`, and `AR` are right-orthogonal local tensors and `X` are bond tensors normalized with normalization coefficients `λ`.
+    Notice `X[l] = C_{l, l+1}`, different from `leftFixedPoint`.
     Here we replace the original iterative equations with new equation iterative equations to speed up:
 
         ---- A[l] ----                --

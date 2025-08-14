@@ -4,7 +4,7 @@ using Reexport
 @reexport using KrylovKit, TensorKit, TensorKit.TensorOperations
 @reexport import Base: +, -, *, /, ==, iterate, promote_rule, convert, length, size, show, getindex, setindex!, lastindex, keys, similar, merge, merge!, iterate, complex
 @reexport import TensorKit: ×, one, zero, dim, inner, scalar, space, domain, codomain, eltype, scalartype, numin, numout, numind, leftorth, rightorth, leftnull, rightnull, tsvd, adjoint, AdjointTensorMap, normalize!, normalize, norm, axpy!, axpby!, add!, add!!, dot, mul!, rmul!, NoTruncation, fuse, zerovector!, zerovector, scale, scale!, scale!!
-@reexport import LinearAlgebra: BLAS, rank, qr, diag, I, diagm
+@reexport import LinearAlgebra: BLAS, rank, qr, diag, I, diagm, ishermitian
 
 # utils
 export trivial, istrivial
@@ -24,24 +24,31 @@ export AbstractEnvironment
 export TransferMatrix, MPSTransferMatrix, MPOTransferMatrix
 export ChannelEnvironment, MPSChannelEnvironment, MPOChannelEnvironment
 export BondEnvironment, CenterEnvironment
-export environment
+export environment, contract
 
 # Method
 export sign_first_element, SimpleIteration
 export pushleft, pushright, pushmid
 export leftFixedPoint, rightFixedPoint, midFixedPoint
 
-# iMPS & iMPO
-export AbstractInfiniteMPS, DenseInfiniteMPS, issparse, coef, Center
-export InfiniteMPS, iMPS
+# iMPS
+export AbstractInfiniteMPS, DenseInfiniteMPS, coef, Center
+export AdjointInfiniteMPS
+export canonicalize!
+export InfiniteMPS, iMPS, randInfiniteMPS
 
-export InfiniteMPO, iMPO
+# iMPO
+export InfiniteMPO, iMPO, identityInfiniteMPO
 
 # SparseMPO
+export SparseMPO
 
 # Impurity tensor
+export AbstractLocalImpurity, LocalImpurity, expectation
 
 # Algorithm
+
+
 
 include("utils/Defaults.jl")
 include("utils/TensorMap.jl")
@@ -60,6 +67,7 @@ include("Environment/ChannelEnvironment.jl")
 include("Environment/BondEnvironment.jl")
 include("Environment/CenterEnvironment.jl")
 include("Environment/environment.jl")
+include("Environment/contract.jl")
 
 include("Method/SimpleIteration.jl")
 include("Method/iterate.jl")
@@ -71,8 +79,16 @@ include("Method/rightFixedPoint.jl")
 include("Method/midFixedPoint.jl")
 
 include("MPS/AbstractInfiniteMPS.jl")
+include("MPS/AdjointInfiniteMPS.jl")
+include("MPS/canonicalize.jl")
 include("MPS/InfiniteMPS.jl")
 
 include("MPO/InfiniteMPO.jl")
+
+include("SparseMPO/SparseMPO.jl")
+
+include("LocalImpurity/LocalImpurity.jl")
+include("LocalImpurity/expectation.jl")
+
 
 end # module iMPSForClassicalModels

@@ -10,7 +10,7 @@ pkg> add https://github.com/Asmendeus/iMPSForClassicalModels.jl.git#main
 
 ## 2. Model
 
-## 3. Solving fixed point eqaution
+## 3. Solving the boudary iMPS
 
 ## 4. Observables
 
