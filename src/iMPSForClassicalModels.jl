@@ -33,7 +33,9 @@ export leftFixedPoint, rightFixedPoint, midFixedPoint
 
 # iMPS & iMPO
 export AbstractInfiniteMPS, DenseInfiniteMPS, issparse, coef, Center
+export InfiniteMPS, iMPS
 
+export InfiniteMPO, iMPO
 
 # SparseMPO
 
@@ -69,5 +71,8 @@ include("Method/rightFixedPoint.jl")
 include("Method/midFixedPoint.jl")
 
 include("MPS/AbstractInfiniteMPS.jl")
+include("MPS/InfiniteMPS.jl")
+
+include("MPO/InfiniteMPO.jl")
 
 end # module iMPSForClassicalModels

@@ -1,5 +1,5 @@
 """
-    function midFixedPoint(env::S, X₀::T, alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi()) where {S, T}
+    midFixedPoint(env::S, X₀::T, alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi()) where {S, T}
 
 A series of functions for solving mid fixed point equations or maximum eigenequations.
 
@@ -9,7 +9,7 @@ A series of functions for solving mid fixed point equations or maximum eigenequa
 `alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi()`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
 
 # ===============================================
-    function midFixedPoint(env::BondEnvironment{N},
+    midFixedPoint(env::BondEnvironment{N},
                 X₀::Union{BondTensor, AdjointBondTensor}=_default_X₀_midFixedPoint(env, false),
                 alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi();
                 which::Symbol=:LM) where N
@@ -84,7 +84,7 @@ function midFixedPoint(env::BondEnvironment{N}, alg::Union{SimpleIteration, Kryl
 end
 
 """
-    function midFixedPoint(env::CenterEnvironment{N},
+    midFixedPoint(env::CenterEnvironment{N},
                 X₀::Union{LocalTensor{R}, AdjointLocalTensor{R}}=_default_X₀_midFixedPoint(env, false),
                 alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi();
                 which::Symbol=:LM) where {N, R}

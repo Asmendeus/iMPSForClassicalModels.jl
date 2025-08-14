@@ -1,5 +1,5 @@
 """
-    function rightFixedPoint(env::S, X₀::T, alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi()) where {S, T}
+    rightFixedPoint(env::S, X₀::T, alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi()) where {S, T}
 
 A series of functions for solving right fixed point equations or maximum eigenequations.
 
@@ -9,7 +9,7 @@ A series of functions for solving right fixed point equations or maximum eigeneq
 `alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi()`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
 
 # ===============================================
-    function rightFixedPoint(A::AbstractVector{<:LocalTensor{R}},
+    rightFixedPoint(A::AbstractVector{<:LocalTensor{R}},
                 X₀::AbstractVector{<:BondTensor}=_default_X₀_rigthFixedPoint(A),
                 alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi();
                 kwargs...) where R
@@ -107,7 +107,7 @@ function rightFixedPoint(A::AbstractVector{<:LocalTensor{R}}, alg::Union{SimpleI
 end
 
 """
-    function rightFixedPoint(B::AbstractVector{<:AdjointLocalTensor{R}},
+    rightFixedPoint(B::AbstractVector{<:AdjointLocalTensor{R}},
                 X₀::AbstractVector{<:AdjointBondTensor}=_default_X₀_rightFixedPoint(B),
                 alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi();
                 kwargs...) where R
@@ -205,7 +205,7 @@ function rightFixedPoint(B::AbstractVector{<:AdjointLocalTensor{R}}, alg::Union{
 end
 
 """
-    function rightFixedPoint(t::TransferMatrix{L, R},
+    rightFixedPoint(t::TransferMatrix{L, R},
                 X₀::AbstractVector{<:RightEnvironmentTensor{2}}=_default_X₀_rightFixedPoint(t),
                 alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=SimpleIteration(; tol=repeat([Defaults.tol,], L))) where {L, R}
 
@@ -284,7 +284,7 @@ function rightFixedPoint(t::TransferMatrix{L, R}, alg::Union{SimpleIteration, Kr
 end
 
 """
-    function rightFixedPoint(env::ChannelEnvironment{N, L, R},
+    rightFixedPoint(env::ChannelEnvironment{N, L, R},
                 X₀::AbstractVector{<:RightEnvironmentTensor{N}}=_default_X₀_rightFixedPoint(env),
                 alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi()) where {N, L, R}
 

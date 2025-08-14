@@ -1,5 +1,5 @@
 """
-    function pushleft(X₀::Union{LeftEnvironmentTensor{2}, BondTensor, AdjointBondTensor}, A::LocalTensor{R}, B::AdjointLocalTensor{R})
+    pushleft(X₀::Union{LeftEnvironmentTensor{2}, BondTensor, AdjointBondTensor}, A::LocalTensor{R}, B::AdjointLocalTensor{R})
         -> X::Union{LeftEnvironmentTensor{2}, BondTensor, AdjointBondTensor}
 
 Contract left environment tensor and transfer matrix environment
@@ -39,9 +39,9 @@ function pushleft(X₀::Union{LeftEnvironmentTensor{2}, BondTensor, AdjointBondT
 end
 
 """
-    function pushleft(X₀::Union{LeftEnvironmentTensor{2}, BondTensor, AdjointBondTensor}, A::AbstractVector{<:LocalTensor{R}}, B::AbstractVector{<:AdjointLocalTensor{R}})
+    pushleft(X₀::Union{LeftEnvironmentTensor{2}, BondTensor, AdjointBondTensor}, A::AbstractVector{<:LocalTensor{R}}, B::AbstractVector{<:AdjointLocalTensor{R}})
         -> X::Union{LeftEnvironmentTensor{2}, BondTensor, AdjointBondTensor}
-    function pushleft(X₀::Union{LeftEnvironmentTensor{2}, BondTensor, AdjointBondTensor}, t::TransferMatrix{L, R})
+    pushleft(X₀::Union{LeftEnvironmentTensor{2}, BondTensor, AdjointBondTensor}, t::TransferMatrix{L, R})
         -> X::Union{LeftEnvironmentTensor{2}, BondTensor, AdjointBondTensor}
 
 Iteratively contract left environment tensor and transfer matrix
@@ -64,9 +64,9 @@ function pushleft(X₀::Union{LeftEnvironmentTensor{2}, BondTensor, AdjointBondT
 end
 
 """
-    function pushleft(X₀::LeftEnvironmentTensor{N}, A::LocalTensor{R}, O::AbstractVector{MPOTensor}, B::AdjointLocalTensor{R})
+    pushleft(X₀::LeftEnvironmentTensor{N}, A::LocalTensor{R}, O::AbstractVector{MPOTensor}, B::AdjointLocalTensor{R})
         -> X::LeftEnvironmentTensor{N}
-    function pushleft(X₀::LeftEnvironmentTensor{3}, A::LocalTensor{R}, O::MPOTensor, B::AdjointLocalTensor{R})
+    pushleft(X₀::LeftEnvironmentTensor{3}, A::LocalTensor{R}, O::MPOTensor, B::AdjointLocalTensor{R})
         -> X::LeftEnvironmentTensor{3}
 
 Contract left environment tensor and channel environment
@@ -124,9 +124,9 @@ function pushleft(X₀::LeftEnvironmentTensor{3}, A::LocalTensor{R}, O::MPOTenso
 end
 
 """
-    function pushleft(X₀::LeftEnvironmentTensor{N}, A::AbstractVector{<:LocalTensor{R}}, O::AbstractMatrix{MPOTensor}, B::AbstractVector{<:AdjointLocalTensor{R}})
+    pushleft(X₀::LeftEnvironmentTensor{N}, A::AbstractVector{<:LocalTensor{R}}, O::AbstractMatrix{MPOTensor}, B::AbstractVector{<:AdjointLocalTensor{R}})
         -> X::LeftEnvironmentTensor{N}
-    function pushleft(X₀::LeftEnvironmentTensor{N}, env::ChannelEnvironment{N, L, R})
+    pushleft(X₀::LeftEnvironmentTensor{N}, env::ChannelEnvironment{N, L, R})
         -> X::LeftEnvironmentTensor{N}
 
 Contract left environment tensor and channel environment

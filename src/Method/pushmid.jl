@@ -1,7 +1,7 @@
 """
-    function pushmid(X₀::BondTensor, FL::LeftEnvironmentTensor{N}, FR::RightEnvironmentTensor{N})
+    pushmid(X₀::BondTensor, FL::LeftEnvironmentTensor{N}, FR::RightEnvironmentTensor{N})
         -> X::BondTensor
-    function pushmid(X₀::BondTensor, env::BondEnvironment{N})
+    pushmid(X₀::BondTensor, env::BondEnvironment{N})
         -> X::BondTensor
 
 Contract bond tensor and bond environment
@@ -50,9 +50,9 @@ function pushmid(X₀::BondTensor, env::BondEnvironment{N}) where N
 end
 
 """
-    function pushmid(X₀::AjointBondTensor, FL::LeftEnvironmentTensor{N}, FR::RightEnvironmentTensor{N})
+    pushmid(X₀::AjointBondTensor, FL::LeftEnvironmentTensor{N}, FR::RightEnvironmentTensor{N})
         -> X::AdjointBondTensor
-    function pushmid(X₀::AjointBondTensor, env::BondEnvironment{N})
+    pushmid(X₀::AjointBondTensor, env::BondEnvironment{N})
         -> X::AdjointBondTensor
 
 Contract adjoint bond tensor and bond environment
@@ -101,11 +101,11 @@ function pushmid(X₀::AdjointBondTensor, env::BondEnvironment{N}) where N
 end
 
 """
-    function pushmid(X₀::LocalTensor{R}, FL::LeftEnvironmentTensor{N}, O::AbstractVector{<:MPOTensor}, FR::RightEnvironmentTensor{N})
+    pushmid(X₀::LocalTensor{R}, FL::LeftEnvironmentTensor{N}, O::AbstractVector{<:MPOTensor}, FR::RightEnvironmentTensor{N})
         -> X::LocalTensor{R}
-    function pushmid(X₀::LocalTensor{R}, FL::LeftEnvironmentTensor{3}, O::MPOTensor, FR::RightEnvironmentTensor{3})
+    pushmid(X₀::LocalTensor{R}, FL::LeftEnvironmentTensor{3}, O::MPOTensor, FR::RightEnvironmentTensor{3})
         -> X::LocalTensor{R}
-    function pushmid(X₀::LocalTensor{R}, env::CenterEnvironment{N})
+    pushmid(X₀::LocalTensor{R}, env::CenterEnvironment{N})
         -> X::LocalTensor{R}
 
 Contract local tensor and center environment
@@ -167,11 +167,11 @@ function pushmid(X₀::LocalTensor{R}, env::CenterEnvironment{N}) where {R, N}
 end
 
 """
-    function pushmid(X₀::AdjointLocalTensor{R}, FL::LeftEnvironmentTensor{N}, O::AbstractVector{<:MPOTensor}, FR::RightEnvironmentTensor{N})
+    pushmid(X₀::AdjointLocalTensor{R}, FL::LeftEnvironmentTensor{N}, O::AbstractVector{<:MPOTensor}, FR::RightEnvironmentTensor{N})
         -> X::AdjointLocalTensor{R}
-    function pushmid(X₀::AdjointLocalTensor{R}, FL::LeftEnvironmentTensor{3}, O::MPOTensor, FR::RightEnvironmentTensor{3})
+    pushmid(X₀::AdjointLocalTensor{R}, FL::LeftEnvironmentTensor{3}, O::MPOTensor, FR::RightEnvironmentTensor{3})
         -> X::AdjointLocalTensor{R}
-    function pushmid(X₀::AdjointLocalTensor{R}, env::CenterEnvironment{N})
+    pushmid(X₀::AdjointLocalTensor{R}, env::CenterEnvironment{N})
         -> X::AdjointLocalTensor{R}
 
 Contract adjoint local tensor and center environment

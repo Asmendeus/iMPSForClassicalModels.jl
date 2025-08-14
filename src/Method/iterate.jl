@@ -1,7 +1,7 @@
 """
-    function Base.iterate(f::Function, x₀::Tuple{Number, V}; tol::Float64=Defaults.tol, maxiter::Int64=Defaults.maxiter) where V
-    function Base.iterate(f::Function, v₀::V; tol::Float64=Defaults.tol, maxiter::Int64=Defaults.maxiter) where V
-    function Base.iterate(f::Function, v₀::V, alg::SimpleIteration) where V
+    Base.iterate(f::Function, x₀::Tuple{Number, V}; tol::Float64=Defaults.tol, maxiter::Int64=Defaults.maxiter) where V
+    Base.iterate(f::Function, v₀::V; tol::Float64=Defaults.tol, maxiter::Int64=Defaults.maxiter) where V
+    Base.iterate(f::Function, v₀::V, alg::SimpleIteration) where V
 
 A simple iterative procedure for solving fixed point equation
     v = f(v) / λ,
@@ -72,9 +72,9 @@ function Base.iterate(f::Function, v₀::V, alg::SimpleIteration) where V
 end
 
 """
-    function Base.iterate(f::Vector{<:Function}, x₀::Tuple{Vector{<:Number}, Vector{<:V}}, direction::Bool; tol::Vector{Float64}=repeat([Defaults.tol,], length(f)), maxiter::Int64=Defaults.maxiter) where V
-    function Base.iterate(f::Vector{<:Function}, v₀::Vector{<:V}, direction::Bool; tol::Vector{Float64}=repeat([Defaults.tol,], length(v₀)), maxiter::Int64=Defaults.maxiter) where V
-    function Base.iterate(f::Vector{<:Function}, v₀::Vector{<:V}, direction::Bool, alg::SimpleIteration) where V
+    Base.iterate(f::Vector{<:Function}, x₀::Tuple{Vector{<:Number}, Vector{<:V}}, direction::Bool; tol::Vector{Float64}=repeat([Defaults.tol,], length(f)), maxiter::Int64=Defaults.maxiter) where V
+    Base.iterate(f::Vector{<:Function}, v₀::Vector{<:V}, direction::Bool; tol::Vector{Float64}=repeat([Defaults.tol,], length(v₀)), maxiter::Int64=Defaults.maxiter) where V
+    Base.iterate(f::Vector{<:Function}, v₀::Vector{<:V}, direction::Bool, alg::SimpleIteration) where V
 
 A simple iterative procedure for solving loop fixed point equations
 

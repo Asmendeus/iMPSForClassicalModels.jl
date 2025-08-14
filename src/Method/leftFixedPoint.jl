@@ -1,5 +1,5 @@
 """
-    function leftFixedPoint(env::S, X₀::T, alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi()) where {S, T}
+    leftFixedPoint(env::S, X₀::T, alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi()) where {S, T}
 
 A series of functions for solving left fixed point equations or maximum eigenequations.
 
@@ -9,7 +9,7 @@ A series of functions for solving left fixed point equations or maximum eigenequ
 `alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi()`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
 
 # ===============================================
-    function leftFixedPoint(A::AbstractVector{<:LocalTensor{R}},
+    leftFixedPoint(A::AbstractVector{<:LocalTensor{R}},
                 X₀::AbstractVector{<:BondTensor}=_default_X₀_leftFixedPoint(A),
                 alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi();
                 kwargs...) where R
@@ -107,7 +107,7 @@ function leftFixedPoint(A::AbstractVector{<:LocalTensor{R}}, alg::Union{SimpleIt
 end
 
 """
-    function leftFixedPoint(B::AbstractVector{<:AdjointLocalTensor{R}},
+    leftFixedPoint(B::AbstractVector{<:AdjointLocalTensor{R}},
                 X₀::AbstractVector{<:AdjointBondTensor}=_default_X₀_leftFixedPoint(B),
                 alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi();
                 kwargs...) where R
@@ -205,7 +205,7 @@ function leftFixedPoint(B::AbstractVector{<:AdjointLocalTensor{R}}, alg::Union{S
 end
 
 """
-    function leftFixedPoint(t::TransferMatrix{L, R},
+    leftFixedPoint(t::TransferMatrix{L, R},
                 X₀::AbstractVector{<:LeftEnvironmentTensor{2}}=_default_X₀_leftFixedPoint(t),
                 alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi()) where {L, R}
 
@@ -284,7 +284,7 @@ function leftFixedPoint(t::TransferMatrix{L, R}, alg::Union{SimpleIteration, Kry
 end
 
 """
-    function leftFixedPoint(env::ChannelEnvironment{N, L, R},
+    leftFixedPoint(env::ChannelEnvironment{N, L, R},
                 X₀::AbstractVector{<:LeftEnvironmentTensor{N}}=_default_X₀_leftFixedPoint(env),
                 alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi()) where {N, L, R}
 

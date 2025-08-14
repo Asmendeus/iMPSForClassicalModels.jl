@@ -1,5 +1,5 @@
 """
-    function pushright(X₀::Union{RightEnvironmentTensor{2}, BondTensor, AdjointBondTensor}, A::LocalTensor{R}, B::AdjointLocalTensor{R})
+    pushright(X₀::Union{RightEnvironmentTensor{2}, BondTensor, AdjointBondTensor}, A::LocalTensor{R}, B::AdjointLocalTensor{R})
         -> X::Union{RightEnvironmentTensor{2}, BondTensor, AdjointBondTensor}
 
 Contract transfer matrix environment and right environment tensor
@@ -39,9 +39,9 @@ function pushright(X₀::Union{RightEnvironmentTensor{2}, BondTensor, AdjointBon
 end
 
 """
-    function pushright(X₀::Union{RightEnvironmentTensor{2}, BondTensor, AdjointBondTensor}, A::AbstractVector{<:LocalTensor{R}}, B::AbstractVector{<:AdjointLocalTensor{R}})
+    pushright(X₀::Union{RightEnvironmentTensor{2}, BondTensor, AdjointBondTensor}, A::AbstractVector{<:LocalTensor{R}}, B::AbstractVector{<:AdjointLocalTensor{R}})
         -> X::Union{RightEnvironmentTensor{2}, BondTensor, AdjointBondTensor}
-    function pushright(X₀::Union{RightEnvironmentTensor{2}, BondTensor, AdjointBondTensor}, t::TransferMatrix{L, R})
+    pushright(X₀::Union{RightEnvironmentTensor{2}, BondTensor, AdjointBondTensor}, t::TransferMatrix{L, R})
         -> X::Union{RightEnvironmentTensor{2}, BondTensor, AdjointBondTensor}
 
 Iteratively contract transfer matrix and right environment tensor
@@ -64,9 +64,9 @@ function pushright(X₀::Union{RightEnvironmentTensor{2}, BondTensor, AdjointBon
 end
 
 """
-    function pushright(X₀::RightEnvironmentTensor{N}, A::LocalTensor{R}, O::AbstractVector{MPOTensor}, B::AdjointLocalTensor{R})
+    pushright(X₀::RightEnvironmentTensor{N}, A::LocalTensor{R}, O::AbstractVector{MPOTensor}, B::AdjointLocalTensor{R})
         -> X::RightEnvironmentTensor{N}
-    function pushright(X₀::RightEnvironmentTensor{3}, A::LocalTensor{R}, O::MPOTensor, B::AdjointLocalTensor{R})
+    pushright(X₀::RightEnvironmentTensor{3}, A::LocalTensor{R}, O::MPOTensor, B::AdjointLocalTensor{R})
         -> X::RightEnvironmentTensor{3}
 
 Contract channel environment and right environment tensor
@@ -124,9 +124,9 @@ function pushright(X₀::RightEnvironmentTensor{3}, A::LocalTensor{R}, O::MPOTen
 end
 
 """
-    function pushright(X₀::RightEnvironmentTensor{N}, A::AbstractVector{<:LocalTensor{R}}, O::AbstractMatrix{MPOTensor}, B::AbstractVector{<:AdjointLocalTensor{R}})
+    pushright(X₀::RightEnvironmentTensor{N}, A::AbstractVector{<:LocalTensor{R}}, O::AbstractMatrix{MPOTensor}, B::AbstractVector{<:AdjointLocalTensor{R}})
         -> X::RightEnvironmentTensor{N}
-    function pushright(X₀::RightEnvironmentTensor{N}, env::ChannelEnvironment{N, L, R})
+    pushright(X₀::RightEnvironmentTensor{N}, env::ChannelEnvironment{N, L, R})
         -> X::RightEnvironmentTensor{N}
 
 Contract channel environment tensor and right environment

@@ -1,5 +1,5 @@
 """
-    function isadjoint(::AbstractTensorWrapperper)::Bool
+    isadjoint(::AbstractTensorWrapperper)
 
 Whether the tensor wrapper is an adjoint wrapper
 """
@@ -7,8 +7,8 @@ isadjoint(::Union{LocalTensor, LeftEnvironmentTensor, RightEnvironmentTensor}) =
 isadjoint(::AdjointLocalTensor) = true
 
 """
-    function isLeftIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=Defaults.tol_norm)
-    function isLeftIsometric(A::AbstractLocalTensor; tol::Float64=Defaults.tol_norm)
+    isLeftIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=Defaults.tol_norm)
+    isLeftIsometric(A::AbstractLocalTensor; tol::Float64=Defaults.tol_norm)
 
 # Return
 -`::Bool`: whether the R-leg local tensor `A` is left-orthogonal
@@ -78,8 +78,8 @@ end
 
 
 """
-    function isRightIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=Defaults.tol_norm)
-    function isRightIsometric(A::AbstractLocalTensor; tol::Float64=Defaults.tol_norm)
+    isRightIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=Defaults.tol_norm)
+    isRightIsometric(A::AbstractLocalTensor; tol::Float64=Defaults.tol_norm)
 
 # Return
 -`::Bool`: whether the R-leg local tensor `A` is right-orthogonal
