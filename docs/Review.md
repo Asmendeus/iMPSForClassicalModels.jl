@@ -134,6 +134,8 @@ However, due to the exponential growth of the computational cost of the multi-le
 
 ## 2. iMPS with mixed canonical form
 
+ref: [SciPost Phys. Lect. Notes 7 (2019)](https://scipost.org/SciPostPhysLectNotes.7)
+
 Before this section begins, please understand a key concept: **Fixed Point is all we need**.
 
 In infinite tensor method, introduction a variational boundary at infinity is used to transform an infinite environment into a finite environment tensor, which corresponds to a maximum eigenvalue problem. The maximum eigenvalue problem can be described by either a maximum eigenvalue equation or a fixed point equation, the solution is usually the same for both in the cases we discuss.
@@ -207,6 +209,11 @@ and center bond matrices are $C_{12} = L_{12}R_{12}$ and $C_{21} = L_{21}R_{21}$
 Eventually we get fixed point tensors $A_{1L}$, $A_{2L}$, $L_{12}$, $L_{21}$, $A_{1R}$, $A_{2R}$, $R_{12}$, $R_{21}$, and center bond and center tensors are $C_{12} = L_{12}R_{12}$, $C_{21} = L_{21}R_{21}$, $A_{1C} = L_{21}A_1R_{12}$, $A_{2C} = L_{12}A_2R_{21}$
 
 ### Variational optimal approximation
+
+We now consider the problem of how to find, for a given $D$-manifold iMPS $|\psi\rangle$, its optimal approximation $|\psi^\prime\rangle$ on the $D^\prime$-manifold. 
+
+An evaluator that judges the degree of approximation of two iMPS is the overlap, i.e., $\frac{|\langle\psi|\psi^\prime\rangle|^2}{\langle\psi^\prime|\psi^\prime\rangle}$. We are actually looking for a $|\psi^\prime\rangle$ on the $D^\prime$-manifold to maximize it. Here we only exhibit the algorithmic flow, please refer to the reference for specific principles and details.
+
 
 ### Variational Infinite Time Evolving Block Decimation (ViTEBD)
 

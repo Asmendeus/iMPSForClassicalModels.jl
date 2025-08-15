@@ -7,6 +7,7 @@ Note each concrete subtype must have a field `A::AbstractTensorMap` to save the 
 """
 abstract type AbstractTensorWrapper{R} end
 numind(::AbstractTensorWrapper{R}) where R = R
+sign_first_element(A::AbstractTensorWrapper) = sign(A.A[1])
 
 # some common functions for wrapper type
 Base.convert(::Type{T}, A::AbstractTensorMap) where {T<:AbstractTensorWrapper} = T(A)

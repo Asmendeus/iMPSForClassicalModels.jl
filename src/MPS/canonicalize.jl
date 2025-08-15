@@ -6,7 +6,7 @@ Canonicalize the iMPS where all sites < `si` are left-canonical and all sites > 
 `alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}` is the algorithm solving the fixed point.
 `kwargs` is propagated to `leftorth` and `rightorth` to determine how to truncate the SVD spectra.
 """
-function canonicalize!(obj::DenseInfiniteMPS{L}, si::Int64; alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi(), kwargs...) where L
+function canonicalize!(obj::DenseInfiniteMPS{L}, si::Int64; alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig(), kwargs...) where L
     1 ≤ si ≤ L || throw(ArgumentError("Canonical center position `$si` is out of iMPS range `1 ~ $L`"))
 
     _, XL, AL, _ = leftFixedPoint(obj.A, alg)

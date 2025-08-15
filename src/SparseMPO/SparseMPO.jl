@@ -24,6 +24,9 @@ struct SparseMPO{W, L} <: AbstractInfiniteMPS{L}
     end
 end
 
+size(::SparseMPO{W, L}) where {W, L} = (W, L)
+length(::SparseMPO{W, L}) where {W, L} = W * L
+
 convert(::Type{<:SparseMPO}, A::AbstractMatrix{MPOTensor}) = SparseMPO(A)
 
 function ishermitian(obj::SparseMPO{W, L}; tol::Float64=Defaults.tol_norm) where {W, L}

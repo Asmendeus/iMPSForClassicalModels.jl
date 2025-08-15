@@ -1,22 +1,19 @@
 """
-    multiply(H::Union{InfiniteMPO{L}, SparseMPO{W, L}},
-        ψ::DenseInfiniteMPS{L},
+    approximate(ψ::DenseInfiniteMPS{L},
         ψ₀::DenseInfiniteMPS{L},
         alg_grad::Union{SimpleIteration}=Defaults.alg_grad,
         alg_eig::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig()) -> ψ′::DenseInfiniteMPS{L}
 
-Apply iMPO `H` to iMPS/iMPO `ψ`, return `ψ′` with maximum overlap with exact result and with D-manifold of `ψ₀` by variational methods.
+Generate the optimal approximation `ψ′` with maximum overlap with `ψ` and with D-manifold of `ψ₀` by variational methods.
 
-`H::Union{InfiniteMPO{L}, SparseMPO{W, L}}`: iMPO applying to `ψ`
-`ψ::DenseInfiniteMPS{L}`: iMPS/iMPO to find a `ψ′` with certain D-manifold maximizing the overlap with Hψ
+`ψ::DenseInfiniteMPS{L}`: iMPS/iMPO to find a `ψ′` with certain D-manifold maximizing |⟨ψ′|ψ⟩|^2 / ⟨ψ′|ψ′⟩ or |Tr(ψ′†ψ)|^2 / Tr(ψ′†ψ′)
 `ψ₀::DenseInfiniteMPS{L}`: the initial iMPS/iMPO, with target D-manifold
 `alg_grad::Union{SimpleIteration}=Defaults.alg_grad`: algorithm for solving gradient problem
 `alg_eig::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig()`: algorithm for solving eigenvalue problem
 """
-function multiply(H::Union{InfiniteMPO{L}, SparseMPO{W, L}},
-        ψ::DenseInfiniteMPS{L},
+function approximate(ψ::DenseInfiniteMPS{L},
         ψ₀::DenseInfiniteMPS{L},
         alg_grad::Union{SimpleIteration}=Defaults.alg_grad(),
-        alg_eig::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig()) where {W, L}
+        alg_eig::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig()) where L
     
 end

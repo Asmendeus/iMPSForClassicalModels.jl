@@ -5,6 +5,13 @@ Abstract type of local impurity tensors, which correspond to local physical quan
 """
 abstract type AbstractLocalImpurity{W, L} end
 
+size(::AbstractLocalImpurity{W, L}) where {W, L} = (W, L)
+length(::AbstractLocalImpurity{W, L}) where {W, L} = W * L
+for func in (:getindex, :lastindex, :setindex!, :iterate, :keys, :isassigned)
+    @eval Base.$func(obj::AbstractLocalImpurity, args...) = $func(obj.A, args...)
+end
+
+
 """
     struct LocalImpurity{W, L}
         A::AbstractMatrix{MPOTensor}

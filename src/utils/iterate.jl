@@ -181,4 +181,4 @@ end
 sign_first_element(A::Number) = sign(A)
 sign_first_element(A::AbstractArray) = sign(A[1])
 sign_first_element(A::AbstractTensorMap) = sign(A[1])
-sign_first_element(A::AbstractTensorWrapper) = sign(A.A[1])
+# sign_first_element(A::AbstractTensorWrapper) = sign(A.A[1])

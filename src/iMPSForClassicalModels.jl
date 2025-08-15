@@ -7,6 +7,7 @@ using Reexport
 @reexport import LinearAlgebra: BLAS, rank, qr, diag, I, diagm, ishermitian
 
 # utils
+export sign_first_element, SimpleIteration
 export trivial, istrivial
 export SimpleIterationInfo, LanczosInfo, ArnoldiInfo
 export BondInfo, FixedPointInfo
@@ -27,7 +28,6 @@ export BondEnvironment, CenterEnvironment
 export environment, contract
 
 # Method
-export sign_first_element, SimpleIteration
 export pushleft, pushright, pushmid
 export leftFixedPoint, rightFixedPoint, midFixedPoint
 
@@ -48,8 +48,8 @@ export AbstractLocalImpurity, LocalImpurity, expectation
 
 # Algorithm
 
-
-
+include("utils/SimpleIteration.jl")
+include("utils/iterate.jl")
 include("utils/Defaults.jl")
 include("utils/TensorMap.jl")
 include("utils/trivial.jl")
@@ -69,8 +69,6 @@ include("Environment/CenterEnvironment.jl")
 include("Environment/environment.jl")
 include("Environment/contract.jl")
 
-include("Method/SimpleIteration.jl")
-include("Method/iterate.jl")
 include("Method/pushleft.jl")
 include("Method/pushright.jl")
 include("Method/pushmid.jl")

@@ -116,11 +116,16 @@ end
 
 ψ1 = iMPS(2)
 ψ2 = randInfiniteMPS(ComplexF64, [ℂ^4, ℂ^3], [ℂ^10, ℂ^10])
-ψ3 = randInfiniteMPS(Float64, 1, 4, 8)'
+ψ3 = randInfiniteMPS(Float64, 1, dp, D)'
 
 ρ1 = iMPO(2)
-ρ2 = identityInfiniteMPO(ComplexF64, [ℝ^4, ℝ^3])
+ρ2 = identityInfiniteMPO(ComplexF64, [ℝ^dp, ℝ^dp])
 ρ3 = identityInfiniteMPO(Float64, 3, ℂ^4)'
 
 Z = SparseMPO(MPOTensor[O1 O1; O2 O2])
 M = LocalImpurity(MPOTensor[O1 O1; O2 O2])
+
+ψ = randInfiniteMPS(Float64, 1, dp, D)
+H = SparseMPO(MPOTensor[O1;;])
+M = LocalImpurity(MPOTensor[O1;;])
+expectation(ψ, H, ψ', M)

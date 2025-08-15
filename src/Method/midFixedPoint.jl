@@ -1,23 +1,23 @@
 """
-    midFixedPoint(env::S, X₀::T, alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi()) where {S, T}
+    midFixedPoint(env::S, X₀::T, alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig()) where {S, T}
 
 A series of functions for solving mid fixed point equations or maximum eigenequations.
 
 # Arguments
 `env::S`: environment for solving fixed point equations or maximum eigenequations
 `X₀::T`: initial state
-`alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi()`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
+`alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig()`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
 
 # ===============================================
     midFixedPoint(env::BondEnvironment{N},
                 X₀::Union{BondTensor, AdjointBondTensor}=_default_X₀_midFixedPoint(env, false),
-                alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi();
+                alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig();
                 which::Symbol=:LM) where N
 
 # Arguments
 `env::BondEnvironment{N}`: bond environment
 `X₀::Union{BondTensor, AdjointBondTensor}=_default_X₀_midFixedPoint(env, false)`: initial tensor, guessed solution of fixed point equation
-`alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi()`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
+`alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig()`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
 
 # Keyword Arguments
 `which::Symbol=:LM`: Which eigenvalue to solve by Krylov algorithm
@@ -55,7 +55,7 @@ A series of functions for solving mid fixed point equations or maximum eigenequa
 """
 function midFixedPoint(env::BondEnvironment{N},
             X₀::Union{BondTensor, AdjointBondTensor}=_default_X₀_midFixedPoint(env, false),
-            alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi();
+            alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig();
             which::Symbol=:LM) where N
     if alg isa SimpleIteration
         func = x -> pushmid(x, env.FL, env.FR)
@@ -86,13 +86,13 @@ end
 """
     midFixedPoint(env::CenterEnvironment{N},
                 X₀::Union{LocalTensor{R}, AdjointLocalTensor{R}}=_default_X₀_midFixedPoint(env, false),
-                alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi();
+                alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig();
                 which::Symbol=:LM) where {N, R}
 
 # Arguments
 `env::CenterEnvironment{N}`: center environment
 `X₀::Union{LocalTensor{R}, AdjointLocalTensor{R}}=_default_X₀_midFixedPoint(env, false)`: initial tensor, guessed solution of fixed point equation
-`alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi()`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
+`alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig()`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
 
 # Keyword Arguments
 `which::Symbol=:LM`: Which eigenvalue to solve by Krylov algorithm
@@ -132,7 +132,7 @@ end
 """
 function midFixedPoint(env::CenterEnvironment{N},
             X₀::Union{LocalTensor{R}, AdjointLocalTensor{R}}=_default_X₀_midFixedPoint(env, false),
-            alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Arnoldi();
+            alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig();
             which::Symbol=:LM) where {N, R}
     if alg isa SimpleIteration
         func = x -> pushmid(x, env.FL, env.O, env.FR)

@@ -2,6 +2,8 @@
 
 `iMPSForClassicalModel.jl` is a package based on `TensorKit.jl` for solving 2D classical statistical models under thermodynamic limit.
 
+!WARNING: The package is still under rapid development, whose current version `v0.1` is a demo version. Some features on "top" level are available, but the most efficient implementation is not provided. These problems are expected to be improved in version `v0.2`
+
 ## Problems can be solved
 
 `iMPSForClassicalModel.jl` provides a range of features for MPS/MPO with canonical form and implementations of some algorithms (including `ViTEBD`and `VUMPS`). Here's what it can solve
@@ -76,4 +78,4 @@ For `SparseMPO`,
 **Note**: `SparseMPO` is an iMPO type used to store local tensors of the classical system's partition function. Although it is written as "SparseMPO", it is not always sparse for a classical system, which is just a naming convention inherited from `FiniteMPS.jl`. For a classical model with discrete degrees of freedom (like Ising, Clock), the local tensor corresponding to the partition function is usually dense, with dense degree equal to about 1. However, for a XY-like model with continuous degrees of freedom, the local tensors are usually sparse after discretization. For example, dense degree of classical XY model with truncation dimension 5 (physical dimension d = 11) on square lattice approximates to 0.06, which is typically sparse.
 
 - `SparseMPO`'s field `A` is matrix of `W` rows and `L` columns, but not a vector of length `L`;
-- Eltype of `SparseMPO.A` is `MPOTensor (alias for LocalTensor{4} where T)`, but not a sparse tensor type.
+- Eltype of `SparseMPO.A` is `MPOTensor (alias for LocalTensor{4})`, but not a sparse tensor type.
