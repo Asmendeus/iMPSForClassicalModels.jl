@@ -29,7 +29,7 @@ length(::SparseMPO{W, L}) where {W, L} = W * L
 
 convert(::Type{<:SparseMPO}, A::AbstractMatrix{MPOTensor}) = SparseMPO(A)
 
-function ishermitian(obj::SparseMPO{W, L}; tol::Float64=Defaults.tol_norm) where {W, L}
+function ishermitian(obj::SparseMPO{W, L}; tol::Float64=Defaults.tol_low) where {W, L}
     for w in 1:ceil(Int, W/2), l in 1:L
         norm(convert(Array, obj[w, l]) - convert(Array, permute(obj[end+1-w, l], (1, 3), (2, 4)))) < tol || return false
     end

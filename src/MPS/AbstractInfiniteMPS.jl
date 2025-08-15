@@ -56,9 +56,9 @@ Interface of `DenseInfiniteMPS`, return the global coefficient, where `F` is the
 coef(obj::DenseInfiniteMPS) = obj.c
 
 """
-     Center(obj::DenseInfiniteMPS) -> Vector (length 2)
+     Center(obj::DenseInfiniteMPS) -> ::Union{Nothing, Int64}
 
-Interface of `DenseInfiniteMPS`, return the info of canonical center. `[a, b]` means left-canonical from `1` to `a-1` and right-canonical from `b+1` to `L`.
+Interface of `DenseInfiniteMPS`, return the info of canonical center.
 """
 Center(obj::DenseInfiniteMPS) = obj.Center
 

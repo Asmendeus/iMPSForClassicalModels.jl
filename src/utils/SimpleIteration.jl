@@ -20,3 +20,6 @@ struct SimpleIteration
         return new(tol, maxiter)
     end
 end
+
+const EigenAlgorithm = Union{SimpleIteration, KrylovKit.KrylovAlgorithm}
+const GradientAlgorithm = Union{SimpleIteration}

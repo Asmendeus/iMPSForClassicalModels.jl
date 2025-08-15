@@ -1,23 +1,24 @@
+#! Dev memo: Allows the use of keyword `which_fix` to specify the solution to which fixed point equation is returned
 """
-    leftFixedPoint(env::S, X₀::T, alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig()) where {S, T}
+    leftFixedPoint(env::S, X₀::T, alg::EigenAlgorithm=Defaults.alg_eig) where {S, T}
 
 A series of functions for solving left fixed point equations or maximum eigenequations.
 
 # Arguments
 `env::S`: environment for solving fixed point equations or maximum eigenequations
 `X₀::T`: initial state
-`alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig()`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
+`alg::EigenAlgorithm=Defaults.alg_eig`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
 
 # ===============================================
     leftFixedPoint(A::AbstractVector{<:LocalTensor{R}},
                 X₀::AbstractVector{<:BondTensor}=_default_X₀_leftFixedPoint(A),
-                alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig();
+                alg::EigenAlgorithm=Defaults.alg_eig;
                 kwargs...) where R
 
 # Arguments
 `A::AbstractVector{<:LocalTensor{R}}`: vector of LocalTensor{R}
 `X₀::AbstractVector{<:BondTensor}=_default_X₀_leftFixedPoint(A)`: initial tensors, guessed solution of fixed point equations
-`alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig()`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
+`alg::EigenAlgorithm=Defaults.alg_eig`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
 
 # Keyword Arguments
 `kwargs`: keyword arguments for `leftorth`
@@ -63,7 +64,7 @@ A series of functions for solving left fixed point equations or maximum eigenequ
 """
 function leftFixedPoint(A::AbstractVector{<:LocalTensor{R}},
             X₀::AbstractVector{<:BondTensor}=_default_X₀_leftFixedPoint(A),
-            alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig();
+            alg::EigenAlgorithm=Defaults.alg_eig;
             kwargs...) where R
     (L = length(A)) == length(X₀) || throw(ArgumentError("Mismatched lengths: $L ≠ $(length(X₀))"))
     if alg isa SimpleIteration
@@ -103,20 +104,20 @@ function leftFixedPoint(A::AbstractVector{<:LocalTensor{R}},
         return λ, X, AL, info
     end
 end
-function leftFixedPoint(A::AbstractVector{<:LocalTensor{R}}, alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}) where R
+function leftFixedPoint(A::AbstractVector{<:LocalTensor{R}}, alg::EigenAlgorithm) where R
     return leftFixedPoint(A, _default_X₀_leftFixedPoint(A), alg)
 end
 
 """
     leftFixedPoint(B::AbstractVector{<:AdjointLocalTensor{R}},
                 X₀::AbstractVector{<:AdjointBondTensor}=_default_X₀_leftFixedPoint(B),
-                alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig();
+                alg::EigenAlgorithm=Defaults.alg_eig;
                 kwargs...) where R
 
 # Arguments
 `B::AbstractVector{<:AdjointLocalTensor{R}}`: vector of AdjointLocalTensor{R}
 `X₀::AbstractVector{AdjointBondTensor}=_default_X₀_leftFixedPoint(B)`: initial tensors, guessed solution of fixed point equations
-`alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig()`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
+`alg::EigenAlgorithm=Defaults.alg_eig`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
 
 # Keyword Arguments
 `kwargs`: keyword arguments for `leftorth`
@@ -161,7 +162,7 @@ end
 """
 function leftFixedPoint(B::AbstractVector{<:AdjointLocalTensor{R}},
             X₀::AbstractVector{<:AdjointBondTensor}=_default_X₀_leftFixedPoint(B),
-            alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig();
+            alg::EigenAlgorithm=Defaults.alg_eig;
             kwargs...) where R
     (L = length(B)) == length(X₀) || throw(ArgumentError("Mismatched lengths: $L ≠ $(length(X₀))"))
     if alg isa SimpleIteration
@@ -201,19 +202,19 @@ function leftFixedPoint(B::AbstractVector{<:AdjointLocalTensor{R}},
         return λ, X, BL, info
     end
 end
-function leftFixedPoint(B::AbstractVector{<:AdjointLocalTensor{R}}, alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}) where R
+function leftFixedPoint(B::AbstractVector{<:AdjointLocalTensor{R}}, alg::EigenAlgorithm) where R
     return leftFixedPoint(B, _default_X₀_leftFixedPoint(B), alg)
 end
 
 """
     leftFixedPoint(t::TransferMatrix{L, R},
                 X₀::AbstractVector{<:LeftEnvironmentTensor{2}}=_default_X₀_leftFixedPoint(t),
-                alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig()) where {L, R}
+                alg::EigenAlgorithm=Defaults.alg_eig) where {L, R}
 
 # Arguments
 `t::TransferMatrix{L, R}`: a transfer matrix wrapper
 `X₀::AbstractVector{LeftEnvironmentTensor{2}}=_default_X₀_leftFixedPoint(t)`: initial tensors, guessed solution of fixed point equations
-`alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig()`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
+`alg::EigenAlgorithm=Defaults.alg_eig`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
 
 # Return
 `λ::Vector{<:Number}`: length `L` vector, coefficients of solution tensors of `L` fixed point equations
@@ -247,7 +248,7 @@ end
 """
 function leftFixedPoint(t::TransferMatrix{L, R},
             X₀::AbstractVector{<:LeftEnvironmentTensor{2}}=_default_X₀_leftFixedPoint(t),
-            alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig()) where {L, R}
+            alg::EigenAlgorithm=Defaults.alg_eig) where {L, R}
     L == length(X₀) || throw(ArgumentError("Mismatched lengths: $L ≠ $(length(X₀))"))
     if alg isa SimpleIteration
         func = [x -> pushleft(x, t.A[l], t.B[l]) for l in 1:L]
@@ -280,19 +281,19 @@ function leftFixedPoint(t::TransferMatrix{L, R},
         return λ, X, info
     end
 end
-function leftFixedPoint(t::TransferMatrix{L, R}, alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}) where {L, R}
+function leftFixedPoint(t::TransferMatrix{L, R}, alg::EigenAlgorithm) where {L, R}
     return leftFixedPoint(t, _default_X₀_leftFixedPoint(t), alg)
 end
 
 """
     leftFixedPoint(env::ChannelEnvironment{N, L, R},
                 X₀::AbstractVector{<:LeftEnvironmentTensor{N}}=_default_X₀_leftFixedPoint(env),
-                alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig()) where {N, L, R}
+                alg::EigenAlgorithm=Defaults.alg_eig) where {N, L, R}
 
 # Arguments
 `env::ChannelEnvironment{N, L, R}`: a channel environment wrapper
 `X₀::AbstractVector{<:LeftEnvironmentTensor{N}}=_default_X₀_leftFixedPoint(env)`: initial tensors, guessed solution of fixed point equations
-`alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig()`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
+`alg::EigenAlgorithm=Defaults.alg_eig`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
 
 # Return
 `λ::Vector{<:Number}`: length `L` vector, coefficients of solution tensors of `L` fixed point equations
@@ -338,7 +339,7 @@ end
 """
 function leftFixedPoint(env::ChannelEnvironment{N, L, R},
             X₀::AbstractVector{<:LeftEnvironmentTensor{N}}=_default_X₀_leftFixedPoint(env),
-            alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig()) where {N, L, R}
+            alg::EigenAlgorithm=Defaults.alg_eig) where {N, L, R}
     L == length(X₀) || throw(ArgumentError("Mismatched lengths: $L ≠ $(length(X₀))"))
     if alg isa SimpleIteration
         func = [x -> pushleft(x, env.A[l], env.O[:, l], env.B[l]) for l in 1:L]
@@ -371,7 +372,7 @@ function leftFixedPoint(env::ChannelEnvironment{N, L, R},
         return λ, X, info
     end
 end
-function leftFixedPoint(env::ChannelEnvironment{N, L, R}, alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}) where {N, L, R}
+function leftFixedPoint(env::ChannelEnvironment{N, L, R}, alg::EigenAlgorithm) where {N, L, R}
     return leftFixedPoint(env, _default_X₀_leftFixedPoint(env), alg)
 end
 

@@ -7,13 +7,13 @@ isadjoint(::Union{LocalTensor, LeftEnvironmentTensor, RightEnvironmentTensor}) =
 isadjoint(::AdjointLocalTensor) = true
 
 """
-    isLeftIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=Defaults.tol_norm)
-    isLeftIsometric(A::AbstractLocalTensor; tol::Float64=Defaults.tol_norm)
+    isLeftIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=Defaults.tol_low)
+    isLeftIsometric(A::AbstractLocalTensor; tol::Float64=Defaults.tol_low)
 
 # Return
 -`::Bool`: whether the R-leg local tensor `A` is left-orthogonal
 """
-function isLeftIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=Defaults.tol_norm)
+function isLeftIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=Defaults.tol_low)
     if numout(A) == 1 && numin(A) == 1 && isadjoint == false
         # BondTensor
         @tensor E[-1; -2] := A[1 -2] * A'[-1 1]
@@ -72,19 +72,19 @@ function isLeftIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=Def
         throw(ArgumentError("Unsupported space: $(space(A))"))
     end
 end
-function isLeftIsometric(A::AbstractLocalTensor; tol::Float64=Defaults.tol_norm)::Bool
+function isLeftIsometric(A::AbstractLocalTensor; tol::Float64=Defaults.tol_low)::Bool
     return isLeftIsometric(A.A, isadjoint(A); tol=tol)
 end
 
 
 """
-    isRightIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=Defaults.tol_norm)
-    isRightIsometric(A::AbstractLocalTensor; tol::Float64=Defaults.tol_norm)
+    isRightIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=Defaults.tol_low)
+    isRightIsometric(A::AbstractLocalTensor; tol::Float64=Defaults.tol_low)
 
 # Return
 -`::Bool`: whether the R-leg local tensor `A` is right-orthogonal
 """
-function isRightIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=Defaults.tol_norm)
+function isRightIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=Defaults.tol_low)
     if numout(A) == 1 && numin(A) == 1 && isadjoint == false
         # BondTensor
         @tensor E[-1; -2] := A[-1 1] * A'[1 -2]
@@ -143,7 +143,7 @@ function isRightIsometric(A::AbstractTensorMap, isadjoint::Bool; tol::Float64=De
         throw(ArgumentError("Unsupported space: $(space(A))"))
     end
 end
-function isRightIsometric(A::AbstractLocalTensor; tol::Float64=Defaults.tol_norm)::Bool
+function isRightIsometric(A::AbstractLocalTensor; tol::Float64=Defaults.tol_low)::Bool
     return isRightIsometric(A.A, isadjoint(A); tol=tol)
 end
 

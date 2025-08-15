@@ -1,11 +1,12 @@
+#! Dev memo: Approximate treatment for large W
 """
     expectation(ψ::DenseInfiniteMPS{L}, H::SparseMPO{W, L}, ψ′::AdjointInfiniteMPS{L}, M::LocalImpurity{W, L};
-            alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig()) -> Number
+            alg::EigenAlgorithm=Defaults.alg_eig) -> Number
 
 Calculate 1-site physical quantity expectation.
 """
 function expectation(ψ::DenseInfiniteMPS{L}, H::SparseMPO{W, L}, ψ′::AdjointInfiniteMPS{L}, M::LocalImpurity{W, L};
-            alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig()) where {W, L}
+            alg::EigenAlgorithm=Defaults.alg_eig) where {W, L}
 
     _, _, AL, _ = leftFixedPoint(ψ.A, alg)
     _, _, AR, _ = rightFixedPoint(ψ.A, alg)
@@ -21,12 +22,12 @@ end
 """
     expectation(ψ::DenseInfiniteMPS{L}, H::SparseMPO{W, L}, ψ′::AdjointInfiniteMPS{L},
             M1::LocalImpurity{W, L}, M2::LocalImpurity{W, L}, r::Int64;
-            alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig()) -> Vector{<:Number}
+            alg::EigenAlgorithm=Defaults.alg_eig) -> Vector{<:Number}
 Calculate 2-site correlation function expectation, return length `r` Vector.
 """
 function expectation(ψ::DenseInfiniteMPS{L}, H::SparseMPO{W, L}, ψ′::AdjointInfiniteMPS{L},
             M1::LocalImpurity{W, L}, M2::LocalImpurity{W, L}, r::Int64;
-            alg::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}=Defaults.alg_eig()) where {W, L}
+            alg::EigenAlgorithm=Defaults.alg_eig) where {W, L}
 
     _, _, AL, _ = leftFixedPoint(ψ.A, alg)
     _, _, AR, _ = rightFixedPoint(ψ.A, alg)

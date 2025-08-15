@@ -1,7 +1,7 @@
 """
      mutable struct InfiniteMPS{L, T<:Union{Float64, ComplexF64}} <: DenseInfiniteMPS{L, T}
           const A::AbstractVector{<:AbstractMPSTensor}
-          const Center::Vector{Int64}
+          Center::Union{Nothing, Int64}
           c::T
      end
 
@@ -11,8 +11,8 @@ Concrete type of iMPS, where `L` is the cell length, `T == Float64` or `ComplexF
     const A::AbstractVector{<:AbstractMPSTensor}
 Length L vector to store the local tensors. Note the vector `A` is immutable while the local tensors in it are mutable.
 
-    const Center::Vector{Int64}
-Length 2 vector to label the canonical boundaries. `[a, b]` means left-canonical from `1` to `a-1` and right-canonical from `b+1` to `L`.
+    const Center::Union{Nothing, Int64}
+Field labeling the canonical center. Local tensors are left-canonical from `1` to `Center-1` and right-canonical from `Center+1` to `L`. `nothing` means not canonicalized.
 
     c::T
 The global coefficient, i.e. we represented an iMPS with L local tensors and an additional scalar `c`, in order to avoid too large/small local tensors.
@@ -32,13 +32,12 @@ Automatically convert local tensors to warpper type `MPSTensor`.
 """
 mutable struct InfiniteMPS{L, T<:Union{Float64, ComplexF64}} <: DenseInfiniteMPS{L, T}
     const A::AbstractVector{<:AbstractMPSTensor}
-    const Center::Vector{Int64}
+    Center::Union{Nothing, Int64}
     c::T
 
-    function InfiniteMPS{L, T}(A::AbstractVector{<:AbstractMPSTensor}=Vector{MPSTensor}(undef, L), Center::Vector{Int64}=[1, L], c::T=one(T)) where {L, T <: Union{Float64, ComplexF64}}
+    function InfiniteMPS{L, T}(A::AbstractVector{<:AbstractMPSTensor}=Vector{MPSTensor}(undef, L), Center::Union{Nothing, Int64}=nothing, c::T=one(T)) where {L, T <: Union{Float64, ComplexF64}}
         L == length(A) || throw(ArgumentError("Mismatched lengths: $L ≠ $(length(A))"))
-        length(Center) == 2 || throw(ArgumentError("Illegal length of `Center` $(length(Center)), which should be 2"))
-        1 ≤ Center[1] ≤ Center[2] ≤ L || throw(ArgumentError("Illegal canonical boundary positions: !(1 ≤ $(Center[1]) ≤ $(Center[2]) ≤ $L)"))
+        isnothing(Center) || throw(ArgumentError("Illegal behavior of specifying canonical center when generating an iMPS. Please use `canonicalize!` or `setCenter!` to set it."))
 
         if T == ComplexF64  # promote each A
             try
@@ -58,12 +57,12 @@ mutable struct InfiniteMPS{L, T<:Union{Float64, ComplexF64}} <: DenseInfiniteMPS
     end
     InfiniteMPS(L::Int64, T::DataType=Defaults.datatype) = InfiniteMPS{L, T}()
 
-    function InfiniteMPS(A::AbstractVector{<:AbstractMPSTensor}, Center::Vector{Int64}=[1, length(A)], c::T=one(mapreduce(eltype, promote_type, A))) where T
+    function InfiniteMPS(A::AbstractVector{<:AbstractMPSTensor}, Center::Union{Nothing, Int64}=nothing, c::T=one(mapreduce(eltype, promote_type, A))) where T
         L = length(A)
         T == mapreduce(eltype, promote_type, A) || throw(ArgumentError("Mismatched datatypes: $(mapreduce(eltype, promote_type, A)) ≠ $T"))
         return InfiniteMPS{L, T}(A, Center, c)
     end
-    function InfiniteMPS(A::AbstractVector{<:AbstractTensorMap}, Center::Vector{Int64}=[1, length(A)], c::T=one(mapreduce(eltype, promote_type, A))) where T
+    function InfiniteMPS(A::AbstractVector{<:AbstractTensorMap}, Center::Union{Nothing, Int64}=nothing, c::T=one(mapreduce(eltype, promote_type, A))) where T
         return InfiniteMPS(convert(Vector{MPSTensor}, A), Center, c)
     end
 end
@@ -94,7 +93,8 @@ function randInfiniteMPS(::Type{T}, pspace::AbstractVector{<:VectorSpace}, aspac
     obj = InfiniteMPS(L, T)
     for si in 1:L
         si₊ = mod(si, L) + 1
-        obj[si] = randisometry(T, aspace[si]⊗pspace[si], aspace[si₊])
+        # obj[si] = randisometry(rand, T, aspace[si]⊗pspace[si], aspace[si₊])   # Error: lead to a singular fixed point
+        obj[si] = TensorMap(rand, T, aspace[si]⊗pspace[si], aspace[si₊])
     end
 
     canonicalize!(obj, 1)

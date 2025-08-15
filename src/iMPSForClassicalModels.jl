@@ -8,6 +8,7 @@ using Reexport
 
 # utils
 export sign_first_element, SimpleIteration
+# export EigenAlgorithm, GradientAlgorithm
 export trivial, istrivial
 export SimpleIterationInfo, LanczosInfo, ArnoldiInfo
 export BondInfo, FixedPointInfo
@@ -34,7 +35,7 @@ export leftFixedPoint, rightFixedPoint, midFixedPoint
 # iMPS
 export AbstractInfiniteMPS, DenseInfiniteMPS, coef, Center
 export AdjointInfiniteMPS
-export canonicalize!
+export canonicalize!, setCenter!
 export InfiniteMPS, iMPS, randInfiniteMPS
 
 # iMPO
@@ -79,6 +80,7 @@ include("Method/midFixedPoint.jl")
 include("MPS/AbstractInfiniteMPS.jl")
 include("MPS/AdjointInfiniteMPS.jl")
 include("MPS/canonicalize.jl")
+include("MPS/setCenter.jl")
 include("MPS/InfiniteMPS.jl")
 
 include("MPO/InfiniteMPO.jl")

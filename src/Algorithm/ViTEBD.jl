@@ -1,8 +1,8 @@
 struct ViTEBD
-    alg_eig::Union{SimpleIteration, KrylovKit.KrylovAlgorithm}
+    alg_eig::EigenAlgorithm
     tol_eig::Float64
 
-    alg_grad::Union{SimpleIteration}
+    alg_grad::GradientAlgorithm
     tol_grad::Float64
 
     maxlayer::Int64

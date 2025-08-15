@@ -67,7 +67,8 @@ For `Method`,
 
 For `iMPS`, similar to `MPS` in `FiniteMPS.jl`
 
-- `canonicalize!` support only `si` as the orthogonal center, not `siL` and `siR`;
+- Type of the field `Centor` of `iMPS` is `Union{Nothing, Int64}`. `Center=nothing` denotes uncanonicalized, and `Center::Int64` indicates the location of the canonical center. Notice that direct generation of an iMPS with a specified canonical center is prohibited. Please set the canonical center from `Nothing` to `Int64` using `canonicalize!`.
+- `canonicalize!` support only `si` as the canonical center, not `siL` and `siR`;
 
 For `iMPO`, similar to `MPO` in `FiniteMPS.jl`
 
