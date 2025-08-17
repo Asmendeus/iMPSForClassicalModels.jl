@@ -13,7 +13,7 @@ end
 """
     abstract type DenseInfiniteMPS{L, T<:Union{Float64, ComplexF64}} <: AbstractInfiniteMPS{L} end
 
-Abstract type of dense iMPS/iMPO with unit cell length `L`.
+Abstract type of dense iMPS/iMPO with unit cell length `L` and data type `T`.
 """
 abstract type DenseInfiniteMPS{L, T<:Union{Float64, ComplexF64}} <: AbstractInfiniteMPS{L} end
 
@@ -28,7 +28,7 @@ function Base.setindex!(obj::DenseInfiniteMPS{L, ComplexF64}, A::T, si::Int64) w
 end
 
 """
-     normalize!(obj::DenseInfiniteMPS) -> obj
+    normalize!(obj::DenseInfiniteMPS) -> obj
 
 Normalize a given iMPS/iMPO according to inner-induced norm.
 
@@ -40,7 +40,7 @@ function normalize!(obj::DenseInfiniteMPS)
 end
 
 """
-     norm(obj::DenseInfiniteMPS) -> ::Float64
+    norm(obj::DenseInfiniteMPS) -> ::Float64
 
 Return the inner-induced norm. Note we assume the iMPS/iMPO satisfies a canonical form and the center tensor is normalized, hence the norm is just `abs(c)`.
 """
@@ -49,21 +49,35 @@ function norm(obj::DenseInfiniteMPS)
 end
 
 """
-     coef(obj::DenseInfiniteMPS) -> ::F
+    coef(obj::DenseInfiniteMPS) -> ::F
 
 Interface of `DenseInfiniteMPS`, return the global coefficient, where `F` is the number type of given MPS.
 """
 coef(obj::DenseInfiniteMPS) = obj.c
 
 """
-     Center(obj::DenseInfiniteMPS) -> ::Union{Nothing, Int64}
+    Center(obj::DenseInfiniteMPS) -> ::Union{Nothing, Int64}
 
 Interface of `DenseInfiniteMPS`, return the info of canonical center.
 """
 Center(obj::DenseInfiniteMPS) = obj.Center
 
 """
-     complex(obj::DenseInfiniteMPS{L}) -> ::DenseInfiniteMPS{L, ComplexF64}
+    iscanonical(obj::DenseInfiniteMPS) -> ::Bool
+
+Return !isnothing(obj.Center)
+"""
+iscanonical(obj::DenseInfiniteMPS) = !isnothing(obj.Center)
+
+"""
+    isuniform(obj::DenseInfiniteMPS) -> ::Bool
+
+Return isnothing(obj.Center)
+"""
+isuniform(obj::DenseInfiniteMPS) = isnothing(obj.Center)
+
+"""
+    complex(obj::DenseInfiniteMPS{L, Float64}) -> ::DenseInfiniteMPS{L, ComplexF64}
 
 Return a copy of given iMPS/iMPO but with `ComplexF64` as basic field.
 """
@@ -77,6 +91,41 @@ function complex(obj::DenseInfiniteMPS{L, Float64}) where L
     return obj_c
 end
 complex(obj::DenseInfiniteMPS{L, ComplexF64}) where L = deepcopy(obj)
+
+"""
+    getAllCanonicalFormTensors(obj::DenseInfiniteMPS{L, T}; kwargs...)
+        -> AL::Vector{LocalTensor{R}}, AR::Vector{LocalTensor{R}}, AC::Vector{LocalTensor{R}}, C::Vector{BondTensor}
+
+Get all tensors of an iMPS/iMPO with canonical form.
+
+`kwargs` is propagated to `setCenter`, `leftorth` and `rightorth`
+"""
+function getAllCanonicalFormTensors(obj::DenseInfiniteMPS{L, T}; kwargs...) where {L, T}
+    A = setCenter(obj, 1; kwargs...).A
+
+    AL = typeof(A)(undef, L)
+    AR = typeof(A)(undef, L)
+    AC = typeof(A)(undef, L)
+    C = Vector{BondTensor}(undef, L)
+
+    AC[1] = A[1]
+    AR[2:end] = A[2:end]
+    C[1], AR[1] = rightorth(A[1]; kwargs...)
+
+    for l in 1:L-1
+        A[l], C[l+1] = leftorth(A[l]; kwargs...)
+        A[l+1] = C[l+1] * A[l+1]
+        AL[l] = A[l]
+        AC[l+1] = A[l+1]
+    end
+    AL[L], tmp = leftorth(A[L]; kwargs...)
+
+    _, s1, _ = tsvd(tmp.A)
+    _, s2, _ = tsvd(C[1].A)
+    @assert norm(s1 - s2) < Defaults.tol_low "Unexpected `BondTensor` inequality"
+
+    return AL, AR, AC, C
+end
 
 function Base.show(io::IO, obj::DenseInfiniteMPS{L}) where L
     any(i -> !isassigned(obj.A, i), 1:L) && return println(io, "$(typeof(obj)): L = $L, to be initialized !")

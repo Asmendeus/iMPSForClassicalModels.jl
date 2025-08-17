@@ -58,7 +58,7 @@ const MPSTensor = LocalTensor{3}
 const MPOTensor = LocalTensor{4}
 
 
-# ========== BondTensor multiplication ==========
+# ========== BondTensor base math ==========
 # Notice A * B = (A' * B')'   if {typeof(A), typeof(B)} = {BondTensor, MPSTensor}
 function Base.:(*)(A::BondTensor, B::LocalTensor{R}) where R
     if R == 2
@@ -96,3 +96,6 @@ function Base.:(*)(A::LocalTensor{R}, B::BondTensor) where R
     end
     return typeof(A)(E)
 end
+
+sqrt(A::BondTensor) = BondTensor(sqrt(A.A))
+inv(A::BondTensor) = BondTensor(inv(A.A))

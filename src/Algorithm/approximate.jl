@@ -11,9 +11,13 @@ Generate the optimal approximation `ψ′` with maximum overlap with `ψ` and wi
 `alg_grad::GradientAlgorithm=Defaults.alg_grad`: algorithm for solving gradient problem
 `alg_eig::EigenAlgorithm=Defaults.alg_eig`: algorithm for solving eigenvalue problem
 """
-function approximate(ψ::DenseInfiniteMPS{L},
+function approximate!(ψ::DenseInfiniteMPS{L},
         ψ₀::DenseInfiniteMPS{L},
         alg_grad::GradientAlgorithm=Defaults.alg_grad,
         alg_eig::EigenAlgorithm=Defaults.alg_eig) where L
+
+    setCenter!(ψ, 1)
+    setCenter!(ψ₀, 1)
+
     
 end

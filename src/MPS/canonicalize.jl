@@ -1,16 +1,17 @@
 """
-canonicalize!(obj::DenseInfiniteMPS, si::Int64)
+    canonicalize!(obj::DenseInfiniteMPS{L, T}, si::Int64; XL₀::AbstractVector{<:LocalTensor{R}}=_default_X₀_leftFixedPoint(obj.A), XR₀::AbstractVector{<:LocalTensor{R}}=_default_X₀_rightFixedPoint(obj.A), alg::EigenAlgorithm=Defaults.alg_eig)
 
-Canonicalize the iMPS where all sites < `si` are left-canonical and all sites > `si` are right-canonical.
+Canonicalize an iMPS/iMPO with uniform form.
 
 `alg::EigenAlgorithm` is the algorithm solving the fixed point.
 """
-function canonicalize!(obj::DenseInfiniteMPS{L}, si::Int64; alg::EigenAlgorithm=Defaults.alg_eig) where L
-    1 ≤ si ≤ L || throw(ArgumentError("Canonical center position `$si` is out of iMPS range `1 ~ $L`"))
+function canonicalize!(obj::DenseInfiniteMPS{L, T}, si::Int64; XL₀::AbstractVector{<:LocalTensor{R}}=_default_X₀_leftFixedPoint(obj.A), XR₀::AbstractVector{<:LocalTensor{R}}=_default_X₀_rightFixedPoint(obj.A), alg::EigenAlgorithm=Defaults.alg_eig) where {L, T, R}
 
-    #! Dev memo: allow default X₀
-    _, XL, AL, _ = leftFixedPoint(obj.A, alg)
-    _, XR, AR, _ = rightFixedPoint(obj.A, alg)
+    1 ≤ si ≤ L || throw(ArgumentError("Canonical center position `$si` is out of iMPS range `1 ~ $L`"))
+    isuniform(obj) || throw(ArgumentError("Illegal behavior of canonicalizing an iMPS/iMPO with canonical form"))
+
+    _, XL, AL, _ = leftFixedPoint(obj.A, XL₀, alg)
+    _, XR, AR, _ = rightFixedPoint(obj.A, XR₀, alg)
 
     for i in 1:si-1
         obj.A[i] = AL[i]
@@ -25,4 +26,9 @@ function canonicalize!(obj::DenseInfiniteMPS{L}, si::Int64; alg::EigenAlgorithm=
 
     obj.Center = si
     return obj
+end
+
+function canonicalize(obj::DenseInfiniteMPS{L, T}, si::Int64; XL₀::AbstractVector{<:LocalTensor{R}}=_default_X₀_leftFixedPoint(obj.A), XR₀::AbstractVector{<:LocalTensor{R}}=_default_X₀_rightFixedPoint(obj.A), alg::EigenAlgorithm=Defaults.alg_eig) where {L, T, R}
+    obj′ = deepcopy(obj)
+    return canonicalize!(obj′, si; XL₀=XL₀, XR₀=XR₀, alg=alg)
 end

@@ -1,4 +1,4 @@
-#! Dev memo: Allows the use of keyword `which_fix` to specify the solution to which fixed point equation is returned
+#! Dev memo: Introduce keyword `which_fix` to specify the solution to which fixed point equation is returned
 """
     rightFixedPoint(env::S, X₀::T, alg::EigenAlgorithm=Defaults.alg_eig) where {S, T}
 

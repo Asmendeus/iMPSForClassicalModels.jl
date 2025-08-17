@@ -74,9 +74,9 @@ For `iMPO`, similar to `MPO` in `FiniteMPS.jl`
 
 - `identityInfiniteMPO` generates a direct product state as an iMPO, made up of onsite identity matrices;
 
-For `SparseMPO`,
+For `SparseInfiniteMPO`, similar to `SparseMPO` in `FiniteMPS.jl`
 
-**Note**: `SparseMPO` is an iMPO type used to store local tensors of the classical system's partition function. Although it is written as "SparseMPO", it is not always sparse for a classical system, which is just a naming convention inherited from `FiniteMPS.jl`. For a classical model with discrete degrees of freedom (like Ising, Clock), the local tensor corresponding to the partition function is usually dense, with dense degree equal to about 1. However, for a XY-like model with continuous degrees of freedom, the local tensors are usually sparse after discretization. For example, dense degree of classical XY model with truncation dimension 5 (physical dimension d = 11) on square lattice approximates to 0.06, which is typically sparse.
+**Note**: `SparseInfiniteMPO` is an iMPO type used to store local tensors of the classical system's partition function. Although it is written as "SparseInfiniteMPO", it is not always sparse for a classical system, which is just a naming convention inherited from `FiniteMPS.jl`. For a classical model with discrete degrees of freedom (like Ising, Clock), the local tensor corresponding to the partition function is usually dense, with dense degree equal to about 1. However, for a XY-like model with continuous degrees of freedom, the local tensors are usually sparse after discretization. For example, dense degree of classical XY model with truncation dimension 5 (physical dimension d = 11) on square lattice approximates to 0.06, which is typically sparse.
 
-- `SparseMPO`'s field `A` is matrix of `W` rows and `L` columns, but not a vector of length `L`;
-- Eltype of `SparseMPO.A` is `MPOTensor (alias for LocalTensor{4})`, but not a sparse tensor type.
+- `SparseInfiniteMPO`'s field `A` is matrix of `W` rows and `L` columns, but not a vector of length `L`;
+- Eltype of `SparseInfiniteMPO.A` is `MPOTensor (alias for LocalTensor{4})`, but not a sparse tensor type.
