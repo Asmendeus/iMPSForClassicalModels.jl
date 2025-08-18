@@ -148,8 +148,8 @@ function isRightIsometric(A::AbstractLocalTensor; tol::Float64=Defaults.tol_low)
 end
 
 """
-     leftorth(A::LocalTensor{R₁}; trunc = notrunc(), kwargs...)
-     leftorth(A::AdjointLocalTensor{R₁}; trunc = notrunc(), kwargs...)
+     leftorth(A::LocalTensor{R₁}; trunc = notrunc(), ismerge::Bool=true, kwargs...)
+     leftorth(A::AdjointLocalTensor{R₁}; trunc = notrunc(), ismerge::Bool=true, kwargs...)
 
 Left canonicalize a local tensor.
 
@@ -157,11 +157,12 @@ Left canonicalize a local tensor.
 -`::LeftIsometricTensor{R₁}`: left isometric tensor
 -`::BondTensor`: bond tensor
 
-If `trunc = notrunc()`, use `TensorKit.leftorth`, otherwise, use `TensorKit.tsvd`.
+If `trunc = notrunc() && ismerge`, use `TensorKit.leftorth`, otherwise, use `TensorKit.tsvd`.
+If `!ismerge`, preserve diagonal singular spectrum as center bond tensor.
 Propagate `kwargs` to the TensorKit functions.
 """
-function leftorth(A::LocalTensor{R₁}; trunc=notrunc(), kwargs...) where R₁
-    if trunc == notrunc()
+function leftorth(A::LocalTensor{R₁}; trunc=notrunc(), ismerge::Bool=true, kwargs...) where R₁
+    if trunc == notrunc() && ismerge
         Q, R = leftorth(A.A, (Tuple(1:R₁-1), (R₁,)); kwargs...)
         if R₁ == 2 || R₁ == 3
             return LocalTensor(Q), BondTensor(R), BondInfo(Q, :R)
@@ -171,35 +172,32 @@ function leftorth(A::LocalTensor{R₁}; trunc=notrunc(), kwargs...) where R₁
     else
         u, s, vd, info = tsvd(A, (Tuple(1:R₁-1), (R₁,)); trunc=trunc, kwargs...)
         if R₁ == 2 || R₁ == 3
-            return LocalTensor(u), LocalTensor(s * vd), info
+            if ismerge
+                return LocalTensor(u), LocalTensor(s * vd), info
+            else
+                return LocalTensor(u), LocalTensor(s), LocalTensor(vd), info
+            end
         else
-            return LocalTensor(permute(u, (1, 2), Tuple(3:R₁))), LocalTensor(s * vd), info
+            if ismerge
+                return LocalTensor(permute(u, (1, 2), Tuple(3:R₁))), LocalTensor(s * vd), info
+            else
+                return LocalTensor(permute(u, (1, 2), Tuple(3:R₁))), LocalTensor(s), LocalTensor(vd), info
+            end
         end
     end
 end
-function leftorth(A::AdjointLocalTensor{R₁}; trunc=notrunc(), kwargs...) where R₁
-    if trunc == notrunc()
-        if R₁ == 2
-            Q, R = leftorth(A.A, ((2,), (1,)); kwargs...)
-            return AdjointLocalTensor(permute(Q, (2,), (1,))), AdjointBondTensor(permute(R, (2,), (1,))), BondInfo(Q, :R)
-        else
-            Q, R = leftorth(A.A, (Tuple(vcat(1:R₁-3, [R₁-1, R₁])), (R₁-2,)); kwargs...)
-            return AdjointLocalTensor(permute(Q, Tuple(vcat(1:R₁-3, [R₁,])), (R₁-2, R₁-1))), AdjointBondTensor(permute(R, (2,), (1,))), BondInfo(Q, :R)
-        end
+function leftorth(A::AdjointLocalTensor{R₁}; trunc=notrunc(), ismerge::Bool=true, kwargs...) where R₁
+    res = leftorth(A'; trunc=trunc, ismerge=ismerge, kwargs...)
+    if ismerge
+        return res[1]', res[2]', res[3]
     else
-        if R₁ == 2
-            u, s, vd, info = tsvd(A, ((2,), (1,)); trunc=trunc, kwargs...)
-            return AdjointLocalTensor(permute(u, (2,), (1,))), AdjointBondTensor(permute(s * vd, (2,), (1,))), info
-        else
-            u, s, vd, info =  tsvd(A, (Tuple(vcat(1:R₁-3, [R₁-1, R₁])), (R₁-2,)); trunc=trunc, kwargs...)
-            return AdjointLocalTensor(permute(u, Tuple(vcat(1:R₁-3, [R₁,])), (R₁-2, R₁-1))), AdjointBondTensor(permute(s * vd, (2,), (1,))), info
-        end
+        return res[1]', res[2]', res[3]', res[4]
     end
 end
 
 """
-    rightorth{R₂}(A::LocalTensor; trunc = notrunc(), kwargs...)
-    rightorth{R₂}(A::AdjointLocalTensor; trunc = notrunc(), kwargs...)
+    rightorth{R₂}(A::LocalTensor; trunc = notrunc(), ismerge::Bool=true, kwargs...)
+    rightorth{R₂}(A::AdjointLocalTensor; trunc = notrunc(), ismerge::Bool=true, kwargs...)
 
 Right canonicalize a local tensor.
 
@@ -207,11 +205,12 @@ Right canonicalize a local tensor.
 -`::BondTensor`: bond tensor
 -`::LocalTensor{R₂}`: right isometric tensor
 
-If `trunc = notrunc()`, use `TensorKit.rightorth`, otherwise, use `TensorKit.tsvd`.
+If `trunc = notrunc() && ismerge`, use `TensorKit.rightorth`, otherwise, use `TensorKit.tsvd`.
+If `!ismerge`, preserve diagonal singular spectrum as center bond tensor.
 Propagate `kwargs` to the TensorKit functions.
 """
-function rightorth(A::LocalTensor{R₂}; trunc=notrunc(), kwargs...) where R₂
-    if trunc == notrunc()
+function rightorth(A::LocalTensor{R₂}; trunc=notrunc(), ismerge::Bool=true, kwargs...) where R₂
+    if trunc == notrunc() && ismerge
         L, Q = rightorth(A.A, ((1,), Tuple(2:R₂)); kwargs...)
         if R₂ == 2
             return BondTensor(L), LocalTensor(Q), BondInfo(Q, :L)
@@ -221,28 +220,25 @@ function rightorth(A::LocalTensor{R₂}; trunc=notrunc(), kwargs...) where R₂
     else
         u, s, vd, info = tsvd(A, ((1,), Tuple(2:R₂)); trunc=trunc, kwargs...)
         if R₂ == 2
-            return BondTensor(u * s), LocalTensor(vd), info
+            if ismerge
+                return BondTensor(u * s), LocalTensor(vd), info
+            else
+                return BondTensor(u), BondTensor(s), LocalTensor(vd), info
+            end
         else
-            return BondTensor(u * s), LocalTensor(permute(vd, (1, 2), Tuple(3:R₂))), info
+            if ismerge
+                return BondTensor(u * s), LocalTensor(permute(vd, (1, 2), Tuple(3:R₂))), info
+            else
+                return BondTensor(u), BondTensor(s), LocalTensor(permute(vd, (1, 2), Tuple(3:R₂))), info
+            end
         end
     end
 end
-function rightorth(A::AdjointLocalTensor{R₂}; trunc=notrunc(), kwargs...) where R₂
-    if trunc == notrunc()
-        if R₂ == 2
-            L, Q = rightorth(A.A, ((2,), (1, )); kwargs...)
-            return AdjointBondTensor(permute(L, (2,), (1,))), AdjointLocalTensor(permute(Q, (2,), (1,))), BondInfo(Q, :L)
-        else
-            L, Q = rightorth(A.A, ((R₂-1,), Tuple(vcat((1:R₂-2), [R₂,]))); kwargs...)
-            return AdjointBondTensor(permute(L, (2,), (1,))), AdjointLocalTensor(permute(Q, Tuple(2:R₂-1), (1, R₂))), BondInfo(Q, :L)
-        end
+function rightorth(A::AdjointLocalTensor{R₂}; trunc=notrunc(), ismerge::Bool=true, kwargs...) where R₂
+    res = rightorth(A'; trunc=trunc, ismerge=ismerge, kwargs...)
+    if ismerge
+        return res[1]', res[2]', res[3]
     else
-        if R₂ == 2
-            u, s, vd, info = tsvd(A, ((2,), (1, )); trunc=trunc, kwargs...)
-            return AdjointBondTensor(permute(u * s, (2,), (1,))), AdjointLocalTensor(permute(vd, (2,), (1,))), info
-        else
-            u, s, vd, info = tsvd(A, ((R₂-1,), Tuple(vcat((1:R₂-2), [R₂,]))); trunc=trunc, kwargs...)
-            return AdjointBondTensor(permute(u * s, (2,), (1,))), AdjointLocalTensor(permute(vd, Tuple(2:R₂-1), (1, R₂))), info
-        end
+        return res[1]', res[2]', res[3]', res[4]
     end
 end

@@ -60,11 +60,13 @@ const MPOTensor = LocalTensor{4}
 
 # ========== BondTensor base math ==========
 # Notice A * B = (A' * B')'   if {typeof(A), typeof(B)} = {BondTensor, MPSTensor}
+function Base.:(*)(A::BondTensor, B::BondTensor)
+    @tensor E[-1; -2] := A.A[-1 1] * B.A[1 -2]
+    return BondTensor(E)
+end
 function Base.:(*)(A::BondTensor, B::LocalTensor{R}) where R
-    if R == 2
-        @tensor E[-1; -2] := A.A[-1 1] * B.A[1 -2]
     # ==== Retain to improve performance ===={
-    elseif R == 3
+    if R == 3
         @tensor E[-1 -2; -3] := A.A[-1 1] * B.A[1 -2 -3]
     elseif R == 4
         @tensor E[-1 -2; -3 -4] := A.A[-1 1] * B.A[1 -2 -3 -4]
@@ -79,10 +81,8 @@ function Base.:(*)(A::BondTensor, B::LocalTensor{R}) where R
     return typeof(B)(E)
 end
 function Base.:(*)(A::LocalTensor{R}, B::BondTensor) where R
-    if R == 2
-        @tensor E[-1; -2] := A.A[-1 1] * B.A[1 -2]
     # ==== Retain to improve performance ===={
-    elseif R == 3
+    if R == 3
         @tensor E[-1 -2; -3] := A.A[-1 -2 1] * B.A[1 -3]
     elseif R == 4
         @tensor E[-1 -2; -3 -4] := A.A[-1 -2 -3 1] * B.A[1 -4]

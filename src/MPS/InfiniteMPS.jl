@@ -31,7 +31,8 @@ Return InfiniteMPS{length(A), T}(A, Center, c)
 Automatically convert `TensorMap` to `MPSTensor`
 """
 mutable struct InfiniteMPS{L, T<:Union{Float64, ComplexF64}} <: DenseInfiniteMPS{L, T}
-    const A::AbstractVector{<:AbstractMPSTensor}
+    const AL::AbstractVector{<:AbstractMPSTensor}
+    const AL::AbstractVector{<:AbstractMPSTensor}
     Center::Union{Nothing, Int64}
     c::T
 

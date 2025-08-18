@@ -52,7 +52,6 @@ export AbstractLocalImpurity, LocalImpurity, expectation
 
 # Algorithm
 
-
 include("utils/SimpleIteration.jl")
 include("utils/iterate.jl")
 include("utils/Defaults.jl")

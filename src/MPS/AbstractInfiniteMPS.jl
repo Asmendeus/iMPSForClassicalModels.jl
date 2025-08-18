@@ -109,20 +109,23 @@ function getAllCanonicalFormTensors(obj::DenseInfiniteMPS{L, T}; kwargs...) wher
     C = Vector{BondTensor}(undef, L)
 
     AC[1] = A[1]
-    AR[2:end] = A[2:end]
-    C[1], AR[1] = rightorth(A[1]; kwargs...)
-
     for l in 1:L-1
-        A[l], C[l+1] = leftorth(A[l]; kwargs...)
-        A[l+1] = C[l+1] * A[l+1]
+        A[l], C[l+1], x = leftorth(A[l]; ismerge=false, kwargs...)
+        A[l+1] = C[l+1] * x * A[l+1]
         AL[l] = A[l]
         AC[l+1] = A[l+1]
     end
-    AL[L], tmp = leftorth(A[L]; kwargs...)
+    AL[L], C[1], x = leftorth(A[L]; ismerge=false, kwargs...)
 
-    _, s1, _ = tsvd(tmp.A)
-    _, s2, _ = tsvd(C[1].A)
-    @assert norm(s1 - s2) < Defaults.tol_low "Unexpected `BondTensor` inequality"
+    AC = map(l -> AL[l] * C[mod(l, L)+1], 1:L)
+    AR = map(l -> inv(C[l]) * AC[l], 1:L)
+
+    @assert norm(C[1] * x * AR[1] - AC[1]) < tol
+    # for l in 1:L
+    #     l₊ = mod(l, L) + 1
+    #     @assert norm(AL[l] * C[l₊] - AC[l]) < Defaults.tol "Mismatched results of left- and right-canonicalization"
+    #     @assert norm(C[l] * AR[l] - AC[l]) < Defaults.tol "Mismatched results of left- and right-canonicalization"
+    # end
 
     return AL, AR, AC, C
 end
