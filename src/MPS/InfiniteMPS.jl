@@ -1,121 +1,32 @@
 """
-     mutable struct InfiniteMPS{L, T<:Union{Float64, ComplexF64}} <: DenseInfiniteMPS{L, T}
-          const A::AbstractVector{<:AbstractMPSTensor}
-          Center::Union{Nothing, Int64}
-          c::T
-     end
+    mutable struct InfiniteMPS{L, T<:Union{Float64, ComplexF64}} <: DenseInfiniteMPS{L, T}
+        const AL::AbstractVector{<:AbstractMPSTensor}
+        const AR::AbstractVector{<:AbstractMPSTensor}
+        const AC::AbstractVector{<:AbstractMPSTensor}
+        const C::AbstractVector{<:AbstractBondTensor}
+    end
 
-Concrete type of iMPS, where `L` is the cell length, `T == Float64` or `ComplexF64` is the number type of local tensors.
+Concrete type of iMPS with canonical form, where `L` is the cell length, `T == Float64` or `ComplexF64` is the number type of local tensors.
 
 # Fields
-    const A::AbstractVector{<:AbstractMPSTensor}
-Length L vector to store the local tensors. Note the vector `A` is immutable while the local tensors in it are mutable.
+    const AL::AbstractVector{<:AbstractMPSTensor}
+Length `L` vector to store the left-canonical tensors.
 
-    const Center::Union{Nothing, Int64}
-Field labeling the canonical center. Local tensors are left-canonical from `1` to `Center-1` and right-canonical from `Center+1` to `L`. `nothing` means iMPS with uniform form.
+    const AR::AbstractVector{<:AbstractMPSTensor}
+Length `L` vector to store the right-canonical tensors.
 
-    c::T
-The global coefficient, i.e. we represented an iMPS with L local tensors and an additional scalar `c`, in order to avoid too large/small local tensors.
+    const AC::AbstractVector{<:AbstractMPSTensor}
+Length `L` vector to store the center tensors.
+
+    const C::AbstractVector{<:AbstractBondTensor}
+Length `L` vector to store the center bond tensors.
 
 # Constructors
-    InfiniteMPS{L, T}(A::AbstractVector{<:AbstractMPSTensor}=Vector{MPSTensor}(undef, L), Center::Vector{Int64}=[1, L], c::T = one(T))
-Standard constructor. Note `Center` must be `nothing`, and we will promote all local tensors if `T == ComplexF64` while the input local tensors in `A` are of `Float64`.
-
-    InfiniteMPS(L::Int64, T::DataType=Defaults.datatype)
-Initialize an iMPS{L, T} with undef local tensors `A` to be filled. Note we initialize `c = one(T)`.
-
-    InfiniteMPS(A::AbstractVector{<:AbstractMPSTensor}, Center::Vector{Int64}=[1, L], c::T=one(T))
-Return InfiniteMPS{length(A), T}(A, Center, c)
-
-    InfiniteMPS(A::AbstractVector{<:AbstractTensorMap}, Center::Union{Nothing, Int64}=nothing, c::T=one(mapreduce(eltype, promote_type, A)))
-Automatically convert `TensorMap` to `MPSTensor`
 """
 mutable struct InfiniteMPS{L, T<:Union{Float64, ComplexF64}} <: DenseInfiniteMPS{L, T}
     const AL::AbstractVector{<:AbstractMPSTensor}
-    const AL::AbstractVector{<:AbstractMPSTensor}
-    Center::Union{Nothing, Int64}
-    c::T
-
-    function InfiniteMPS{L, T}(A::AbstractVector{<:AbstractMPSTensor}=Vector{MPSTensor}(undef, L), Center::Union{Nothing, Int64}=nothing, c::T=one(T); tol::Float64=Defaults.tol) where {L, T <: Union{Float64, ComplexF64}}
-        L == length(A) || throw(ArgumentError("Mismatched lengths: $L ≠ $(length(A))"))
-
-        if !isnothing(Center)
-            (all(x->isLeftIsometric(x; tol=tol), A[1:Center-1]) && all(x->isRightIsometric(x; tol=tol), A[Center+1:L])) || throw(ArgumentError("The canonical iMPS is not canonicalized"))
-            normalize!(A[Center])
-        end
-
-        if T == ComplexF64  # promote each A
-            try
-                for i = 1:L
-                    eltype(A[i]) != T && (A[i] *= one(T))
-                end
-            catch
-                nothing
-            end
-        end
-
-        if !(eltype(A) <: AbstractMPSTensor)
-            A = convert(Vector{MPSTensor}, A)
-        end
-
-        return new{L, T}(A, Center, c)
-    end
-    InfiniteMPS(L::Int64, T::DataType=Defaults.datatype) = InfiniteMPS{L, T}()
-
-    function InfiniteMPS(A::AbstractVector{<:AbstractMPSTensor}, Center::Union{Nothing, Int64}=nothing, c::T=one(mapreduce(eltype, promote_type, A)); tol::Float64=Defaults.tol) where T
-        L = length(A)
-        T == mapreduce(eltype, promote_type, A) || throw(ArgumentError("Mismatched datatypes: $(mapreduce(eltype, promote_type, A)) ≠ $T"))
-        return InfiniteMPS{L, T}(A, Center, c; tol=tol)
-    end
-    function InfiniteMPS(A::AbstractVector{<:AbstractTensorMap}, Center::Union{Nothing, Int64}=nothing, c::T=one(mapreduce(eltype, promote_type, A)); tol::Float64=Defaults.tol) where T
-        return InfiniteMPS(convert(Vector{MPSTensor}, A), Center, c; tol=tol)
-    end
+    const AR::AbstractVector{<:AbstractMPSTensor}
+    const AC::AbstractVector{<:AbstractMPSTensor}
+    const C::AbstractVector{<:AbstractBondTensor}
 end
-
-const iMPS = InfiniteMPS
-
-"""
-    randInfiniteMPS(::Type{T}, pspace::AbstractVector{<:VectorSpace}, aspace::AbstractVector{<:VectorSpace}; kwargs...) -> InfiniteMPS{L, T}
-
-Generate a length `L` random MPS with given length `L` vector `pspace` and `aspace`. `T = Float64`(default) or `ComplexF64` is the number type. Note the canonical center is initialized to the first site. `kwargs` is propagated to `leftorth` and `rightorth`.
-
-    randInfiniteMPS(::Type{T}, L::Int64, pspace::VectorSpace, apsace::VectorSpace; kwargs...) -> InfiniteMPS{L, T}
-
-Assume the same `pspace` and `aspace`, except for the boundary bond, which is assumed to be trivial.
-
-    randInfiniteMPS(::Type{T}, pdim::AbstractVector{Int64}, adim::AbstractVector{Int64}; kwargs...) -> InfiniteMPS{L, T}
-
-Assume all spaces are trivial space, i.e., ℝ for `T == Float64` and ℂ for `T == ComplexF64`.
-
-    randInfiniteMPS(::Type{T}, L::Int64, pdim::Int64, adim::Int64; kwargs...)
-
-Assume the same trivial `pspace` and `aspace`.
-"""
-function randInfiniteMPS(::Type{T}, pspace::AbstractVector{<:VectorSpace}, aspace::AbstractVector{<:VectorSpace}; kwargs...) where T <: Union{Float64, ComplexF64}
-
-    (L = length(pspace)) == length(aspace) || throw(ArgumentError("Mismatched lengths of `pspace` and `aspace`: $(length(pspace)) ≠ $(length(aspace))"))
-
-    obj = InfiniteMPS(L, T)
-    for si in 1:L
-        si₊ = mod(si, L) + 1
-        obj[si] = TensorMap(rand, T, aspace[si]⊗pspace[si], aspace[si₊])
-    end
-
-    canonicalize!(obj, 1)
-    return normalize!(obj)
-end
-function randInfiniteMPS(::Type{T}, L::Int64, pspace::VectorSpace, aspace::VectorSpace; kwargs...) where T <: Union{Float64, ComplexF64}
-    return randInfiniteMPS(T, repeat([pspace,], L), repeat([aspace,], L); kwargs...)
-end
-function randInfiniteMPS(::Type{T}, pdim::AbstractVector{Int64}, adim::AbstractVector{Int64}; kwargs...) where T <: Union{Float64, ComplexF64}
-    spacetype = T == Float64 ? ℝ : ℂ
-    pspace = map(d -> spacetype^d, pdim)
-    aspace = map(d -> spacetype^d, adim)
-    return randInfiniteMPS(T, pspace, aspace; kwargs...)
-end
-function randInfiniteMPS(::Type{T}, L::Int64, pdim::Int64, adim::Int64; kwargs...) where T <: Union{Float64, ComplexF64}
-    spacetype = T == Float64 ? ℝ : ℂ
-    pspace = repeat([spacetype^pdim,], L)
-    aspace = repeat([spacetype^adim,], L)
-    return randInfiniteMPS(T, pspace, aspace; kwargs...)
-end
+const IMPS = InfiniteMPS

@@ -31,24 +31,21 @@ export environment, contract
 # Method
 export pushleft, pushright, pushmid
 export leftFixedPoint, rightFixedPoint, midFixedPoint
-export getAL, getAR
 
 # iMPS
-export AbstractInfiniteMPS, DenseInfiniteMPS, coef, Center, iscanonical, isuniform, getAllCanonicalFormTensors
-export AdjointInfiniteMPS
-export canonicalize!, canonicalize
-export setCenter!, setCenter
-export uniformize!, uniformize
-export InfiniteMPS, iMPS, randInfiniteMPS
+export AbstractInfiniteMPS
+export AbstractUniformMPS, DenseUniformMPS, getA
+export AbstractCanonicalMPS, DenseCanonicalMPS, getAL, getAR, getAR, getC
+
 
 # iMPO
-export InfiniteMPO, iMPO, identityInfiniteMPO
+
 
 # SparseInfiniteMPO
-export SparseInfiniteMPO
+
 
 # Impurity tensor
-export AbstractLocalImpurity, LocalImpurity, expectation
+
 
 # Algorithm
 
@@ -79,22 +76,8 @@ include("Method/pushmid.jl")
 include("Method/leftFixedPoint.jl")
 include("Method/rightFixedPoint.jl")
 include("Method/midFixedPoint.jl")
-include("Method/getAL.jl")
-include("Method/getAR.jl")
 
 include("MPS/AbstractInfiniteMPS.jl")
-include("MPS/InfiniteMPS.jl")
-include("MPS/AdjointInfiniteMPS.jl")
-include("MPS/canonicalize.jl")
-include("MPS/setCenter.jl")
-include("MPS/uniformize.jl")
-
-include("MPO/InfiniteMPO.jl")
-
-include("SparseMPO/SparseInfiniteMPO.jl")
-
-include("LocalImpurity/LocalImpurity.jl")
-include("LocalImpurity/expectation.jl")
 
 
 end # module iMPSForClassicalModels
