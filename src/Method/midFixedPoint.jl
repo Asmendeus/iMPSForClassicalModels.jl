@@ -6,7 +6,7 @@ A series of functions for solving mid fixed point equations or maximum eigenequa
 # Arguments
 `env::S`: environment for solving fixed point equations or maximum eigenequations
 `X₀::T`: initial state
-`alg::EigenAlgorithm=Defaults.alg_eig`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
+`alg::EigenAlgorithm=Defaults.alg_eig`: `SimpleIterator` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
 
 # ===============================================
     midFixedPoint(env::BondEnvironment{N},
@@ -17,7 +17,7 @@ A series of functions for solving mid fixed point equations or maximum eigenequa
 # Arguments
 `env::BondEnvironment{N}`: bond environment
 `X₀::Union{BondTensor, AdjointBondTensor}=_default_X₀_midFixedPoint(env, false)`: initial tensor, guessed solution of fixed point equation
-`alg::EigenAlgorithm=Defaults.alg_eig`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
+`alg::EigenAlgorithm=Defaults.alg_eig`: `SimpleIterator` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
 
 # Keyword Arguments
 `which::Symbol=:LM`: Which eigenvalue to solve by Krylov algorithm
@@ -57,7 +57,7 @@ function midFixedPoint(env::BondEnvironment{N},
             X₀::Union{BondTensor, AdjointBondTensor}=_default_X₀_midFixedPoint(env, false),
             alg::EigenAlgorithm=Defaults.alg_eig;
             which::Symbol=:LM) where N
-    if alg isa SimpleIteration
+    if alg isa SimpleIterator
         func = x -> pushmid(x, env.FL, env.FR)
         λ, X, info = iterate(func, X₀, alg)
         return λ, X, info
@@ -92,7 +92,7 @@ end
 # Arguments
 `env::CenterEnvironment{N}`: center environment
 `X₀::Union{LocalTensor{R}, AdjointLocalTensor{R}}=_default_X₀_midFixedPoint(env, false)`: initial tensor, guessed solution of fixed point equation
-`alg::EigenAlgorithm=Defaults.alg_eig`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
+`alg::EigenAlgorithm=Defaults.alg_eig`: `SimpleIterator` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
 
 # Keyword Arguments
 `which::Symbol=:LM`: Which eigenvalue to solve by Krylov algorithm
@@ -134,7 +134,7 @@ function midFixedPoint(env::CenterEnvironment{N},
             X₀::Union{LocalTensor{R}, AdjointLocalTensor{R}}=_default_X₀_midFixedPoint(env, false),
             alg::EigenAlgorithm=Defaults.alg_eig;
             which::Symbol=:LM) where {N, R}
-    if alg isa SimpleIteration
+    if alg isa SimpleIterator
         func = x -> pushmid(x, env.FL, env.O, env.FR)
         λ, X, info = iterate(func, X₀, alg)
         return λ, X, info

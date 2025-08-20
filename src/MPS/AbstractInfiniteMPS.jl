@@ -26,6 +26,12 @@ Interface of `AbstractUniformMPS`, return the local tensors
 """
 getA(obj::AbstractUniformMPS) = obj.A
 
+# space
+leftVirtualSpace(obj::AbstractUniformMPS) = map(x->leftVirtualSpace(x), obj.A)
+rightVirtualSpace(obj::AbstractUniformMPS) = map(x->rightVirtualSpace(x), obj.A)
+physicalSpace(obj::AbstractUniformMPS) = map(x->physicalSpace(x), obj.A)
+extraPhysicalSpace(obj::AbstractUniformMPS) = map(x->extraPhysicalSpace(x), obj.A)
+
 # ===== Canonical <: Infinite =====
 """
     abstract type AbstractCanonicalMPS{L} <: AbstractInfiniteMPS{L}
@@ -67,6 +73,12 @@ getAC(obj::AbstractCanonicalMPS) = obj.AC
 Interface of `AbstractCanonicalMPS`, return the center bond tensors
 """
 getC(obj::AbstractCanonicalMPS) = obj.C
+
+# space
+leftVirtualSpace(obj::AbstractCanonicalMPS) = map(x->leftVirtualSpace(x), obj.AL)
+rightVirtualSpace(obj::AbstractCanonicalMPS) = map(x->rightVirtualSpace(x), obj.AL)
+physicalSpace(obj::AbstractCanonicalMPS) = map(x->physicalSpace(x), obj.AL)
+extraPhysicalSpace(obj::AbstractCanonicalMPS) = map(x->extraPhysicalSpace(x), obj.AL)
 
 # ===== Dense Uniform <: Uniform =====
 """

@@ -7,10 +7,10 @@ using Reexport
 @reexport import LinearAlgebra: BLAS, rank, qr, diag, I, diagm, ishermitian
 
 # utils
-export sign_first_element, SimpleIteration
+export sign_first_element, SimpleIterator
 # export EigenAlgorithm, GradientAlgorithm
 export trivial, istrivial
-export SimpleIterationInfo, LanczosInfo, ArnoldiInfo
+export SimpleIteratorInfo, LanczosInfo, ArnoldiInfo
 export BondInfo, FixedPointInfo
 
 # Tensor wrapper
@@ -19,6 +19,7 @@ export AbstractLocalTensor, AbstractBondTensor, AbstractMPSTensor, AbstractMPOTe
 export LocalTensor, BondTensor, MPSTensor, MPOTensor
 export AdjointLocalTensor, AdjointBondTensor, AdjointMPSTensor, AdjointMPOTensor
 export AbstractEnvironmentTensor, LeftEnvironmentTensor, RightEnvironmentTensor
+export leftVirtualSpace, rightVirtualSpace, physicalSpace, extraPhysicalSpace
 export isadjoint, isLeftIsometric, isRightIsometric, leftorth, rightorth
 
 # Environment
@@ -49,7 +50,7 @@ export AbstractCanonicalMPS, DenseCanonicalMPS, getAL, getAR, getAR, getC
 
 # Algorithm
 
-include("utils/SimpleIteration.jl")
+include("utils/SimpleIterator.jl")
 include("utils/iterate.jl")
 include("utils/Defaults.jl")
 include("utils/TensorMap.jl")

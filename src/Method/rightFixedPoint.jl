@@ -7,7 +7,7 @@ A series of functions for solving right fixed point equations or maximum eigeneq
 # Arguments
 `env::S`: environment for solving fixed point equations or maximum eigenequations
 `X₀::T`: initial state
-`alg::EigenAlgorithm=Defaults.alg_eig`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
+`alg::EigenAlgorithm=Defaults.alg_eig`: `SimpleIterator` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
 
 # ===============================================
     rightFixedPoint(A::AbstractVector{<:LocalTensor{R}},
@@ -18,7 +18,7 @@ A series of functions for solving right fixed point equations or maximum eigeneq
 # Arguments
 `A::AbstractVector{<:LocalTensor{R}}`: vector of LocalTensor{R}
 `X₀::AbstractVector{<:BondTensor}=_default_X₀_rightFixedPoint(A)`: initial tensors, guessed solution of fixed point equations
-`alg::EigenAlgorithm=Defaults.alg_eig`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
+`alg::EigenAlgorithm=Defaults.alg_eig`: `SimpleIterator` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
 
 # Keyword Arguments
 `kwargs`: keyword arguments for `rightorth`
@@ -67,7 +67,7 @@ function rightFixedPoint(A::AbstractVector{<:LocalTensor{R}},
             alg::EigenAlgorithm=Defaults.alg_eig;
             kwargs...) where R
     (L = length(A)) == length(X₀) || throw(ArgumentError("Mismatched lengths: $L ≠ $(length(X₀))"))
-    if alg isa SimpleIteration
+    if alg isa SimpleIterator
         func = [x -> pushright(x, A[l], rightorth((A[l] * x)')[2]; kwargs...) for l in 1:L]
         λ, X, info = iterate(func, X₀, false, alg)
         AR = [rightorth(A[l] * X[l])[2] for l in 1:L]
@@ -117,7 +117,7 @@ end
 # Arguments
 `B::AbstractVector{<:AdjointLocalTensor{R}}`: vector of AdjointLocalTensor{R}
 `X₀::AbstractVector{AdjointBondTensor}=_default_X₀_rightFixedPoint(B)`: initial tensors, guessed solution of fixed point equations
-`alg::EigenAlgorithm=Defaults.alg_eig`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
+`alg::EigenAlgorithm=Defaults.alg_eig`: `SimpleIterator` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
 
 # Keyword Arguments
 `kwargs`: keyword arguments for `rightorth`
@@ -165,7 +165,7 @@ function rightFixedPoint(B::AbstractVector{<:AdjointLocalTensor{R}},
             alg::EigenAlgorithm=Defaults.alg_eig;
             kwargs...) where R
     (L = length(B)) == length(X₀) || throw(ArgumentError("Mismatched lengths: $L ≠ $(length(X₀))"))
-    if alg isa SimpleIteration
+    if alg isa SimpleIterator
         func = [x -> pushright(x, rightorth((B[l] * x)')[2], B[l]; kwargs...) for l in 1:L]
         λ, X, info = iterate(func, X₀, false, alg)
         BR = [rightorth(B[l] * X[l])[2] for l in 1:L]
@@ -209,12 +209,12 @@ end
 """
     rightFixedPoint(t::TransferMatrix{L, R},
                 X₀::AbstractVector{<:RightEnvironmentTensor{2}}=_default_X₀_rightFixedPoint(t),
-                alg::EigenAlgorithm=SimpleIteration(; tol=repeat([Defaults.tol,], L))) where {L, R}
+                alg::EigenAlgorithm=SimpleIterator(; tol=repeat([Defaults.tol,], L))) where {L, R}
 
 # Arguments
 `t::TransferMatrix{L, R}`: a transfer matrix wrapper
 `X₀::AbstractVector{RightEnvironmentTensor{2}}=_default_X₀_rightFixedPoint(t)`: initial tensors, guessed solution of fixed point equations
-`alg::EigenAlgorithm=SimpleIteration()`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
+`alg::EigenAlgorithm=SimpleIterator()`: `SimpleIterator` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
 
 # Return
 `λ::Vector{<:Number}`: length `L` vector, coefficients of solution tensors of `L` fixed point equations
@@ -248,9 +248,9 @@ end
 """
 function rightFixedPoint(t::TransferMatrix{L, R},
             X₀::AbstractVector{<:RightEnvironmentTensor{2}}=_default_X₀_rightFixedPoint(t),
-            alg::EigenAlgorithm=SimpleIteration(; tol=repeat([Defaults.tol,], L))) where {L, R}
+            alg::EigenAlgorithm=SimpleIterator(; tol=repeat([Defaults.tol,], L))) where {L, R}
     L == length(X₀) || throw(ArgumentError("Mismatched lengths: $L ≠ $(length(X₀))"))
-    if alg isa SimpleIteration
+    if alg isa SimpleIterator
         func = [x -> pushright(x, t.A[l], t.B[l]) for l in 1:L]
         λ, X, info = iterate(func, X₀, false, alg)
         return λ, X, info
@@ -293,7 +293,7 @@ end
 # Arguments
 `env::ChannelEnvironment{N, L, R}`: a channel environment wrapper
 `X₀::AbstractVector{<:RightEnvironmentTensor{N}}=_default_X₀_rightFixedPoint(env)`: initial tensors, guessed solution of fixed point equations
-`alg::EigenAlgorithm=Defaults.alg_eig`: `SimpleIteration` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
+`alg::EigenAlgorithm=Defaults.alg_eig`: `SimpleIterator` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
 
 # Return
 `λ::Vector{<:Number}`: length `L` vector, coefficients of solution tensors of `L` fixed point equations
@@ -341,7 +341,7 @@ function rightFixedPoint(env::ChannelEnvironment{N, L, R},
             X₀::AbstractVector{<:RightEnvironmentTensor{N}}=_default_X₀_rightFixedPoint(env),
             alg::EigenAlgorithm=Defaults.alg_eig) where {N, L, R}
     L == length(X₀) || throw(ArgumentError("Mismatched lengths: $L ≠ $(length(X₀))"))
-    if alg isa SimpleIteration
+    if alg isa SimpleIterator
         func = [x -> pushright(x, env.A[l], env.O[:, l], env.B[l]) for l in 1:L]
         λ, X, info = iterate(func, X₀, false, alg)
         return λ, X, info

@@ -1,7 +1,7 @@
 """
     Base.iterate(f::Function, x₀::Tuple{Number, V}; tol::Float64=Defaults.tol, maxiter::Int64=Defaults.maxiter)
     Base.iterate(f::Function, v₀::V; tol::Float64=Defaults.tol, maxiter::Int64=Defaults.maxiter)
-    Base.iterate(f::Function, v₀::V, alg::SimpleIteration)
+    Base.iterate(f::Function, v₀::V, alg::SimpleIterator)
 
 A simple iterative procedure for solving fixed point equation
     v = f(v) / λ,
@@ -11,7 +11,7 @@ where `λ` is normalization coefficient of fixed point with `norm(v) = 1` and `n
 `f::Function`: automorphism from V to V, i.e., for any v∈V, f(v)∈V
 `x₀::Tuple{Number, V}`: x₀ = (_, v₀)
 `v₀::V`: initial value
-`alg::SimpleIteration`: wrapper for keyword arguments
+`alg::SimpleIterator`: wrapper for keyword arguments
 
 # Keyword Arguments
 `tol::Float64=Defaults.tol`: tolerance for iteration, i.e., norm(f(v) / λ - v)
@@ -19,7 +19,7 @@ where `λ` is normalization coefficient of fixed point with `norm(v) = 1` and `n
 
 # Return
 `v::V`: value after iteration
-`info::SimpleIterationInfo`: iteration information
+`info::SimpleIteratorInfo`: iteration information
 
 # Functions to be defined
 - Base.:(-)(::V, ::V) -> ::V
@@ -62,19 +62,19 @@ function Base.iterate(f::Function, x₀::Tuple{Number, V}; tol::Float64=Defaults
         @warn "Simple iterations fail to converge: ϵ = $(normres[end]) > $tol"
     end
 
-    return λ, v₀, SimpleIterationInfo(converged, normres, numiter, numops)
+    return λ, v₀, SimpleIteratorInfo(converged, normres, numiter, numops)
 end
 function Base.iterate(f::Function, v₀::V; tol::Float64=Defaults.tol, maxiter::Int64=Defaults.maxiter) where V
     return iterate(f, (1.0, v₀); tol=tol, maxiter=maxiter)
 end
-function Base.iterate(f::Function, v₀::V, alg::SimpleIteration) where V
+function Base.iterate(f::Function, v₀::V, alg::SimpleIterator) where V
     return iterate(f, (1.0, v₀); tol=alg.tol, maxiter=alg.maxiter)
 end
 
 """
     Base.iterate(f::AbstractVector{<:Function}, x₀::Tuple{AbstractVector{<:Number}, AbstractVector{<:V}}; tol::Vector{Float64}=repeat([Defaults.tol,], length(f)), maxiter::Int64=Defaults.maxiter)
     Base.iterate(f::AbstractVector{<:Function}, v₀::AbstractVector{<:V}; tol::Vector{Float64}=repeat([Defaults.tol,], length(v₀)), maxiter::Int64=Defaults.maxiter)
-    Base.iterate(f::AbstractVector{<:Function}, v₀::AbstractVector{<:V}, alg::SimpleIteration)
+    Base.iterate(f::AbstractVector{<:Function}, v₀::AbstractVector{<:V}, alg::SimpleIterator)
 
 A simple iterative procedure for solving fixed point equations
 
@@ -90,7 +90,7 @@ where `λ` are normalization coefficients of fixed point with `norm(v[i]) = 1` a
 `f::AbstractVector{<:Function}`: automorphisms from V to V, i.e., for any v∈V, f(v)∈V
 `x₀::Tuple{AbstractVector{<:Number}, AbstractVector{<:V}}`: x₀ = (_, v₀)
 `v₀::AbstractVector{<:V}`: initial values
-`alg::SimpleIteration`: wrapper for keyword arguments
+`alg::SimpleIterator`: wrapper for keyword arguments
 
 # Keyword Arguments
 `tol::AbstractVector{Float64}=repeat([Defaults.tol,], length(x₀[2]))`: tolerances for iteration, i.e., norm(f.(v) ./ λ - v)
@@ -98,7 +98,7 @@ where `λ` are normalization coefficients of fixed point with `norm(v[i]) = 1` a
 
 # Return
 `v::V`: values after iteration
-`info::SimpleIterationInfo`: iteration information
+`info::SimpleIteratorInfo`: iteration information
 
 # Functions to be defined
 - Base.:(-)(::V, ::V) -> ::V
@@ -145,19 +145,19 @@ function Base.iterate(f::AbstractVector{<:Function}, x₀::Tuple{AbstractVector{
         @warn "Simple iterations fail to converge: ϵ = $(normres[end]) .< $tol not all true"
     end
 
-    return λ, v₀, SimpleIterationInfo(converged, normres, numiter, numops)
+    return λ, v₀, SimpleIteratorInfo(converged, normres, numiter, numops)
 end
 function Base.iterate(f::AbstractVector{<:Function}, v₀::AbstractVector{<:V}; tol::AbstractVector{Float64}=repeat([Defaults.tol,], length(v₀)), maxiter::Int64=Defaults.maxiter) where V
     return iterate(f, ([1.0,], v₀), direction; tol=tol, maxiter=maxiter)
 end
-function Base.iterate(f::AbstractVector{<:Function}, v₀::AbstractVector{<:V}, alg::SimpleIteration) where V
+function Base.iterate(f::AbstractVector{<:Function}, v₀::AbstractVector{<:V}, alg::SimpleIterator) where V
     return iterate(f, ([1.0,], v₀); tol=alg.tol, maxiter=alg.maxiter)
 end
 
 """
     Base.iterate(f::AbstractVector{<:Function}, x₀::Tuple{AbstractVector{<:Number}, AbstractVector{<:V}}, direction::Bool; tol::Vector{Float64}=repeat([Defaults.tol,], length(f)), maxiter::Int64=Defaults.maxiter)
     Base.iterate(f::AbstractVector{<:Function}, v₀::AbstractVector{<:V}, direction::Bool; tol::Vector{Float64}=repeat([Defaults.tol,], length(v₀)), maxiter::Int64=Defaults.maxiter)
-    Base.iterate(f::AbstractVector{<:Function}, v₀::AbstractVector{<:V}, direction::Bool, alg::SimpleIteration)
+    Base.iterate(f::AbstractVector{<:Function}, v₀::AbstractVector{<:V}, direction::Bool, alg::SimpleIterator)
 
 A simple iterative procedure for solving loop fixed point equations
 
@@ -182,7 +182,7 @@ where `λ` are normalization coefficients of fixed point with `norm(v[i]) = 1` a
 `x₀::Tuple{AbstractVector{<:Number}, AbstractVector{<:V}}`: x₀ = (_, v₀)
 `v₀::AbstractVector{<:V}`: initial values
 `direction::Bool`: loop direction - true is positive loop and false is reverse loop
-`alg::SimpleIteration`: wrapper for keyword arguments
+`alg::SimpleIterator`: wrapper for keyword arguments
 
 # Keyword Arguments
 `tol::AbstractVector{Float64}=repeat([Defaults.tol,], length(x₀[2]))`: tolerances for iteration, i.e., norm(f.(v) ./ λ - v)
@@ -190,7 +190,7 @@ where `λ` are normalization coefficients of fixed point with `norm(v[i]) = 1` a
 
 # Return
 `v::V`: values after iteration
-`info::SimpleIterationInfo`: iteration information
+`info::SimpleIteratorInfo`: iteration information
 
 # Functions to be defined
 - Base.:(-)(::V, ::V) -> ::V
@@ -251,12 +251,12 @@ function Base.iterate(f::AbstractVector{<:Function}, x₀::Tuple{AbstractVector{
         @warn "Simple iterations fail to converge: ϵ = $(normres[end]) .< $tol not all true"
     end
 
-    return λ, v₀, SimpleIterationInfo(converged, normres, numiter, numops)
+    return λ, v₀, SimpleIteratorInfo(converged, normres, numiter, numops)
 end
 function Base.iterate(f::AbstractVector{<:Function}, v₀::AbstractVector{<:V}, direction::Bool; tol::AbstractVector{Float64}=repeat([Defaults.tol,], length(v₀)), maxiter::Int64=Defaults.maxiter) where V
     return iterate(f, ([1.0,], v₀), direction; tol=tol, maxiter=maxiter)
 end
-function Base.iterate(f::AbstractVector{<:Function}, v₀::AbstractVector{<:V}, direction::Bool, alg::SimpleIteration) where V
+function Base.iterate(f::AbstractVector{<:Function}, v₀::AbstractVector{<:V}, direction::Bool, alg::SimpleIterator) where V
     return iterate(f, ([1.0,], v₀), direction; tol=alg.tol, maxiter=alg.maxiter)
 end
 
