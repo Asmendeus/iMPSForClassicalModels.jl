@@ -74,6 +74,18 @@ Interface of `AbstractCanonicalMPS`, return the center bond tensors
 """
 getC(obj::AbstractCanonicalMPS) = obj.C
 
+"""
+    normalize!(obj::AbstractCanonicalMPS)
+
+Normalize a given canonical iMPS according to inner-induced norm.
+"""
+function normalize!(obj::AbstractCanonicalMPS)
+    nc = norm.(obj.C)
+    obj.C ./= nc
+    obj.AC ./= nc
+    return obj
+end
+
 # space
 leftVirtualSpace(obj::AbstractCanonicalMPS) = map(x->leftVirtualSpace(x), obj.AL)
 rightVirtualSpace(obj::AbstractCanonicalMPS) = map(x->rightVirtualSpace(x), obj.AL)
@@ -89,6 +101,15 @@ Abstract type of all dense iMPS/iMPO with uniform form of cell length `L`.
 abstract type DenseUniformMPS{L, T<:Union{Float64, ComplexF64}} <: AbstractUniformMPS{L} end
 
 scalartype(::DenseUniformMPS{L, T}) where {L, T} = T
+
+"""
+    canonicalize(::Type{DenseUniformMPS}) -> ::Type{DenseCanonicalMPS}
+
+Interface of `canonicalize(::DenseUniformMPS)` indicates the data type after transformation.
+"""
+function canonicalize(obj::Type{DenseUniformMPS})
+    throw(ArgumentError("Not define `canonicalize` for `$(typeof(obj))`"))
+end
 
 function Base.show(io::IO, obj::DenseUniformMPS{L}) where L
     any(i -> !isassigned(obj.A, i), 1:L) && return println(io, "$(typeof(obj)): L = $L, to be initialized !")
@@ -114,6 +135,15 @@ Abstract type of all dense iMPS/iMPO with canonical form of cell length `L`.
 abstract type DenseCanonicalMPS{L, T<:Union{Float64, ComplexF64}} <: AbstractCanonicalMPS{L} end
 
 scalartype(::DenseCanonicalMPS{L, T}) where {L, T} = T
+
+"""
+    uniformize(::Type{DenseCanonicalMPS}) -> ::Type{DenseUniformMPS}
+
+Interface of `uniformize(::DenseCanonicalMPS)` indicates the data type after transformation.
+"""
+function uniformize(obj::Type{DenseCanonicalMPS})
+    throw(ArgumentError("Not define `uniformize` for `$(typeof(obj))`"))
+end
 
 function Base.show(io::IO, obj::DenseCanonicalMPS{L}) where L
     any(i -> !isassigned(obj.AL, i), 1:L) && return println(io, "$(typeof(obj)): L = $L, to be initialized !")

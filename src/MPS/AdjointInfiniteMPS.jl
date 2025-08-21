@@ -1,25 +1,25 @@
 """
-    struct AdjointInfiniteMPS{L} <: AbstractInfiniteMPS{L}
-        parent::DenseInfiniteMPS{L}
+    struct AdjointInfiniteMPS{L, T} <: AbstractInfiniteMPS{L}
+        parent::Union{DenseUniformMPS{L, T}, DenseCanonicalMPS{L, T}}
     end
 
 Lazy wrapper type for adjoint of iMPS.
 
-    adjoint(::DenseInfiniteMPS) -> ::AdjointInfiniteMPS
-    adjoint(::AdjointInfiniteMPS) -> ::DenseInfiniteMPS
+    adjoint(::Union{DenseUniformMPS, DenseCanonicalMPS}) -> ::AdjointInfiniteMPS
+    adjoint(::AdjointInfiniteMPS) -> ::Union{DenseUniformMPS, DenseCanonicalMPS}
 
 Functions to be directly propagated to the parent:
 
-    lastindex, length, keys, norm, normalize!, Center, iterate, canonicalize!
+    normalize!, uniformize, canonicalize
 
 Functions to be propagated to the parent with some adaptations:
 
-    getindex, setindex!, coef
+    getA, getAL, getAR, getAC, getC, leftVirtualSpace, rightVirtualSpace, physicalSpace, extraPhysicalSpace
 """
 struct AdjointInfiniteMPS{L, T} <: AbstractInfiniteMPS{L}
-    parent::DenseInfiniteMPS{L, T}
+    parent::Union{DenseUniformMPS{L, T}, DenseCanonicalMPS{L, T}}
 end
-adjoint(A::DenseInfiniteMPS) = AdjointInfiniteMPS(A)
+adjoint(A::Union{DenseUniformMPS, DenseCanonicalMPS}) = AdjointInfiniteMPS(A)
 adjoint(A::AdjointInfiniteMPS) = A.parent
 
 function show(io::IO, obj::AdjointInfiniteMPS)
@@ -27,28 +27,12 @@ function show(io::IO, obj::AdjointInfiniteMPS)
      show(io, obj.parent)
 end
 
-# apply lazy adjoint when obtaining the local tensors
-getindex(obj::AdjointInfiniteMPS, inds...) = getindex(obj.parent, inds...)'
-setindex!(obj::AdjointInfiniteMPS, X, inds...) = setindex!(obj.parent, X', inds...)
-"""
-    coef(obj::AdjointInfiniteMPS) = coef(obj.parent)'
-"""
-coef(obj::AdjointInfiniteMPS) = coef(obj.parent)'
-
-"""
-    getAllCanonicalFormTensors(obj::AdjointInfiniteMPS{L, T}; kwargs...)
-        -> BL::Vector{AdjointLocalTensor{R}}, BR:Vector{AdjointLocalTensor{R}}, BC::Vector{AdjointLocalTensor{R}}, C::Vector{AdjointBondTensor}
-
-Get all tensors of an adjoint iMPS/iMPO with canonical form.
-
-`kwargs` is propagated to `setCenter`, `leftorth` and `rightorth`
-"""
-function getAllCanonicalFormTensors(obj::AdjointInfiniteMPS{L, T}; kwargs...) where {L, T}
-    AL, AR, AC, C = AllCanonicalFormTensors(obj.parent)
-    return adjoint.(AL), adjoint.(AR), adjoint.(AC), adjoint.(C)
-end
-
 # some functions to be directly propagated to the parent
-for func in (:lastindex, :length, :keys,:norm, :normalize!, :Center, :iterate, :canonicalize!, :scalartype, :iscanonical, :isuniform)
-     @eval $func(obj::AdjointInfiniteMPS, args...) = $func(obj.parent, args...)
+normalize!(obj::AdjointInfiniteMPS) = normalize!(obj.parent)
+uniformize(obj::AdjointInfiniteMPS) = AdjointInfiniteMPS(uniformize(obj.parent))
+canonicalize(obj::AdjointInfiniteMPS) = AdjointInfiniteMPS(canonicalize(obj.parent))
+
+# apply lazy adjoint when obtaining the local tensors
+for func in (:getA, :getAL, :getAR, :getAC, :getC, :leftVirtualSpace, :rightVirtualSpace, :physicalSpace, :extraPhysicalSpace)
+    @eval $func(obj::AdjointInfiniteMPS, args...) = adjoint.($func(obj.parent, args...))
 end

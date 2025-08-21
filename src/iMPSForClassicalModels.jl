@@ -37,7 +37,10 @@ export leftFixedPoint, rightFixedPoint, midFixedPoint
 export AbstractInfiniteMPS
 export AbstractUniformMPS, DenseUniformMPS, getA
 export AbstractCanonicalMPS, DenseCanonicalMPS, getAL, getAR, getAR, getC
-
+export UniformMPS, UMPS, randUMPS
+export CanonicalMPS, CMPS, randCMPS
+export canonicalize, uniformize
+export AdjointInfiniteMPS
 
 # iMPO
 
@@ -79,6 +82,10 @@ include("Method/rightFixedPoint.jl")
 include("Method/midFixedPoint.jl")
 
 include("MPS/AbstractInfiniteMPS.jl")
-
+include("MPS/UniformMPS.jl")
+include("MPS/CanonicalMPS.jl")
+include("MPS/canonicalize.jl")
+include("MPS/uniformize.jl")
+include("MPS/AdjointInfiniteMPS.jl")
 
 end # module iMPSForClassicalModels

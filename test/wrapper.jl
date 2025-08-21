@@ -88,22 +88,6 @@ bondEnv2 = environment(FL2, FR2)
 centerEnv1 = environment(FL1, O1, FR1)
 centerEnv2 = environment(FL1, [O1, O2], FR1)
 
-ψ1 = iMPS(2)
-ψ2 = randInfiniteMPS(ComplexF64, [ℂ^4, ℂ^3], [ℂ^10, ℂ^10])
-ψ3 = randInfiniteMPS(Float64, 1, dp, D)'
-
-ρ1 = iMPO(2)
-ρ2 = identityInfiniteMPO(ComplexF64, [ℝ^dp, ℝ^dp])
-ρ3 = identityInfiniteMPO(Float64, 3, ℂ^4)'
-
-Z = SparseInfiniteMPO(MPOTensor[O1 O1; O2 O2])
-M = LocalImpurity(MPOTensor[O1 O1; O2 O2])
-
-ψ = randInfiniteMPS(Float64, 1, dp, D)
-ρ = SparseInfiniteMPO(MPOTensor[O1;;])
-M = LocalImpurity(MPOTensor[O1;;])
-expectation(ψ, ρ, ψ', M)
-
 @testset "leftorth & rightorth" begin
     @test isLeftIsometric(AL)
     @test norm(AL.A * RA.A - A.A) < tol
@@ -128,23 +112,4 @@ expectation(ψ, ρ, ψ', M)
 
     @test isRightIsometric(CR)
     @test norm(LC.A * CR.A - C.A) < tol
-end
-
-@testset "iMPS & iMPO" begin
-    setCenter!(ψ2, 2)
-    @test isLeftIsometric(ψ2[1])
-    setCenter!(ψ2, 1)
-    @test isRightIsometric(ψ2[2])
-
-    ψ2′ = canonicalize(uniformize(ψ2), 2)
-    _, _, _, C2 = getAllCanonicalFormTensors(ψ2)
-    _, _, _, C2′ = getAllCanonicalFormTensors(ψ2′)
-
-    _, s1, _ = tsvd(C2[1], (1,), (2,))
-    _, s1′, _ = tsvd(C2′[1], (1,), (2,))
-    _, s2, _ = tsvd(C2[2], (1,), (2,))
-    _, s2′, _ = tsvd(C2′[2], (1,), (2,))
-
-    @test norm(s1′ - s1) < tol
-    @test norm(s2′ - s2) < tol
 end

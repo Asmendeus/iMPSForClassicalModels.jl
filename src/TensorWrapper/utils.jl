@@ -5,8 +5,8 @@
 # Return
 -`::VectorSpace`: left virtual space
 """
-leftVirtualSpace(A::LocalTensor{R}) = codomain(A, 1)
-leftVirtualSpace(A::AdjointLocalTensor{R}) = domain(A, 1)
+leftVirtualSpace(A::LocalTensor{R}) where R = codomain(A, 1)
+leftVirtualSpace(A::AdjointLocalTensor{R}) where R = domain(A, 1)
 
 """
     rightVirtualSpace(A::LocalTensor{R})
@@ -15,8 +15,8 @@ leftVirtualSpace(A::AdjointLocalTensor{R}) = domain(A, 1)
 # Return
 -`::VectorSpace`: right virtual space
 """
-rightVirtualSpace(A::LocalTensor{R}) = domain(A, R-2)
-rightVirtualSpace(A::AdjointLocalTensor{R}) = codomain(A, R-2)
+rightVirtualSpace(A::LocalTensor{R}) where R = domain(A, R-2)
+rightVirtualSpace(A::AdjointLocalTensor{R}) where R = codomain(A, R-2)
 
 """
     physicalSpace(A::LocalTensor{R})
@@ -25,8 +25,8 @@ rightVirtualSpace(A::AdjointLocalTensor{R}) = codomain(A, R-2)
 # Return
 -`::VectorSpace`: physical space
 """
-physicalSpace(A::LocalTensor{R}) = codomain(A, 2)
-physicalSpace(A::AdjointLocalTensor{R}) = domain(A, 2)
+physicalSpace(A::LocalTensor{R}) where R = codomain(A, 2)
+physicalSpace(A::AdjointLocalTensor{R}) where R = domain(A, 2)
 
 """
     extraPhysicalSpace(A::LocalTensor{R})
@@ -35,8 +35,8 @@ physicalSpace(A::AdjointLocalTensor{R}) = domain(A, 2)
 # Return
 -`::Vector{<:VectorSpace}`: physical space
 """
-extraPhysicalSpace(A::LocalTensor{R}) = [domain(A, i) for i in 1:R-3]
-extraPhysicalSpace(A::AdjointLocalTensor{R}) = [codomain(A, i) for i in 1:R-3]
+extraPhysicalSpace(A::LocalTensor{R}) where R = [domain(A, i) for i in 1:R-3]
+extraPhysicalSpace(A::AdjointLocalTensor{R}) where R = [codomain(A, i) for i in 1:R-3]
 
 """
     isadjoint(::AbstractTensorWrapperper)
