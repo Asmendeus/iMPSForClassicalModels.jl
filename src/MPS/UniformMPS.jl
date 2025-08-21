@@ -59,7 +59,7 @@ Assume the same `pspace` and `aspace`, except for the boundary bond, which is as
 
 Assume `pspace = [spacetype] .^ pdim` and `aspace = [spacetype] .^ adim`, where `spacetype = ℂ(T=ComplexF64) or ℝ(T=Float64)`
 
-    randUMPS([::Type{T},] L::Int64, D::Int64, d::Int64) -> UMPS{L}
+    randUMPS([::Type{T},] L::Int64, pdim::Int64, adim::Int64) -> UMPS{L}
 
 Assume the same `pdim` and `adim`.
 """
@@ -67,11 +67,11 @@ function randUMPS(::Type{T}, pspace::Vector{VectorSpace}, aspace::Vector{VectorS
     (L = length(pspace)) == length(aspace) || throw(ArgumentError("Mismatched lengths: $(length(pspace)) ≠ $(length(aspace))"))
     left_aspace = aspace[[end, (1:end-1)...]]
     right_aspace = aspace
-    A = map(l->TensorMap(rand, T, left_aspace[l]⊗pspace[l], right_aspace[l]), 1:L)
+    A = map(l->MPSTensor(TensorMap(rand, T, left_aspace[l]⊗pspace[l], right_aspace[l])), 1:L)
     return UniformMPS{L, T}(A)
 end
 function randUMPS(::Type{T}, L::Int64, pspace::VectorSpace, apsace::VectorSpace) where T<:Union{Float64, ComplexF64}
-    A = map(_->TensorMap(rand, T, aspace⊗pspace, aspace), 1:L)
+    A = map(_->MPSTensor(TensorMap(rand, T, aspace⊗pspace, aspace)), 1:L)
     return UniformMPS{L, T}(A)
 end
 function randUMPS(::Type{T}, pdim::Vector{Int64}, adim::Vector{Int64}) where T<:Union{Float64, ComplexF64}
@@ -80,13 +80,13 @@ function randUMPS(::Type{T}, pdim::Vector{Int64}, adim::Vector{Int64}) where T<:
     pspace = map(x->spacetype ^ x, pdim)
     left_aspace = map(x->spacetype ^ x, adim[[end, (1:end-1)...]])
     right_aspace = map(x->spacetype ^ x, adim)
-    A = map(l->TensorMap(rand, T, left_aspace[l]⊗pspace[l], right_aspace[l]), 1:L)
+    A = map(l->MPSTensor(TensorMap(rand, T, left_aspace[l]⊗pspace[l], right_aspace[l])), 1:L)
     return UniformMPS{L, T}(A)
 end
 function randUMPS(::Type{T}, L::Int64, pdim::Int64, adim::Int64) where T<:Union{Float64, ComplexF64}
     spacetype = T == ComplexF64 ? ℂ : ℝ
     pspace = spacetype ^ pdim
     aspace = spacetype ^ adim
-    A = map(_->TensorMap(rand, T, aspace⊗pspace, aspace), 1:L)
+    A = map(_->MPSTensor(TensorMap(rand, T, aspace⊗pspace, aspace)), 1:L)
     return UniformMPS{L, T}(A)
 end

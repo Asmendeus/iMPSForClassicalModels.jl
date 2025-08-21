@@ -43,9 +43,10 @@ export canonicalize, uniformize
 export AdjointInfiniteMPS
 
 # iMPO
+export UniformMPO, UMPO, identityUMPO
+export CanonicalMPO, CMPO, identityCMPO
 
-
-# SparseInfiniteMPO
+# SparseMPO
 
 
 # Impurity tensor

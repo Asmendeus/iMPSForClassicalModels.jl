@@ -1,11 +1,12 @@
 """
-    struct SparseInfiniteMPO{W, L} <: AbstractInfiniteMPS{L}
+    struct SparseUMPO{W, L} <: AbstractInfiniteMPS{L}
         O::AbstractMatrix{MPOTensor}
     end
 
 An iMPO type stores local tensors of the classical system's partition function.
 
-**Note**: Although it is written as "SparseInfiniteMPO", it is not always sparse for a classical system, which is just a naming
+# Note
+Although it is written as "SparseUMPO", it is not always sparse for a classical system, which is just a naming
 convention inherited from `FiniteMPS.jl`. For a classical model with discrete degrees of freedom (like Ising, Clock),
 the local tensor corresponding to the partition function is usually dense, with dense degree equal to about 1.
 However, for a XY-like model with continuous degrees of freedom, the local tensors are usually sparse after discretization.
@@ -13,30 +14,30 @@ For example, dense degree of classical XY model with truncation dimension 5 (phy
 approximates to 0.06, which is typically sparse.
 
 # Constructors
-    SparseInfiniteMPO{W, L}(A::AbstractMatrix{<:MPOTensor})
-    SparseInfiniteMPO(A::AbstractMatrix{<:MPOTensor})
+    SparseUMPO{W, L}(A::AbstractMatrix{<:MPOTensor})
+    SparseUMPO(A::AbstractMatrix{<:MPOTensor})
 """
-struct SparseInfiniteMPO{W, L} <: AbstractInfiniteMPS{L}
+struct SparseUMPO{W, L} <: AbstractUniformMPS{L}
     A::AbstractMatrix{MPOTensor}
-    function SparseInfiniteMPO(A::AbstractMatrix{<:MPOTensor})
+    function SparseUMPO(A::AbstractMatrix{<:MPOTensor})
         W, L = size(A)
         return new{W, L}(A)
     end
 end
 
-size(::SparseInfiniteMPO{W, L}) where {W, L} = (W, L)
-length(::SparseInfiniteMPO{W, L}) where {W, L} = W * L
+size(::SparseUMPO{W, L}) where {W, L} = (W, L)
+length(::SparseUMPO{W, L}) where {W, L} = W * L
 
-convert(::Type{<:SparseInfiniteMPO}, A::AbstractMatrix{MPOTensor}) = SparseInfiniteMPO(A)
+convert(::Type{<:SparseUMPO}, A::AbstractMatrix{MPOTensor}) = SparseUMPO(A)
 
-function ishermitian(obj::SparseInfiniteMPO{W, L}; tol::Float64=Defaults.tol_low) where {W, L}
+function ishermitian(obj::SparseUMPO{W, L}; tol::Float64=Defaults.tol_low) where {W, L}
     for w in 1:ceil(Int, W/2), l in 1:L
         norm(convert(Array, obj[w, l]) - convert(Array, permute(obj[end+1-w, l], (1, 3), (2, 4)))) < tol || return false
     end
     return true
 end
 
-function show(io::IO, obj::SparseInfiniteMPO{W, L}) where {W, L}
+function show(io::IO, obj::SparseUMPO{W, L}) where {W, L}
 
     memory = obj |> Base.summarysize |> Base.format_bytes
     println(io, "$(typeof(obj)): total memory = $memory")

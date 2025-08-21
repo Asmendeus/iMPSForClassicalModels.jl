@@ -23,9 +23,9 @@ Length `L` vector to store the center bond tensors.
 
 # Notes
 By convention, we appoint that:
-- `AL[i] * C[i]` = `AC[i]` = `C[i-1] * AR[i]`
-- `AL[i]' * AL[i] = I`
-- `AR[i] * AR[i]' = I`
+- AL[i] * C[i] = AC[i] = C[i-1] * AR[i]
+- AL[i]' * AL[i] = I
+- AR[i] * AR[i]' = I
 The first virtual space and C[1] are between AL[1] and AL[2], and the ones behind AL[L] same as the ones ahead AL[1] are the last ones.
 
 # Constructors
@@ -107,7 +107,7 @@ Assume the same `pspace` and `aspace`, except for the boundary bond, which is as
 
 Assume `pspace = [spacetype] .^ pdim` and `aspace = [spacetype] .^ adim`, where `spacetype = ℂ(T=ComplexF64) or ℝ(T=Float64)`
 
-    randCMPS([::Type{T},] L::Int64, D::Int64, d::Int64; kwargs...) -> CMPS{L, T}
+    randCMPS([::Type{T},] L::Int64, pdim::Int64, adim::Int64; kwargs...) -> CMPS{L, T}
 
 Assume the same `pdim` and `adim`.
 """
@@ -115,11 +115,11 @@ function randCMPS(::Type{T}, pspace::Vector{VectorSpace}, aspace::Vector{VectorS
     (L = length(pspace)) == length(aspace) || throw(ArgumentError("Mismatched lengths: $(length(pspace)) ≠ $(length(aspace))"))
     left_aspace = aspace[[end, (1:end-1)...]]
     right_aspace = aspace
-    A = map(l->TensorMap(rand, T, left_aspace[l]⊗pspace[l], right_aspace[l]), 1:L)
+    A = map(l->MPSTensor(TensorMap(rand, T, left_aspace[l]⊗pspace[l], right_aspace[l])), 1:L)
     return canonicalize(UniformMPS{L, T}(A); kwargs...)
 end
 function randCMPS(::Type{T}, L::Int64, pspace::VectorSpace, apsace::VectorSpace; kwargs...) where T<:Union{Float64, ComplexF64}
-    A = map(_->TensorMap(rand, T, aspace⊗pspace, aspace), 1:L)
+    A = map(_->MPSTensor(TensorMap(rand, T, aspace⊗pspace, aspace)), 1:L)
     return canonicalize(UniformMPS{L, T}(A); kwargs...)
 end
 function randCMPS(::Type{T}, pdim::Vector{Int64}, adim::Vector{Int64}; kwargs...) where T<:Union{Float64, ComplexF64}
@@ -128,13 +128,13 @@ function randCMPS(::Type{T}, pdim::Vector{Int64}, adim::Vector{Int64}; kwargs...
     pspace = map(x->spacetype ^ x, pdim)
     left_aspace = map(x->spacetype ^ x, adim[[end, (1:end-1)...]])
     right_aspace = map(x->spacetype ^ x, adim)
-    A = map(l->TensorMap(rand, T, left_aspace[l]⊗pspace[l], right_aspace[l]), 1:L)
+    A = map(l->MPSTensor(TensorMap(rand, T, left_aspace[l]⊗pspace[l], right_aspace[l])), 1:L)
     return canonicalize(UniformMPS{L, T}(A); kwargs...)
 end
 function randCMPS(::Type{T}, L::Int64, pdim::Int64, adim::Int64; kwargs...) where T<:Union{Float64, ComplexF64}
     spacetype = T == ComplexF64 ? ℂ : ℝ
     pspace = spacetype ^ pdim
     aspace = spacetype ^ adim
-    A = map(_->TensorMap(rand, T, aspace⊗pspace, aspace), 1:L)
+    A = map(_->MPSTensor(TensorMap(rand, T, aspace⊗pspace, aspace)), 1:L)
     return canonicalize(UniformMPS{L, T}(A); kwargs...)
 end
