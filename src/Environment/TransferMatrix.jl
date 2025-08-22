@@ -1,7 +1,7 @@
 """
     mutable struct TransferMatrix{L, R} <: AbstractEnvironment{2}
-        const A::AbstractVector{LocalTensor{R}}
-        const B::AbstractVector{AdjointLocalTensor{R}}
+        const A::AbstractVector{<:LocalTensor{R}}
+        const B::AbstractVector{<:AdjointLocalTensor{R}}
     end
 
 Wrapper type for transfer matrix.
@@ -21,8 +21,8 @@ Graphic presentation:
     TransferMatrix(A::LocalTensor{R}, B::AdjointLocalTensor{R})
 """
 mutable struct TransferMatrix{L, R} <: AbstractEnvironment{2}
-    const A::AbstractVector{LocalTensor{R}}
-    const B::AbstractVector{AdjointLocalTensor{R}}
+    const A::AbstractVector{<:LocalTensor{R}}
+    const B::AbstractVector{<:AdjointLocalTensor{R}}
 
     function TransferMatrix{L, R}(A::AbstractVector{<:LocalTensor{R}}, B::AbstractVector{<:AdjointLocalTensor{R}}) where {L, R}
         (L == length(A) == length(B)) || throw(ArgumentError("Mismatched lengths: ($L, $(length(A)), $(length(B)))"))

@@ -208,12 +208,23 @@ and center bond matrices are $C_{12} = L_{12}R_{12}$ and $C_{21} = L_{21}R_{21}$
 
 Eventually we get fixed point tensors $A_{1L}$, $A_{2L}$, $L_{12}$, $L_{21}$, $A_{1R}$, $A_{2R}$, $R_{12}$, $R_{21}$, and center bond and center tensors are $C_{12} = L_{12}R_{12}$, $C_{21} = L_{21}R_{21}$, $A_{1C} = L_{21}A_1R_{12}$, $A_{2C} = L_{12}A_2R_{21}$
 
+`iMPSForClassicalModels` also provides the canonicalization method based on solving largest eigen-equation, see `leftFixedPoint ` and `leftFixedPoint` for details.
+
+### Overlap of two iMPSs
+
+Overlap of two iMPSs $|\psi\rangle$ and $|\psi^\prime\rangle$ is defined as
+
+$$
+O(\psi, \psi^\prime) = \left|\frac{\langle\psi|\psi^\prime\rangle}{\sqrt{\langle\psi|\psi\rangle\langle\psi^\prime|\psi^\prime\rangle}}\right|
+$$
+
+indicating approximation degree between the two. $O(\psi, \psi^\prime)=1$ means the two are equivalent in the sense of gauge degrees of freedom or one is a submanifold of the other. Here we assume that $|\psi\rangle$ and $|\psi^\prime\rangle$ have been normalized and their overlap are represented graphically as
+
 ### Variational optimal approximation
 
-We now consider the problem of how to find, for a given $D$-manifold iMPS $|\psi\rangle$, its optimal approximation $|\psi^\prime\rangle$ on the $D^\prime$-manifold. 
+We now consider the problem of how to find, for a given $D$-manifold iMPS $|\psi\rangle$, its optimal approximation $|\psi^\prime\rangle$ on the $D^\prime$-manifold.
 
 An evaluator that judges the degree of approximation of two iMPS is the overlap, i.e., $\frac{|\langle\psi|\psi^\prime\rangle|^2}{\langle\psi^\prime|\psi^\prime\rangle}$. We are actually looking for a $|\psi^\prime\rangle$ on the $D^\prime$-manifold to maximize it. Here we only exhibit the algorithmic flow, please refer to the reference for specific principles and details.
-
 
 ### Variational Infinite Time Evolving Block Decimation (ViTEBD)
 

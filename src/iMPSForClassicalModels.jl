@@ -3,7 +3,7 @@ module iMPSForClassicalModels
 using Reexport
 @reexport using KrylovKit, TensorKit, TensorKit.TensorOperations
 @reexport import Base: +, -, *, /, ==, iterate, promote_rule, convert, length, size, show, getindex, setindex!, lastindex, keys, similar, merge, merge!, iterate, complex
-@reexport import TensorKit: ×, one, zero, dim, inner, scalar, space, domain, codomain, eltype, scalartype, numin, numout, numind, leftorth, rightorth, leftnull, rightnull, tsvd, adjoint, AdjointTensorMap, normalize!, normalize, norm, axpy!, axpby!, add!, add!!, dot, mul!, rmul!, NoTruncation, fuse, zerovector!, zerovector, scale, scale!, scale!!, sqrt, inv
+@reexport import TensorKit: ×, tr, one, zero, dim, inner, scalar, space, domain, codomain, eltype, scalartype, numin, numout, numind, leftorth, rightorth, leftnull, rightnull, tsvd, adjoint, AdjointTensorMap, normalize!, normalize, norm, axpy!, axpby!, add!, add!!, dot, mul!, rmul!, NoTruncation, fuse, zerovector!, zerovector, scale, scale!, scale!!, sqrt, inv
 @reexport import LinearAlgebra: BLAS, rank, qr, diag, I, diagm, ishermitian
 
 # utils
@@ -42,6 +42,7 @@ export UniformMPS, UMPS, randUMPS
 export CanonicalMPS, CMPS, randCMPS
 export canonicalize, uniformize
 export AdjointInfiniteMPS
+export overlap
 
 # iMPO
 export UniformMPO, UMPO, identityUMPO
@@ -51,7 +52,7 @@ export CanonicalMPO, CMPO, identityCMPO
 export SparseUMPO
 
 # Impurity tensor
-
+export AbstractLocalImpurity, LocalImpurity, expectation
 
 # Algorithm
 
@@ -89,6 +90,7 @@ include("MPS/CanonicalMPS.jl")
 include("MPS/canonicalize.jl")
 include("MPS/uniformize.jl")
 include("MPS/AdjointInfiniteMPS.jl")
+include("MPS/overlap.jl")
 
 include("MPO/UniformMPO.jl")
 include("MPO/CanonicalMPO.jl")

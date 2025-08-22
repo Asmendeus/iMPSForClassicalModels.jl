@@ -1,7 +1,7 @@
 """
     mutable struct ChannelEnvironment{N, L, R} <: AbstractEnvironment{N}
         const A::AbstractVector{<:LocalTensor{R}}
-        const O::AbstractMatrix{MPOTensor}
+        const O::AbstractMatrix{<:MPOTensor}
         const B::AbstractVector{<:AdjointLocalTensor{R}}
     end
 
@@ -29,7 +29,7 @@ Graphic presentation:
 """
 mutable struct ChannelEnvironment{N, L, R} <: AbstractEnvironment{N}
     const A::AbstractVector{<:LocalTensor{R}}
-    const O::AbstractMatrix{MPOTensor}
+    const O::AbstractMatrix{<:MPOTensor}
     const B::AbstractVector{<:AdjointLocalTensor{R}}
 
     function ChannelEnvironment{N, L, R}(A::AbstractVector{<:LocalTensor{R}}, O::AbstractMatrix{<:MPOTensor}, B::AbstractVector{<:AdjointLocalTensor{R}}) where {N, L, R}

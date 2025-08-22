@@ -56,6 +56,7 @@ mutable struct CanonicalMPO{L, T<:Union{Float64, ComplexF64}} <: DenseCanonicalM
         AR = inv.(C)[[end, (1:end-1)...]] * AC
         return CanonicalMPO{L, T}(AL, AR, AC, C)
     end
+    CanonicalMPO(AL::AbstractMPOTensor, C::AbstractBondTensor) = CanonicalMPS([AL,], [C,])
 end
 const CMPO = CanonicalMPO
 

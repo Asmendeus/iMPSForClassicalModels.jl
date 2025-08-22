@@ -1,0 +1,5 @@
+include("iMPSForClassicalModels/test/wrapper.jl")
+include("iMPSForClassicalModels/test/iterate.jl")
+include("iMPSForClassicalModels/test/leftFixedPoint.jl")
+include("iMPSForClassicalModels/test/rightFixedPoint.jl")
+include("iMPSForClassicalModels/test/midFixedPoint.jl")

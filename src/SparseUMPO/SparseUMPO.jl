@@ -16,6 +16,7 @@ approximates to 0.06, which is typically sparse.
 # Constructors
     SparseUMPO{W, L}(A::AbstractMatrix{<:AbstractMPOTensor})
     SparseUMPO(A::AbstractMatrix{<:AbstractMPOTensor})
+    SparseUMPO(A::AbstractMPOTensor)
 """
 struct SparseUMPO{W, L} <: AbstractUniformMPS{L}
     A::AbstractMatrix{<:AbstractMPOTensor}
@@ -27,6 +28,9 @@ struct SparseUMPO{W, L} <: AbstractUniformMPS{L}
     function SparseUMPO(A::AbstractMatrix{<:AbstractMPOTensor})
         W, L = size(A)
         return new{W, L}(A)
+    end
+    function SparseUMPO(A::AbstractMPOTensor)
+        return new{1, 1}([A;;])
     end
 end
 

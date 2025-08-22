@@ -68,9 +68,9 @@ function leftFixedPoint(A::AbstractVector{<:LocalTensor{R}},
             kwargs...) where R
     (L = length(A)) == length(X₀) || throw(ArgumentError("Mismatched lengths: $L ≠ $(length(X₀))"))
     if alg isa SimpleIterator
-        func = [x -> pushleft(x, A[l], leftorth((x * A[l])')[1]; kwargs...) for l in 1:L]
+        func = [x -> pushleft(x, A[l], leftorth((x * A[l])'; kwargs...)[1]) for l in 1:L]
         λ, X, info = iterate(func, X₀, true, alg)
-        AL = [leftorth(X[l] * A[l])[1] for l in 1:L]
+        AL = [leftorth(X[l] * A[l]; kwargs...)[1] for l in 1:L]
         return λ, X, AL, info
     elseif alg isa KrylovKit.KrylovAlgorithm
         func = x -> pushleft(x, A, adjoint.(A))
@@ -104,8 +104,8 @@ function leftFixedPoint(A::AbstractVector{<:LocalTensor{R}},
         return λ, X, AL, info
     end
 end
-function leftFixedPoint(A::AbstractVector{<:LocalTensor{R}}, alg::EigenAlgorithm) where R
-    return leftFixedPoint(A, _default_X₀_leftFixedPoint(A), alg)
+function leftFixedPoint(A::AbstractVector{<:LocalTensor{R}}, alg::EigenAlgorithm; kwargs...) where R
+    return leftFixedPoint(A, _default_X₀_leftFixedPoint(A), alg; kwargs...)
 end
 
 """
@@ -166,9 +166,9 @@ function leftFixedPoint(B::AbstractVector{<:AdjointLocalTensor{R}},
             kwargs...) where R
     (L = length(B)) == length(X₀) || throw(ArgumentError("Mismatched lengths: $L ≠ $(length(X₀))"))
     if alg isa SimpleIterator
-        func = [x -> pushleft(x, leftorth((x * B[l])')[1], B[l]; kwargs...) for l in 1:L]
+        func = [x -> pushleft(x, leftorth((x * B[l])'; kwargs...)[1], B[l]) for l in 1:L]
         λ, X, info = iterate(func, X₀, true, alg)
-        BL = [leftorth(X[l] * B[l])[1] for l in 1:L]
+        BL = [leftorth(X[l] * B[l]; kwargs...)[1] for l in 1:L]
         return λ, X, BL, info
     elseif alg isa KrylovKit.KrylovAlgorithm
         func = x -> pushleft(x, adjoint.(B), B)
@@ -202,8 +202,8 @@ function leftFixedPoint(B::AbstractVector{<:AdjointLocalTensor{R}},
         return λ, X, BL, info
     end
 end
-function leftFixedPoint(B::AbstractVector{<:AdjointLocalTensor{R}}, alg::EigenAlgorithm) where R
-    return leftFixedPoint(B, _default_X₀_leftFixedPoint(B), alg)
+function leftFixedPoint(B::AbstractVector{<:AdjointLocalTensor{R}}, alg::EigenAlgorithm; kwargs...) where R
+    return leftFixedPoint(B, _default_X₀_leftFixedPoint(B), alg; kwargs...)
 end
 
 """

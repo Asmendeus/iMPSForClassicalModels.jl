@@ -39,6 +39,7 @@ The first virtual space and C[1] are between AL[1] and AL[2], and the ones behin
                  AC::AbstractVector{<:AbstractMPSTensor},
                  C::AbstractVector{<:AbstractBondTensor})
     CanonicalMPS(AL::AbstractVector{<:AbstractMPSTensor}, C::AbstractVector{<:AbstractBondTensor})
+    CanonicalMPS(AL::AbstractMPSTensor, C::AbstractBondTensor)
 """
 mutable struct CanonicalMPS{L, T<:Union{Float64, ComplexF64}} <: DenseCanonicalMPS{L, T}
     const AL::AbstractVector{<:AbstractMPSTensor}
@@ -81,9 +82,10 @@ mutable struct CanonicalMPS{L, T<:Union{Float64, ComplexF64}} <: DenseCanonicalM
         T = promote_type(mapreduce(eltype, promote_type, AL),
                          mapreduce(eltype, promote_type, C))
         AC = AL .* C
-        AR = inv.(C)[[end, (1:end-1)...]] * AC
+        AR = inv.(C)[[L, (1:L-1)...]] * AC
         return CanonicalMPS{L, T}(AL, AR, AC, C)
     end
+    CanonicalMPS(AL::AbstractMPSTensor, C::AbstractBondTensor) = CanonicalMPS([AL,], [C,])
 end
 const CMPS = CanonicalMPS
 
@@ -113,28 +115,28 @@ Assume the same `pdim` and `adim`.
 """
 function randCMPS(::Type{T}, pspace::Vector{VectorSpace}, aspace::Vector{VectorSpace}; kwargs...) where T<:Union{Float64, ComplexF64}
     (L = length(pspace)) == length(aspace) || throw(ArgumentError("Mismatched lengths: $(length(pspace)) ≠ $(length(aspace))"))
-    left_aspace = aspace[[end, (1:end-1)...]]
+    left_aspace = aspace[[L, (1:L-1)...]]
     right_aspace = aspace
     A = map(l->MPSTensor(TensorMap(rand, T, left_aspace[l]⊗pspace[l], right_aspace[l])), 1:L)
-    return canonicalize(UniformMPS{L, T}(A); kwargs...)
+    return normalize!(canonicalize(UniformMPS{L, T}(A); kwargs...))
 end
 function randCMPS(::Type{T}, L::Int64, pspace::VectorSpace, apsace::VectorSpace; kwargs...) where T<:Union{Float64, ComplexF64}
     A = map(_->MPSTensor(TensorMap(rand, T, aspace⊗pspace, aspace)), 1:L)
-    return canonicalize(UniformMPS{L, T}(A); kwargs...)
+    return normalize!(canonicalize(UniformMPS{L, T}(A); kwargs...))
 end
 function randCMPS(::Type{T}, pdim::Vector{Int64}, adim::Vector{Int64}; kwargs...) where T<:Union{Float64, ComplexF64}
     (L = length(pdim)) == length(adim) || throw(ArgumentError("Mismatched lengths: $(length(pdim)) ≠ $(length(adim))"))
     spacetype = T == ComplexF64 ? ℂ : ℝ
     pspace = map(x->spacetype ^ x, pdim)
-    left_aspace = map(x->spacetype ^ x, adim[[end, (1:end-1)...]])
+    left_aspace = map(x->spacetype ^ x, adim[[L, (1:L-1)...]])
     right_aspace = map(x->spacetype ^ x, adim)
     A = map(l->MPSTensor(TensorMap(rand, T, left_aspace[l]⊗pspace[l], right_aspace[l])), 1:L)
-    return canonicalize(UniformMPS{L, T}(A); kwargs...)
+    return normalize!(canonicalize(UniformMPS{L, T}(A); kwargs...))
 end
 function randCMPS(::Type{T}, L::Int64, pdim::Int64, adim::Int64; kwargs...) where T<:Union{Float64, ComplexF64}
     spacetype = T == ComplexF64 ? ℂ : ℝ
     pspace = spacetype ^ pdim
     aspace = spacetype ^ adim
     A = map(_->MPSTensor(TensorMap(rand, T, aspace⊗pspace, aspace)), 1:L)
-    return canonicalize(UniformMPS{L, T}(A); kwargs...)
+    return normalize!(canonicalize(UniformMPS{L, T}(A); kwargs...))
 end

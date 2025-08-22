@@ -28,6 +28,7 @@ mutable struct UniformMPO{L, T<:Union{Float64, ComplexF64}} <: DenseUniformMPS{L
         T = mapreduce(eltype, promote_type, A)
         return new{L, T}(A)
     end
+    UniformMPO(A::AbstractMPOTensor) = new{1, eltype(A)}([A,])
 end
 const UMPO = UniformMPO
 

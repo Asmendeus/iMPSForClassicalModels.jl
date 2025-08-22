@@ -12,31 +12,31 @@ d2 = 5    # second layer  MPO tensor's auxiliary bond dimension
 
 # MPS: -- A --
 #         |
-A = MPSTensor(TensorMap(rand, ℝ^D⊗ℝ^dp, ℝ^D))
+A = MPSTensor(TensorMap(rand, ℂ^D⊗ℂ^dp, ℂ^D))
 # MPS: -- A1 -- A2 --
 #         |     |
-A1 = MPSTensor(TensorMap(rand, ℝ^DL⊗ℝ^dp, ℝ^DR))
-A2 = MPSTensor(TensorMap(rand, ℝ^DR⊗ℝ^dp, ℝ^DL))
+A1 = MPSTensor(TensorMap(rand, ℂ^DL⊗ℂ^dp, ℂ^DR))
+A2 = MPSTensor(TensorMap(rand, ℂ^DR⊗ℂ^dp, ℂ^DL))
 
 # MPO:    |
 #      -- O --
 #         |
-O = MPOTensor(TensorMap(rand, ℝ^d1⊗ℝ^dp, ℝ^dp⊗ℝ^d1))
+O = MPOTensor(TensorMap(rand, ℂ^d1⊗ℂ^dp, ℂ^dp⊗ℂ^d1))
 
 # MultirowMPO:    |     |
 #              —— O1 —— O1 ——
 #                 |     |
 #              —— O2 —— O2 ——
 #                 |     |
-O1 = MPOTensor(TensorMap(rand, ℝ^d1⊗ℝ^dp, ℝ^dp⊗ℝ^d1))
-O2 = MPOTensor(TensorMap(rand, ℝ^d2⊗ℝ^dp, ℝ^dp⊗ℝ^d2))
+O1 = MPOTensor(TensorMap(rand, ℂ^d1⊗ℂ^dp, ℂ^dp⊗ℂ^d1))
+O2 = MPOTensor(TensorMap(rand, ℂ^d2⊗ℂ^dp, ℂ^dp⊗ℂ^d2))
 
 # AdjointMPS:    |
 #             —— B ——
-B = AdjointMPSTensor(TensorMap(rand, ℝ^DL, ℝ^DL⊗ℝ^dp))
+B = AdjointMPSTensor(TensorMap(rand, ℂ^DL, ℂ^DL⊗ℂ^dp))
 
 # BondTensor: -- C --
-C = BondTensor(TensorMap(rand, ℝ^DL, ℝ^DR))
+C = BondTensor(TensorMap(rand, ℂ^DL, ℂ^DL))
 
 # single layer EnvironmentTensor:
 #    ___             ___
@@ -46,8 +46,8 @@ C = BondTensor(TensorMap(rand, ℝ^DL, ℝ^DR))
 #   |   |           |   |
 #   |   | --     -- |   |
 #    ‾‾‾             ‾‾‾
-FL1 = LeftEnvironmentTensor(TensorMap(rand, ℝ^DL, ℝ^d1⊗ℝ^DL))
-FR1 = RightEnvironmentTensor(TensorMap(rand, ℝ^DR⊗ℝ^d1, ℝ^DR))
+FL1 = LeftEnvironmentTensor(TensorMap(rand, ℂ^DL, ℂ^d1⊗ℂ^DL))
+FR1 = RightEnvironmentTensor(TensorMap(rand, ℂ^DR⊗ℂ^d1, ℂ^DR))
 # bilayer EnvironmentTensor:
 #    ___             ___
 #   |   | --     -- |   |
@@ -58,8 +58,8 @@ FR1 = RightEnvironmentTensor(TensorMap(rand, ℝ^DR⊗ℝ^d1, ℝ^DR))
 #   |   |           |   |
 #   |   | --     -- |   |
 #    ‾‾‾             ‾‾‾
-FL2 = LeftEnvironmentTensor(TensorMap(rand, ℝ^DL, ℝ^d2⊗ℝ^d1⊗ℝ^DL))
-FR2 = RightEnvironmentTensor(TensorMap(rand, ℝ^DL⊗ℝ^d1⊗ℝ^d2, ℝ^DL))
+FL2 = LeftEnvironmentTensor(TensorMap(rand, ℂ^DL, ℂ^d2⊗ℂ^d1⊗ℂ^DL))
+FR2 = RightEnvironmentTensor(TensorMap(rand, ℂ^DL⊗ℂ^d1⊗ℂ^d2, ℂ^DL))
 
 # leftorth and rightorth
 AL, RA, _ = leftorth(A)
@@ -88,6 +88,18 @@ bondEnv2 = environment(FL2, FR2)
 centerEnv1 = environment(FL1, O1, FR1)
 centerEnv2 = environment(FL1, [O1, O2], FR1)
 
+# MPS
+ψ1 = UMPS(A)
+ψ2 = randUMPS(ComplexF64, 2, 4, 10)
+
+# MPO
+ρ1 = UMPO(O)
+ρ2 = identityUMPO(ComplexF64, 2, 4)
+
+# SparseUMPO
+Z1 = SparseUMPO(O)
+Z2 = SparseUMPO([O1 O1; O2 O2])
+
 @testset "leftorth & rightorth" begin
     @test isLeftIsometric(AL)
     @test norm(AL.A * RA.A - A.A) < tol
@@ -112,4 +124,30 @@ centerEnv2 = environment(FL1, [O1, O2], FR1)
 
     @test isRightIsometric(CR)
     @test norm(LC.A * CR.A - C.A) < tol
+end
+
+@testset "iMPS & iMPO" begin
+    @test abs(overlap(ψ1, ψ1) - 1) < tol
+
+    ψ1c = canonicalize(ψ1)
+    @test abs(overlap(ψ1c, ψ1c) - 1) < tol
+    @test norm(ψ1c.AL[1] * ψ1c.C[1] - ψ1c.C[1] * ψ1c.AR[1]) < tol
+
+    @test abs(norm(ψ1) - norm(ψ1c)) < tol
+
+    ψ1u = uniformize(ψ1c)
+    @test abs(overlap(ψ1, ψ1u) - 1) < tol
+
+
+    @test abs(overlap(ψ2, ψ2) - 1) < tol
+
+    ψ2c = canonicalize(ψ2)
+    @test abs(overlap(ψ2c, ψ2c) - 1) < tol
+    @test norm(ψ2c.AL[1] * ψ2c.C[1] - ψ2c.C[2] * ψ2c.AR[1]) < tol
+    @test norm(ψ2c.AL[2] * ψ2c.C[2] - ψ2c.C[1] * ψ2c.AR[2]) < tol
+
+    @test abs(norm(ψ2) - norm(ψ2c)) < tol
+
+    ψ2u = uniformize(ψ2c)
+    @test abs(overlap(ψ2, ψ2u) - 1) < tol
 end

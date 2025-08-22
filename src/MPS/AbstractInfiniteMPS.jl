@@ -30,6 +30,21 @@ Interface of `AbstractUniformMPS`, return the local tensors
 """
 getA(obj::AbstractUniformMPS) = obj.A
 
+"""
+    norm(obj::AbstractUniformMPS) -> ::Float64
+
+Return the inner-induced norm of a unit cell.
+"""
+function norm(obj::AbstractUniformMPS;
+            XL₀::AbstractVector{<:LeftEnvironmentTensor{2}}=_default_X₀_leftFixedPoint(TransferMatrix(obj.A, adjoint.(obj.A))),
+            XR₀::AbstractVector{<:RightEnvironmentTensor{2}}=_default_X₀_rightFixedPoint(TransferMatrix(obj.A, adjoint.(obj.A))),
+            alg::EigenAlgorithm=Defaults.alg_eig)
+    t = TransferMatrix(obj.A, adjoint.(obj.A))
+    _, XL, _ = leftFixedPoint(t, XL₀, alg)
+    _, XR, _ = rightFixedPoint(t, XR₀, alg)
+    return abs(contract(environment(XL[1], XR[end])))
+end
+
 # space
 leftVirtualSpace(obj::AbstractUniformMPS) = map(x->leftVirtualSpace(x), obj.A)
 rightVirtualSpace(obj::AbstractUniformMPS) = map(x->rightVirtualSpace(x), obj.A)
@@ -79,6 +94,13 @@ Interface of `AbstractCanonicalMPS`, return the center bond tensors
 getC(obj::AbstractCanonicalMPS) = obj.C
 
 """
+    norm(obj::AbstractCanonicalMPS, si::Int64=1) -> ::Float64
+
+Return the inner-induced norm of a unit cell.
+"""
+norm(obj::AbstractCanonicalMPS, si::Int64=1) = abs(tr(obj.C[si].A' * obj.C[si].A))
+
+"""
     normalize!(obj::AbstractCanonicalMPS)
 
 Normalize a given canonical iMPS according to inner-induced norm.
@@ -88,6 +110,16 @@ function normalize!(obj::AbstractCanonicalMPS)
     obj.C ./= nc
     obj.AC ./= nc
     return obj
+end
+
+"""
+    normalize(obj::AbstractCanonicalMPS)
+
+Pure function of `normalize!`
+"""
+function normalize(obj::AbstractCanonicalMPS)
+    obj′ = deepcopy(obj)
+    return normalize!(obj′)
 end
 
 # space

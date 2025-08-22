@@ -111,11 +111,11 @@ function contract(C::BondTensor, env::BondEnvironment{N}, C′::AdjointBondTenso
 end
 function contract(env::BondEnvironment{N}) where N
     if N == 2
-        @tensor E = env.FL[1 2] * env.FR[2 1]
+        @tensor E = env.FL.A[1 2] * env.FR.A[2 1]
     elseif N == 3
-        @tensor E = env.FL[1 2 3] * env.FR[3 2 1]
+        @tensor E = env.FL.A[1 2 3] * env.FR.A[3 2 1]
     elseif N == 4
-        @tensor E = env.FL[1 2 3 4] * env.FR[4 3 2 1]
+        @tensor E = env.FL.A[1 2 3 4] * env.FR.A[4 3 2 1]
     else
         throw(ArgumentError("Undefined behavior. You can add your requirements to the function based on the comments in the source code at the error location."))
         # ===== Generate the code you need =====
@@ -128,7 +128,7 @@ function contract(env::BondEnvironment{N}) where N
         # N = ()
         # str_legs_FL = "1" * prod([" $i" for i in 2:N])
         # str_legs_FR = prod(["$i " for i in N:-1:2]) * "1"
-        # str_expr = "@tensor E = env.FL[$str_legs_FL] * env.FR[$str_legs_FR]"
+        # str_expr = "@tensor E = env.FL.A[$str_legs_FL] * env.FR.A[$str_legs_FR]"
         # ==========
         # Dev memo: No method was found for `eval` to be applied to function scopes
     return E

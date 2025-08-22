@@ -16,6 +16,7 @@ By convention, we appoint that the first virtual space is between A[1] and A[2],
     UniformMPS{L, T}(A::AbstractVector{<:AbstractMPSTensor}=Vector{MPSTensor}(undef, L))
     UniformMPS(L::Int64, T::Union{Float64, ComplexF64}=Defaults.datatype)
     UniformMPS(A::AbstractVector{<:AbstractMPSTensor})
+    UniformMPS(A::AbstractMPSTensor)
 """
 mutable struct UniformMPS{L, T<:Union{Float64, ComplexF64}} <: DenseUniformMPS{L, T}
     const A::AbstractVector{<:AbstractMPSTensor}
@@ -36,6 +37,7 @@ mutable struct UniformMPS{L, T<:Union{Float64, ComplexF64}} <: DenseUniformMPS{L
         T = mapreduce(eltype, promote_type, A)
         return new{L, T}(A)
     end
+    UniformMPS(A::AbstractMPSTensor) = new{1, eltype(A)}([A,])
 end
 const UMPS = UniformMPS
 
@@ -65,7 +67,7 @@ Assume the same `pdim` and `adim`.
 """
 function randUMPS(::Type{T}, pspace::Vector{VectorSpace}, aspace::Vector{VectorSpace}) where T<:Union{Float64, ComplexF64}
     (L = length(pspace)) == length(aspace) || throw(ArgumentError("Mismatched lengths: $(length(pspace)) ≠ $(length(aspace))"))
-    left_aspace = aspace[[end, (1:end-1)...]]
+    left_aspace = aspace[[L, (1:L-1)...]]
     right_aspace = aspace
     A = map(l->MPSTensor(TensorMap(rand, T, left_aspace[l]⊗pspace[l], right_aspace[l])), 1:L)
     return UniformMPS{L, T}(A)
@@ -78,7 +80,7 @@ function randUMPS(::Type{T}, pdim::Vector{Int64}, adim::Vector{Int64}) where T<:
     (L = length(pdim)) == length(adim) || throw(ArgumentError("Mismatched lengths: $(length(pdim)) ≠ $(length(adim))"))
     spacetype = T == ComplexF64 ? ℂ : ℝ
     pspace = map(x->spacetype ^ x, pdim)
-    left_aspace = map(x->spacetype ^ x, adim[[end, (1:end-1)...]])
+    left_aspace = map(x->spacetype ^ x, adim[[L, (1:L-1)...]])
     right_aspace = map(x->spacetype ^ x, adim)
     A = map(l->MPSTensor(TensorMap(rand, T, left_aspace[l]⊗pspace[l], right_aspace[l])), 1:L)
     return UniformMPS{L, T}(A)

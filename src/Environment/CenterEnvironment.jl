@@ -1,7 +1,7 @@
 """
     mutable struct CenterEnvironment{N} <: AbstractEnvironment{N}
         FL::LeftEnvironmentTensor{N}
-        const O::AbstractVector{MPOTensor}
+        const O::AbstractVector{<:MPOTensor}
         FR::RightEnvironmentTensor{N}
     end
 
@@ -26,7 +26,7 @@ Graphic presentation:
 """
 mutable struct CenterEnvironment{N} <: AbstractEnvironment{N}
     FL::LeftEnvironmentTensor{N}
-    const O::AbstractVector{MPOTensor}
+    const O::AbstractVector{<:MPOTensor}
     FR::RightEnvironmentTensor{N}
 
     function CenterEnvironment{N}(FL::LeftEnvironmentTensor{N}, O::AbstractVector{<:MPOTensor}, FR::RightEnvironmentTensor{N}) where N
