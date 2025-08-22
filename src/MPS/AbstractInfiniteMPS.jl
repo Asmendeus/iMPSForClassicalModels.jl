@@ -19,6 +19,10 @@ Note each concrete subtype must have a field:
 """
 abstract type AbstractUniformMPS{L} <: AbstractInfiniteMPS{L} end
 
+for func in (:getindex, :lastindex, :setindex!, :iterate, :keys, :isassigned)
+    @eval Base.$func(obj::AbstractUniformMPS, args...) = $func(obj.A, args...)
+end
+
 """
     getA(obj::AbstractUniformMPS)
 
@@ -162,3 +166,5 @@ function Base.show(io::IO, obj::DenseCanonicalMPS{L}) where L
         println(io, "Bond ", lpad(si-1, lsi), "->", lpad(si, lsi), ": $(codomain(A).spaces[1]), dim = $(D) -> $(DD)")
     end
 end
+
+const DenseInfiniteMPS{L, T} = Union{DenseUniformMPS{L, T}, DenseCanonicalMPS{L, T}}

@@ -1,6 +1,6 @@
 """
-    struct SparseUMPO{W, L} <: AbstractInfiniteMPS{L}
-        O::AbstractMatrix{MPOTensor}
+    struct SparseUMPO{W, L} <: AbstractUniformMPS{L}
+        O::AbstractMatrix{<:AbstractMPOTensor}
     end
 
 An iMPO type stores local tensors of the classical system's partition function.
@@ -14,12 +14,17 @@ For example, dense degree of classical XY model with truncation dimension 5 (phy
 approximates to 0.06, which is typically sparse.
 
 # Constructors
-    SparseUMPO{W, L}(A::AbstractMatrix{<:MPOTensor})
-    SparseUMPO(A::AbstractMatrix{<:MPOTensor})
+    SparseUMPO{W, L}(A::AbstractMatrix{<:AbstractMPOTensor})
+    SparseUMPO(A::AbstractMatrix{<:AbstractMPOTensor})
 """
 struct SparseUMPO{W, L} <: AbstractUniformMPS{L}
-    A::AbstractMatrix{MPOTensor}
-    function SparseUMPO(A::AbstractMatrix{<:MPOTensor})
+    A::AbstractMatrix{<:AbstractMPOTensor}
+
+    function SparseUMPO{W, L}(A::AbstractMatrix{<:AbstractMPOTensor}) where {W, L}
+        (W, L) == size(A) || throw(ArgumentError("Mismatched size: ($W, $L) ≠ $(size(A))"))
+        return new{W, L}(A)
+    end
+    function SparseUMPO(A::AbstractMatrix{<:AbstractMPOTensor})
         W, L = size(A)
         return new{W, L}(A)
     end
@@ -28,7 +33,7 @@ end
 size(::SparseUMPO{W, L}) where {W, L} = (W, L)
 length(::SparseUMPO{W, L}) where {W, L} = W * L
 
-convert(::Type{<:SparseUMPO}, A::AbstractMatrix{MPOTensor}) = SparseUMPO(A)
+convert(::Type{<:SparseUMPO}, A::AbstractMatrix{<:AbstractMPOTensor}) = SparseUMPO(A)
 
 function ishermitian(obj::SparseUMPO{W, L}; tol::Float64=Defaults.tol_low) where {W, L}
     for w in 1:ceil(Int, W/2), l in 1:L

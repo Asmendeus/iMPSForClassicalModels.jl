@@ -16,3 +16,4 @@ function uniformize(obj::DenseCanonicalMPS)
     A = left_inv_sqrt_C .* AL .* right_sqrt_C
     return uniformize(typeof(obj))(A)
 end
+uniformize(obj::DenseUniformMPS) = obj

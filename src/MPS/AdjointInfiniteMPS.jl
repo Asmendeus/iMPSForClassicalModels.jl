@@ -5,8 +5,8 @@
 
 Lazy wrapper type for adjoint of iMPS.
 
-    adjoint(::Union{DenseUniformMPS, DenseCanonicalMPS}) -> ::AdjointInfiniteMPS
-    adjoint(::AdjointInfiniteMPS) -> ::Union{DenseUniformMPS, DenseCanonicalMPS}
+    adjoint(::DenseInfiniteMPS) -> ::AdjointInfiniteMPS
+    adjoint(::AdjointInfiniteMPS) -> ::DenseInfiniteMPS
 
 Functions to be directly propagated to the parent:
 
@@ -19,7 +19,7 @@ Functions to be propagated to the parent with some adaptations:
 struct AdjointInfiniteMPS{L, T} <: AbstractInfiniteMPS{L}
     parent::Union{DenseUniformMPS{L, T}, DenseCanonicalMPS{L, T}}
 end
-adjoint(A::Union{DenseUniformMPS, DenseCanonicalMPS}) = AdjointInfiniteMPS(A)
+adjoint(A::DenseInfiniteMPS) = AdjointInfiniteMPS(A)
 adjoint(A::AdjointInfiniteMPS) = A.parent
 
 function show(io::IO, obj::AdjointInfiniteMPS)

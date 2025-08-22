@@ -1,5 +1,5 @@
 """
-    mutable struct UniformMPO{L, T<:Union{Float64, ComplexF64}} <: DenseUniformMPO{L, T}
+    mutable struct UniformMPO{L, T<:Union{Float64, ComplexF64}} <: DenseUniformMPS{L, T}
         const A::AbstractVector{<:AbstractMPOTensor}
     end
 
@@ -9,7 +9,7 @@ All the fields and constructors are exactly the same to those of `UniformMPS`.
 We redefine the type `UniformMPO` just for using multiple dispacth when implementing the algebra between `UniformMPS` and `UniformMPO`.
 Details of constructors please see `UniformMPS`.
 """
-mutable struct UniformMPO{L, T<:Union{Float64, ComplexF64}} <: DenseUniformMPO{L, T}
+mutable struct UniformMPO{L, T<:Union{Float64, ComplexF64}} <: DenseUniformMPS{L, T}
     const A::AbstractVector{<:AbstractMPOTensor}
 
     function UniformMPO{L, T}(A::AbstractVector{<:AbstractMPOTensor}=Vector{MPOTensor}(undef, L)) where {L, T<:Union{Float64, ComplexF64}}

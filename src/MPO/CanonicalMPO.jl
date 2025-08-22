@@ -1,5 +1,5 @@
 """
-    mutable struct CanonicalMPO{L, T<:Union{Float64, ComplexF64}} <: DenseCanonicalMPO{L, T}
+    mutable struct CanonicalMPO{L, T<:Union{Float64, ComplexF64}} <: DenseCanonicalMPS{L, T}
         const AL::AbstractVector{<:AbstractMPOTensor}
         const AR::AbstractVector{<:AbstractMPOTensor}
         const AC::AbstractVector{<:AbstractMPOTensor}
@@ -12,7 +12,7 @@ All the fields and constructors are exactly the same to those of `CanonicalMPS`.
 We redefine the type `CanonicalMPO` just for using multiple dispacth when implementing the algebra between `UniformMPS` and `UniformMPO`.
 Details of constructors please see `CanonicalMPS`.
 """
-mutable struct CanonicalMPO{L, T<:Union{Float64, ComplexF64}} <: DenseCanonicalMPO{L, T}
+mutable struct CanonicalMPO{L, T<:Union{Float64, ComplexF64}} <: DenseCanonicalMPS{L, T}
     const AL::AbstractVector{<:AbstractMPOTensor}
     const AR::AbstractVector{<:AbstractMPOTensor}
     const AC::AbstractVector{<:AbstractMPOTensor}

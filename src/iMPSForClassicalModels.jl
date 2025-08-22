@@ -37,6 +37,7 @@ export leftFixedPoint, rightFixedPoint, midFixedPoint
 export AbstractInfiniteMPS
 export AbstractUniformMPS, DenseUniformMPS, getA
 export AbstractCanonicalMPS, DenseCanonicalMPS, getAL, getAR, getAR, getC
+export DenseInfiniteMPS
 export UniformMPS, UMPS, randUMPS
 export CanonicalMPS, CMPS, randCMPS
 export canonicalize, uniformize
@@ -47,7 +48,7 @@ export UniformMPO, UMPO, identityUMPO
 export CanonicalMPO, CMPO, identityCMPO
 
 # SparseMPO
-
+export SparseUMPO
 
 # Impurity tensor
 
@@ -88,5 +89,13 @@ include("MPS/CanonicalMPS.jl")
 include("MPS/canonicalize.jl")
 include("MPS/uniformize.jl")
 include("MPS/AdjointInfiniteMPS.jl")
+
+include("MPO/UniformMPO.jl")
+include("MPO/CanonicalMPO.jl")
+
+include("SparseUMPO/SparseUMPO.jl")
+
+include("LocalImpurity/LocalImpurity.jl")
+include("LocalImpurity/expectation.jl")
 
 end # module iMPSForClassicalModels

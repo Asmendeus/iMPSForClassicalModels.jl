@@ -38,3 +38,4 @@ function canonicalize(obj::DenseUniformMPS{L, T}; XL₀=_default_X₀_leftFixedP
 
     return canonicalize(typeof(obj))(AL, AR, AC, C)
 end
+canonicalize(obj::DenseCanonicalMPS; kwargs...) = obj

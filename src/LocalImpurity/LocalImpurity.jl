@@ -11,25 +11,29 @@ for func in (:getindex, :lastindex, :setindex!, :iterate, :keys, :isassigned)
     @eval Base.$func(obj::AbstractLocalImpurity, args...) = $func(obj.A, args...)
 end
 
-
 """
     struct LocalImpurity{W, L}
-        A::AbstractMatrix{MPOTensor}
+        A::AbstractMatrix{<:AbstractMPOTensor}
     end
 
 # Constructors
-    LocalImpurity{W, L}(A::AbstractMatrix{<:MPOTensor})
-    LocalImpurity(A::AbstractMatrix{<:MPOTensor})
+    LocalImpurity{W, L}(A::AbstractMatrix{<:AbstractMPOTensor})
+    LocalImpurity(A::AbstractMatrix{<:AbstractMPOTensor})
 """
 struct LocalImpurity{W, L} <: AbstractLocalImpurity{W, L}
-    A::AbstractMatrix{MPOTensor}
-    function LocalImpurity(A::AbstractMatrix{<:MPOTensor})
+    A::AbstractMatrix{<:AbstractMPOTensor}
+
+    function LocalImpurity{W, L}(A::AbstractMatrix{<:AbstractMPOTensor}) where {W, L}
+        (W, L) == size(A) || throw(ArgumentError("Mismatched size: ($W, $L) ≠ $(size(A))"))
+        return new{W, L}(A)
+    end
+    function LocalImpurity(A::AbstractMatrix{<:AbstractMPOTensor})
         W, L = size(A)
         return new{W, L}(A)
     end
 end
 
-convert(::Type{<:LocalImpurity}, A::AbstractMatrix{MPOTensor}) = LocalImpurity(A)
+convert(::Type{<:LocalImpurity}, A::AbstractMatrix{<:AbstractMPOTensor}) = LocalImpurity(A)
 
 function show(io::IO, obj::LocalImpurity{W, L}) where {W, L}
 

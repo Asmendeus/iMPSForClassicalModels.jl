@@ -1,7 +1,8 @@
 """
-    contract(FL::LeftEnvironmentTensor{N}, env::ChannelEnvironment{N, L, R}, FR::RightEnvironmentTensor{N}) -> Number
-    contract(AC::LocalTensor{R}, env::CenterEnvironment{N}, AC′::AdjointLocalTensor{R}) -> Number
-    contract(C::BondTensor, env::BondEnvironment{N}, C′::AdjointBondTensor) -> Number
+    contract(FL::LeftEnvironmentTensor{N}, env::ChannelEnvironment{N, L, R}, FR::RightEnvironmentTensor{N}) -> ::Number
+    contract(AC::LocalTensor{R}, env::CenterEnvironment{N}, AC′::AdjointLocalTensor{R}) -> ::Number
+    contract(C::BondTensor, env::BondEnvironment{N}, C′::AdjointBondTensor) -> ::Number
+    contract(env::BondEnvironment{N}) -> ::Number
 
 Contract losed tensor network into a single number
 1.
