@@ -138,7 +138,6 @@ end
     ψ1u = uniformize(ψ1c)
     @test abs(overlap(ψ1, ψ1u) - 1) < tol
 
-
     @test abs(overlap(ψ2, ψ2) - 1) < tol
 
     ψ2c = canonicalize(ψ2)
