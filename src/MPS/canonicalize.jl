@@ -28,7 +28,7 @@ function canonicalize(obj::DenseUniformMPS{L, T}; XL₀=_default_X₀_leftFixedP
     for i in 1:L
         u, s, vd = tsvd(C[i].A, (1,), (2,))
         U[i] = eltype(C)(u)
-        C[i] = eltype(C)(s)
+        C[i] = eltype(C)(normalize(s))
         Vd[i] = eltype(C)(vd)
     end
     AL = adjoint.(U)[[L, (1:L-1)...]] .* AL .* U

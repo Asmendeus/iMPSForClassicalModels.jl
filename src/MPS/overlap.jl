@@ -1,26 +1,25 @@
 """
-    overlap(obj::T, obj′::T;
-            XL₀::AbstractVector{<:LeftEnvironmentTensor{2}}=_default_X₀_leftFixedPoint(TransferMatrix(obj.A, adjoint.(obj′.A))),
-            XR₀::AbstractVector{<:RightEnvironmentTensor{2}}=_default_X₀_rightFixedPoint(TransferMatrix(obj.A, adjoint.(obj′.A))),
-            alg::EigenAlgorithm=Defaults.alg_eig) where T <: DenseUniformMPS
-    overlap(obj::T, obj′::T) where T <: DenseCanonicalMPS
+    overlap(obj::DenseInfiniteMPS{L, T}, obj′::DenseInfiniteMPS{L, T};
+            XL₀::AbstractVector{<:LeftEnvironmentTensor{2}}=_default_X₀_leftFixedPoint(TransferMatrix(isa(obj, DenseUniformMPS) ? obj.A : obj.AL, isa(obj′, DenseUniformMPS) ? adjoint.(obj′.A) : adjoint.(obj′.AL))),
+            alg::EigenAlgorithm=Defaults.alg_eig) where {L, T}
 
-Overlap of two iMPSs or iMPOs, i.e.,
-    O(ψ, ψ′) = |⟨ψ|ψ′⟩ / sqrt(⟨ψ|ψ⟩ ⟨ψ′|ψ′⟩)|           (iMPSs)
-    O(ρ, ρ′) = |Tr(ρ†ρ′) / sqrt(Tr(ρ†ρ) Tr(ρ′†ρ′))|   (iMPOs)
-indicating approximation degree between the two.
+Overlap of two iMPSs, i.e., `∏_l λ[l]` solved by
+     __                                            __
+    |  | -- A[1] -- ... -- A[L] --                |  | --
+    |FL|    |              |        =  ∏_l λ[l] * |FL|
+    |  | -- B[1] -- ... -- B[L] --                |  | --
+     ‾‾                                            ‾‾
+Here `A` is `obj.A` or `obj.AL`, and `B` is `adjoint.(obj′.A)` or `adjoint.(obj′.AL)`.
+`obj` and `obj′` are normalized iMPS/iMPO.
 
-`O = 1` means the two are equivalent in the sense of gauge degrees of freedom or one is a submanifold of the other.
+`abs(overlap(obj, obj′)) = 1` means the two are equivalent in the sense of gauge degrees of freedom.
 """
-function overlap(obj::T, obj′::T;
-            XL₀::AbstractVector{<:LeftEnvironmentTensor{2}}=_default_X₀_leftFixedPoint(TransferMatrix(obj.A, adjoint.(obj′.A))),
-            XR₀::AbstractVector{<:RightEnvironmentTensor{2}}=_default_X₀_rightFixedPoint(TransferMatrix(obj.A, adjoint.(obj′.A))),
-            alg::EigenAlgorithm=Defaults.alg_eig) where T <: DenseUniformMPS
-    t = TransferMatrix(obj.A, adjoint.(obj′.A))
-    _, XL, _ = leftFixedPoint(t, XL₀, alg)
-    _, XR, _ = rightFixedPoint(t, XR₀, alg)
-    return norm(contract(environment(XL[1], XR[end]))) / sqrt(norm(obj) * norm(obj′))
-end
-function overlap(obj::T, obj′::T) where T <: DenseCanonicalMPS
-    return tr(obj.C[1].A * obj′.C[1].A') / sqrt(norm(obj) * norm(obj′))
+function overlap(obj::DenseInfiniteMPS{L, T}, obj′::DenseInfiniteMPS{L, T};
+            XL₀::AbstractVector{<:LeftEnvironmentTensor{2}}=_default_X₀_leftFixedPoint(TransferMatrix(isa(obj, DenseUniformMPS) ? obj.A : obj.AL, isa(obj′, DenseUniformMPS) ? adjoint.(obj′.A) : adjoint.(obj′.AL))),
+            alg::EigenAlgorithm=Defaults.alg_eig) where {L, T}
+    A = isa(obj, DenseUniformMPS) ? normalize(obj).A : obj.AL
+    B = isa(obj′, DenseUniformMPS) ? adjoint.(normalize(obj′).A) : adjoint.(obj′.AL)
+    t = TransferMatrix(A, B)
+    λ, _, _ = leftFixedPoint(t, XL₀, alg)
+    return prod(λ)
 end

@@ -9,6 +9,15 @@ A series of functions for solving right fixed point equations or maximum eigeneq
 `X₀::T`: initial state
 `alg::EigenAlgorithm=Defaults.alg_eig`: `SimpleIterator` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
 
+# Return in common
+`λ::Vector{<:Number}`: length `L` vector, coefficients of solution tensors of `L` fixed point equations
+`X::Vector{<:AbstractTensorWrapper}`: length `L` vector, solution tensors of `L` fixed point equations
+`info`: information of the algorithm
+
+# Notes
+By convention, we appoint that:
+the eigenvector `X` must meet `norm(X) = 1` and have a positive real first element
+
 # ===============================================
     rightFixedPoint(A::AbstractVector{<:LocalTensor{R}},
                 X₀::AbstractVector{<:BondTensor}=_default_X₀_rigthFixedPoint(A),

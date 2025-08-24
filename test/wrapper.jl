@@ -126,27 +126,43 @@ Z2 = SparseUMPO([O1 O1; O2 O2])
     @test norm(LC.A * CR.A - C.A) < tol
 end
 
-@testset "iMPS & iMPO" begin
+@testset "iMPS (L = 1)" begin
     @test abs(overlap(ψ1, ψ1) - 1) < tol
 
     ψ1c = canonicalize(ψ1)
     @test abs(overlap(ψ1c, ψ1c) - 1) < tol
     @test norm(ψ1c.AL[1] * ψ1c.C[1] - ψ1c.C[1] * ψ1c.AR[1]) < tol
-
-    @test abs(norm(ψ1) - norm(ψ1c)) < tol
+    @test abs(overlap(ψ1, ψ1c) - 1) < tol
 
     ψ1u = uniformize(ψ1c)
+    @test abs(overlap(ψ1u, ψ1u) - 1) < tol
+    @test abs(overlap(ψ1c, ψ1u) - 1) < tol
     @test abs(overlap(ψ1, ψ1u) - 1) < tol
-
+end
+@testset "iMPS (L = 2)" begin
     @test abs(overlap(ψ2, ψ2) - 1) < tol
 
     ψ2c = canonicalize(ψ2)
     @test abs(overlap(ψ2c, ψ2c) - 1) < tol
     @test norm(ψ2c.AL[1] * ψ2c.C[1] - ψ2c.C[2] * ψ2c.AR[1]) < tol
     @test norm(ψ2c.AL[2] * ψ2c.C[2] - ψ2c.C[1] * ψ2c.AR[2]) < tol
-
-    @test abs(norm(ψ2) - norm(ψ2c)) < tol
+    @test abs(overlap(ψ2, ψ2c) - 1) < tol
 
     ψ2u = uniformize(ψ2c)
+    @test abs(overlap(ψ2u, ψ2u) - 1) < tol
+    @test abs(overlap(ψ2c, ψ2u) - 1) < tol
     @test abs(overlap(ψ2, ψ2u) - 1) < tol
+end
+@testset "iMPO (L = 1)" begin
+    @test abs(overlap(ρ1, ρ1) - 1) < tol
+
+    ρ1c = canonicalize(ρ1)
+    @test abs(overlap(ρ1c, ρ1c) - 1) < tol
+    @test norm(ρ1c.AL[1] * ρ1c.C[1] - ρ1c.C[1] * ρ1c.AR[1]) < tol
+    @test abs(overlap(ρ1, ρ1c) - 1) < tol
+
+    ρ1u = uniformize(ρ1c)
+    @test abs(overlap(ρ1u, ρ1u) - 1) < tol
+    @test abs(overlap(ρ1c, ρ1u) - 1) < tol
+    @test abs(overlap(ρ1, ρ1u) - 1) < tol
 end

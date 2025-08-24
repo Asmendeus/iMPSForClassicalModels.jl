@@ -98,45 +98,25 @@ uniformize(::Type{CanonicalMPS{L, T}}) where {L, T} = UniformMPS{L, T}
 
 """
     randCMPS([::Type{T},] pspace::Vector{VectorSpace}, aspace::Vector{VectorSpace}; kwargs...) -> CMPS{L, T}
-
-Generate a length `L` random CMPS with given length `L` vector `pspace` and `aspace`. `T = ComplexF64`(default) or `Float64` is the number type.
-
     randCMPS([::Type{T},] L::Int64, pspace::VectorSpace, apsace::VectorSpace; kwargs...) -> CMPS{L, T}
-
-Assume the same `pspace` and `aspace`, except for the boundary bond, which is assumed to be trivial.
-
     randCMPS([::Type{T},] pdim::Vector{Int64}, adim::Vector{Int64}; kwargs...) -> CMPS{L, T}
-
-Assume `pspace = [spacetype] .^ pdim` and `aspace = [spacetype] .^ adim`, where `spacetype = ℂ(T=ComplexF64) or ℝ(T=Float64)`
-
     randCMPS([::Type{T},] L::Int64, pdim::Int64, adim::Int64; kwargs...) -> CMPS{L, T}
 
-Assume the same `pdim` and `adim`.
+Generate a length `L` random CMPS by canonicalize a random UMPS. The arguments are propagated to `randUMPS` and `kwargs` are propagated to `canonicalize`.
 """
 function randCMPS(::Type{T}, pspace::Vector{VectorSpace}, aspace::Vector{VectorSpace}; kwargs...) where T<:Union{Float64, ComplexF64}
-    (L = length(pspace)) == length(aspace) || throw(ArgumentError("Mismatched lengths: $(length(pspace)) ≠ $(length(aspace))"))
-    left_aspace = aspace[[L, (1:L-1)...]]
-    right_aspace = aspace
-    A = map(l->MPSTensor(TensorMap(rand, T, left_aspace[l]⊗pspace[l], right_aspace[l])), 1:L)
-    return normalize!(canonicalize(UniformMPS{L, T}(A); kwargs...))
+    umps = randUMPS(T, pspace, aspace)
+    return canonicalize(umps; kwargs...)
 end
 function randCMPS(::Type{T}, L::Int64, pspace::VectorSpace, apsace::VectorSpace; kwargs...) where T<:Union{Float64, ComplexF64}
-    A = map(_->MPSTensor(TensorMap(rand, T, aspace⊗pspace, aspace)), 1:L)
-    return normalize!(canonicalize(UniformMPS{L, T}(A); kwargs...))
+    umps = randUMPS(T, L, pspace, aspace)
+    return canonicalize(umps; kwargs...)
 end
 function randCMPS(::Type{T}, pdim::Vector{Int64}, adim::Vector{Int64}; kwargs...) where T<:Union{Float64, ComplexF64}
-    (L = length(pdim)) == length(adim) || throw(ArgumentError("Mismatched lengths: $(length(pdim)) ≠ $(length(adim))"))
-    spacetype = T == ComplexF64 ? ℂ : ℝ
-    pspace = map(x->spacetype ^ x, pdim)
-    left_aspace = map(x->spacetype ^ x, adim[[L, (1:L-1)...]])
-    right_aspace = map(x->spacetype ^ x, adim)
-    A = map(l->MPSTensor(TensorMap(rand, T, left_aspace[l]⊗pspace[l], right_aspace[l])), 1:L)
-    return normalize!(canonicalize(UniformMPS{L, T}(A); kwargs...))
+    umps = randUMPS(T, pdim, adim)
+    return canonicalize(umps; kwargs...)
 end
 function randCMPS(::Type{T}, L::Int64, pdim::Int64, adim::Int64; kwargs...) where T<:Union{Float64, ComplexF64}
-    spacetype = T == ComplexF64 ? ℂ : ℝ
-    pspace = spacetype ^ pdim
-    aspace = spacetype ^ adim
-    A = map(_->MPSTensor(TensorMap(rand, T, aspace⊗pspace, aspace)), 1:L)
-    return normalize!(canonicalize(UniformMPS{L, T}(A); kwargs...))
+    umps = randUMPS(T, L, pdim, adim)
+    return canonicalize(umps; kwargs...)
 end

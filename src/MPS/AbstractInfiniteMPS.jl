@@ -31,18 +31,63 @@ Interface of `AbstractUniformMPS`, return the local tensors
 getA(obj::AbstractUniformMPS) = obj.A
 
 """
-    norm(obj::AbstractUniformMPS) -> ::Float64
+    norm(obj::AbstractUniformMPS;
+        XL₀::AbstractVector{<:BondTensor}=_default_X₀_leftFixedPoint(obj.A),
+        alg::EigenAlgorithm=Defaults.alg_eig) -> ::Vector{Float64}
 
-Return the inner-induced norm of a unit cell.
+Return the largest eigenvalues in canonicalization, i.e., `λ` solved by
+
+    -- X[l] -- A[l] --  =  λ[l] * -- AL[l] -- X[l+1] --
+                |                     |
 """
 function norm(obj::AbstractUniformMPS;
-            XL₀::AbstractVector{<:LeftEnvironmentTensor{2}}=_default_X₀_leftFixedPoint(TransferMatrix(obj.A, adjoint.(obj.A))),
-            XR₀::AbstractVector{<:RightEnvironmentTensor{2}}=_default_X₀_rightFixedPoint(TransferMatrix(obj.A, adjoint.(obj.A))),
+            XL₀::AbstractVector{<:BondTensor}=_default_X₀_leftFixedPoint(obj.A),
             alg::EigenAlgorithm=Defaults.alg_eig)
-    t = TransferMatrix(obj.A, adjoint.(obj.A))
-    _, XL, _ = leftFixedPoint(t, XL₀, alg)
-    _, XR, _ = rightFixedPoint(t, XR₀, alg)
-    return abs(contract(environment(XL[1], XR[end])))
+    λ, _, _ = leftFixedPoint(obj.A, XL₀, alg)
+    @assert all(x->abs(imag(x)) < Defaults.tol, λ) "Incorrect result: norms of non-real number"
+    return abs.(λ)
+end
+
+"""
+    norm(obj::AbstractUniformMPS, si::Int64;
+        XL₀::AbstractVector{<:BondTensor}=_default_X₀_leftFixedPoint(obj.A),
+        alg::EigenAlgorithm=Defaults.alg_eig) -> ::Float64
+
+Return the `si`-th largest eigenvalue in canonicalization.
+"""
+function norm(obj::AbstractUniformMPS, si::Int64;
+            XL₀::AbstractVector{<:BondTensor}=_default_X₀_leftFixedPoint(obj.A),
+            alg::EigenAlgorithm=Defaults.alg_eig)
+    return norm(obj; XL₀=XL₀, alg=alg)[si]
+end
+
+"""
+    normalize!(obj::AbstractUniformMPS{L};
+            XL₀::AbstractVector{<:BondTensor}=_default_X₀_leftFixedPoint(obj.A),
+            alg::EigenAlgorithm=Defaults.alg_eig)
+
+Normalize a given uniform iMPS according to inner-induced norm.
+"""
+function normalize!(obj::AbstractUniformMPS{L};
+            XL₀::AbstractVector{<:BondTensor}=_default_X₀_leftFixedPoint(obj.A),
+            alg::EigenAlgorithm=Defaults.alg_eig) where L
+    λ = norm(obj; XL₀=XL₀, alg=alg)
+    obj.A ./= λ
+    return obj
+end
+
+"""
+    normalize(obj::AbstractUniformMPS{L};
+            XL₀::AbstractVector{<:BondTensor}=_default_X₀_leftFixedPoint(obj.A),
+            alg::EigenAlgorithm=Defaults.alg_eig)
+
+Pure function of `normalize!`
+"""
+function normalize(obj::AbstractUniformMPS{L};
+        XL₀::AbstractVector{<:BondTensor}=_default_X₀_leftFixedPoint(obj.A),
+        alg::EigenAlgorithm=Defaults.alg_eig) where L
+    obj′ = deepcopy(obj)
+    return normalize!(obj′; XL₀=XL₀, alg=alg)
 end
 
 # space
@@ -94,11 +139,18 @@ Interface of `AbstractCanonicalMPS`, return the center bond tensors
 getC(obj::AbstractCanonicalMPS) = obj.C
 
 """
-    norm(obj::AbstractCanonicalMPS, si::Int64=1) -> ::Float64
+    norm(obj::AbstractCanonicalMPS) -> ::Vector{Float64}
 
-Return the inner-induced norm of a unit cell.
+Return the inner-induced norms.
 """
-norm(obj::AbstractCanonicalMPS, si::Int64=1) = abs(tr(obj.C[si].A' * obj.C[si].A))
+norm(obj::AbstractCanonicalMPS) = norm.(obj.C)
+
+"""
+    norm(obj::AbstractCanonicalMPS, si::Int64) -> ::Float64
+
+Return the `si`-th inner-induced norm.
+"""
+norm(obj::AbstractCanonicalMPS, si::Int64) = norm(obj.C[si])
 
 """
     normalize!(obj::AbstractCanonicalMPS)
@@ -106,7 +158,7 @@ norm(obj::AbstractCanonicalMPS, si::Int64=1) = abs(tr(obj.C[si].A' * obj.C[si].A
 Normalize a given canonical iMPS according to inner-induced norm.
 """
 function normalize!(obj::AbstractCanonicalMPS)
-    nc = norm.(obj.C)
+    nc = norm(obj)
     obj.C ./= nc
     obj.AC ./= nc
     return obj

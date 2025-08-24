@@ -8,6 +8,15 @@ A series of functions for solving mid fixed point equations or maximum eigenequa
 `X₀::T`: initial state
 `alg::EigenAlgorithm=Defaults.alg_eig`: `SimpleIterator` for `iterate`, while `Arnoldi` or `Lanczos` for `eigsolve`
 
+# Return in common
+`λ::Vector{<:Number}`: length `L` vector, coefficients of solution tensors of `L` fixed point equations
+`X::Vector{<:AbstractTensorWrapper}`: length `L` vector, solution tensors of `L` fixed point equations
+`info`: information of the algorithm
+
+# Notes
+By convention, we appoint that:
+the eigenvector `X` must meet `norm(X) = 1` and have a positive real first element
+
 # ===============================================
     midFixedPoint(env::BondEnvironment{N},
                 X₀::Union{BondTensor, AdjointBondTensor}=_default_X₀_midFixedPoint(env, false),
