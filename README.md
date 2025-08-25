@@ -44,8 +44,9 @@ See [Tutorial.md](docs/Tutorial.md)
 
 ## About next version
 
-In `v0.1.1`, the following features are expected to be added
+In `v0.2.0`, the following features are expected to be added
 
+- Implementation of variational algorithm based on gradient algorithm;
 - Optimization of partial code logic;
 - Examples of classical Clock and XY model;
 - More accurate and comprehensive reviews and tutorials.

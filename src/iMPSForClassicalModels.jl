@@ -55,6 +55,7 @@ export SparseUMPO
 export AbstractLocalImpurity, LocalImpurity, expectation
 
 # Algorithm
+export getAL, getAR, approximate
 
 include("utils/SimpleIterator.jl")
 include("utils/iterate.jl")
@@ -99,5 +100,9 @@ include("SparseUMPO/SparseUMPO.jl")
 
 include("LocalImpurity/LocalImpurity.jl")
 include("LocalImpurity/expectation.jl")
+
+include("Algorithm/getAL.jl")
+include("Algorithm/getAR.jl")
+include("Algorithm/approximate.jl")
 
 end # module iMPSForClassicalModels

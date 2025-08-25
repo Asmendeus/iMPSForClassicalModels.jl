@@ -252,3 +252,14 @@ function Base.show(io::IO, obj::DenseCanonicalMPS{L}) where L
 end
 
 const DenseInfiniteMPS{L, T} = Union{DenseUniformMPS{L, T}, DenseCanonicalMPS{L, T}}
+
+# Interface functions for `iterate`
+lambda(obj::DenseInfiniteMPS) = norm.(obj.C) .* sign.(obj.C)
+function division(obj::DenseInfiniteMPS, n::AbstractVector{<:Number})
+    obj′ = deepcopy(obj)
+    obj′.C ./= n
+    obj′.AC ./= n
+    return obj′
+end
+minus(obj1::T, _::T) where T <: DenseInfiniteMPS = obj1
+norm_max(obj::DenseInfiniteMPS) = maximum(norm.(obj.AL .* obj.C .- obj.AC))
