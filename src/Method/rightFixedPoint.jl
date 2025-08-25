@@ -92,13 +92,13 @@ function rightFixedPoint(A::AbstractVector{<:LocalTensor{R}},
         u, s, _, _ = tsvd(vecs[1].A)
 
         X[end] = BondTensor(u * sqrt(s))
-        X[end] /= sign_first_element(X[end])
+        X[end] /= lambda(X[end])
         # Notice AR[end] and λ[end] need to be re-updated
         for l in L:-1:0
             l_now = mod(l-1, L) + 1
             l₋ = mod(l-2, L) + 1
             x, AR[l_now] = rightorth(A[l_now] * X[l_now]; kwargs...)
-            λ[l_now] = norm(x) * sign_first_element(x)
+            λ[l_now] = lambda(x)
             X[l₋] = x / λ[l_now]
         end
 
@@ -190,13 +190,13 @@ function rightFixedPoint(B::AbstractVector{<:AdjointLocalTensor{R}},
         _, s, vd, _ = tsvd(vecs[1].A)
 
         X[end] = AdjointBondTensor(sqrt(s) * vd)
-        X[end] /= sign_first_element(X[end])
+        X[end] /= lambda(X[end])
         # Notice BR[end] and λ[end] need to be re-updated
         for l in L:-1:0
             l_now = mod(l-1, L) + 1
             l₋ = mod(l-2, L) + 1
             x, BR[l_now] = rightorth(B[l_now] * X[l_now]; kwargs...)
-            λ[l_now] = norm(x) * sign_first_element(x)
+            λ[l_now] = lambda(x)
             X[l₋] = x / λ[l_now]
         end
 
@@ -271,11 +271,11 @@ function rightFixedPoint(t::TransferMatrix{L, R},
         X = Vector{RightEnvironmentTensor{2}}(undef, L)
 
         X[end] = vecs[1]
-        X[end] /= sign_first_element(X[end])
+        X[end] /= lambda(X[end])
         for l in L:-1:1
             l₋ = mod(l-2, L) + 1
             vec = pushright(X[l], t.A[l], t.B[l])
-            λ[l] = norm(vec) * sign_first_element(vec)
+            λ[l] = lambda(vec)
             X[l₋] = vec / λ[l]
         end
 
@@ -362,11 +362,11 @@ function rightFixedPoint(env::ChannelEnvironment{N, L, R},
         X = Vector{RightEnvironmentTensor{N}}(undef, L)
 
         X[end] = vecs[1]
-        X[end] /= sign_first_element(X[end])
+        X[end] /= lambda(X[end])
         for l in L:-1:1
             l₋ = mod(l-2, L) + 1
             vec = pushright(X[l], env.A[l], env.O[:, l], env.B[l])
-            λ[l] = norm(vec) * sign_first_element(vec)
+            λ[l] = lambda(vec)
             X[l₋] = vec / λ[l]
         end
 

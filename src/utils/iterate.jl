@@ -1,53 +1,52 @@
 """
-    Base.iterate(f::Function, x₀::Tuple{Number, V}; tol::Float64=Defaults.tol, maxiter::Int64=Defaults.maxiter)
     Base.iterate(f::Function, v₀::V; tol::Float64=Defaults.tol, maxiter::Int64=Defaults.maxiter)
     Base.iterate(f::Function, v₀::V, alg::SimpleIterator)
 
 A simple iterative procedure for solving fixed point equation
-    v = f(v) / λ,
-where `λ` is normalization coefficient of fixed point with `norm(v) = 1` and `norm(f(v)) = λ`.
+    f(v) = λ * v,
+where `f` is a self-map, i.e., `f(::V) -> ::V`. `λ` is normalization coefficient of fixed point `v`.
 
 # Arguments
-`f::Function`: automorphism from V to V, i.e., for any v∈V, f(v)∈V
-`x₀::Tuple{Number, V}`: x₀ = (_, v₀)
-`v₀::V`: initial value
+`f::Function`: self-map on `V`, i.e., for any v∈V, f(v)∈V
+`v₀::V`: initial argument
 `alg::SimpleIterator`: wrapper for keyword arguments
 
 # Keyword Arguments
-`tol::Float64=Defaults.tol`: tolerance for iteration, i.e., norm(f(v) / λ - v)
+`tol::Float64=Defaults.tol`: tolerance for iteration
 `maxiter::Int64=Defaults.maxiter`: iteration step limit
 
 # Return
-`v::V`: value after iteration
+`λ::N`: normalization coefficient of `f(v)`
+`v::V`: argument after iteration
 `info::SimpleIteratorInfo`: iteration information
 
 # Functions to be defined
-- Base.:(-)(::V, ::V) -> ::V
-- Base.:(/)(::V, ::Float64) -> ::V
-- norm(::V) -> Float64
-- sign_first_element(::V) -> Number
+`lambda(::V) -> ::N`
+`division(::V, ::N) -> ::V`
+`minus(::V, ::V) -> ::V`
+`norm_max(::V) -> Float64`
 """
-function Base.iterate(f::Function, x₀::Tuple{Number, V}; tol::Float64=Defaults.tol, maxiter::Int64=Defaults.maxiter) where V
+function Base.iterate(f::Function, v₀::V; tol::Float64=Defaults.tol, maxiter::Int64=Defaults.maxiter) where V
 
     converged = false
     normres = Float64[]
     numiter = 0
     numops = 0
 
-    λ = norm(x₀[2]) * sign_first_element(x₀[2])
-    v₀ = x₀[2] / λ
+    λ = lambda(v₀)
+    v₀ = division(v₀, λ)
 
     while numiter < maxiter
 
         v = f(v₀)
 
-        λ = norm(v) * sign_first_element(v)
-        v /= λ
+        λ = lambda(v)
+        v = division(v, λ)
 
         numops += 1
         numiter += 1
 
-        nr = norm(v - v₀)
+        nr = norm_max(minus(v, v₀))
         push!(normres, nr)
 
         v₀ = deepcopy(v)
@@ -64,16 +63,12 @@ function Base.iterate(f::Function, x₀::Tuple{Number, V}; tol::Float64=Defaults
 
     return λ, v₀, SimpleIteratorInfo(converged, normres, numiter, numops)
 end
-function Base.iterate(f::Function, v₀::V; tol::Float64=Defaults.tol, maxiter::Int64=Defaults.maxiter) where V
-    return iterate(f, (1.0, v₀); tol=tol, maxiter=maxiter)
-end
 function Base.iterate(f::Function, v₀::V, alg::SimpleIterator) where V
-    return iterate(f, (1.0, v₀); tol=alg.tol, maxiter=alg.maxiter)
+    return iterate(f, v₀; tol=alg.tol, maxiter=alg.maxiter)
 end
 
 """
-    Base.iterate(f::AbstractVector{<:Function}, x₀::Tuple{AbstractVector{<:Number}, AbstractVector{<:V}}; tol::Vector{Float64}=repeat([Defaults.tol,], length(f)), maxiter::Int64=Defaults.maxiter)
-    Base.iterate(f::AbstractVector{<:Function}, v₀::AbstractVector{<:V}; tol::Vector{Float64}=repeat([Defaults.tol,], length(v₀)), maxiter::Int64=Defaults.maxiter)
+    Base.iterate(f::AbstractVector{<:Function}, v₀::AbstractVector{<:V}; tol::Float64=Defaults.tol, maxiter::Int64=Defaults.maxiter)
     Base.iterate(f::AbstractVector{<:Function}, v₀::AbstractVector{<:V}, alg::SimpleIterator)
 
 A simple iterative procedure for solving fixed point equations
@@ -84,79 +79,72 @@ A simple iterative procedure for solving fixed point equations
             ⋮
     v[end] = f[end](v[end]) / λ[end]
 
-where `λ` are normalization coefficients of fixed point with `norm(v[i]) = 1` and `norm(f[i](v[i])) = λ[i]`.
+where `f` are self-maps, i.e., `f[i](::V) -> ::V`. `λ` are normalization coefficients of fixed points `v`.
 
 # Arguments
-`f::AbstractVector{<:Function}`: automorphisms from V to V, i.e., for any v∈V, f(v)∈V
-`x₀::Tuple{AbstractVector{<:Number}, AbstractVector{<:V}}`: x₀ = (_, v₀)
-`v₀::AbstractVector{<:V}`: initial values
+`f::AbstractVector{<:Function}`: self-maps on `V`, i.e., for any v∈V, f[i](v)∈V
+`v₀::AbstractVector{<:V}`: initial arguments
 `alg::SimpleIterator`: wrapper for keyword arguments
 
 # Keyword Arguments
-`tol::AbstractVector{Float64}=repeat([Defaults.tol,], length(x₀[2]))`: tolerances for iteration, i.e., norm(f.(v) ./ λ - v)
+`tol::Float64=Defaults.tol`: tolerance for iteration
 `maxiter::Int64=Defaults.maxiter`: iteration step limit
 
 # Return
-`v::V`: values after iteration
+`v::V`: arguments after iteration
 `info::SimpleIteratorInfo`: iteration information
 
 # Functions to be defined
-- Base.:(-)(::V, ::V) -> ::V
-- Base.:(/)(::V, ::Float64) -> ::V
-- norm(::V) -> Float64
-- sign_first_element(::V) -> Number
+`lambda(::AbstractVector{<:V}) -> ::AbstractVector{<:N}`
+`division(::AbstractVector{<:V}, ::AbstractVector{<:N}) -> ::AbstractVector{<:V}`
+`minus(::AbstractVector{<:V}, ::AbstractVector{<:V}) -> ::AbstractVector{<:V}`
+`norm_max(::AbstractVector{<:V}) -> Float64`
 """
-function Base.iterate(f::AbstractVector{<:Function}, x₀::Tuple{AbstractVector{<:Number}, AbstractVector{<:V}}; tol::Vector{Float64}=repeat([Defaults.tol,], length(f)), maxiter::Int64=Defaults.maxiter) where V
+function Base.iterate(f::AbstractVector{<:Function}, v₀::AbstractVector{<:V}; tol::Float64=Defaults.tol, maxiter::Int64=Defaults.maxiter) where V
 
-    (L = length(f)) == length(x₀[2]) == length(tol) || throw(ArgumentError("Mismatched lengths of `f`, `v₀` and `tol`: ($(length(f)), $(length(x₀[2])), $(length(tol)))"))
+    (L = length(f)) == length(v₀) || throw(ArgumentError("Mismatched lengths of `f` and `v₀`: ($(length(f)), $(length(v₀)))"))
 
     converged = false
-    normres = Vector{Float64}[]
+    normres = Float64[]
     numiter = 0
     numops = 0
 
-    λ = norm.(x₀[2]) .* sign_first_element.(x₀[2])
-    v₀ = x₀[2] ./ λ
-    v = deepcopy(v₀)
+    λ = lambda(v₀)
+    v₀ = division(v₀, λ)
 
     while numiter < maxiter
 
-        for l in 1:L
-            v[l] = f[l](v₀[l])
-            λ[l] = norm(v[l]) * sign_first_element(v[l])
-            v[l] /= λ[l]
-        end
+        v = map(l->f[l](v₀[l]), 1:L)
 
-        numops += L
+        λ = lambda(v)
+        v = division(v, λ)
+
+        numops += 1
         numiter += 1
 
-        nr = norm.(v - v₀)
+        nr = norm_max(minus(v, v₀))
         push!(normres, nr)
 
         v₀ = deepcopy(v)
 
-        if all(nr .< tol)
+        if nr < tol
             converged = true
             break
         end
     end
 
     if !converged
-        @warn "Simple iterations fail to converge: ϵ = $(normres[end]) .< $tol not all true"
+        @warn "Simple iterations fail to converge: ϵ = $(normres[end]) > $tol"
     end
 
     return λ, v₀, SimpleIteratorInfo(converged, normres, numiter, numops)
 end
-function Base.iterate(f::AbstractVector{<:Function}, v₀::AbstractVector{<:V}; tol::AbstractVector{Float64}=repeat([Defaults.tol,], length(v₀)), maxiter::Int64=Defaults.maxiter) where V
-    return iterate(f, ([1.0,], v₀), direction; tol=tol, maxiter=maxiter)
-end
 function Base.iterate(f::AbstractVector{<:Function}, v₀::AbstractVector{<:V}, alg::SimpleIterator) where V
-    return iterate(f, ([1.0,], v₀); tol=alg.tol, maxiter=alg.maxiter)
+    return iterate(f, v₀; tol=alg.tol, maxiter=alg.maxiter)
 end
 
 """
-    Base.iterate(f::AbstractVector{<:Function}, x₀::Tuple{AbstractVector{<:Number}, AbstractVector{<:V}}, direction::Bool; tol::Vector{Float64}=repeat([Defaults.tol,], length(f)), maxiter::Int64=Defaults.maxiter)
-    Base.iterate(f::AbstractVector{<:Function}, v₀::AbstractVector{<:V}, direction::Bool; tol::Vector{Float64}=repeat([Defaults.tol,], length(v₀)), maxiter::Int64=Defaults.maxiter)
+    Base.iterate(f::AbstractVector{<:Function}, v₀::AbstractVector{<:V}, direction::Bool; tol::Float64=Defaults.tol, maxiter::Int64=Defaults.maxiter)
     Base.iterate(f::AbstractVector{<:Function}, v₀::AbstractVector{<:V}, direction::Bool, alg::SimpleIterator)
 
 A simple iterative procedure for solving loop fixed point equations
@@ -175,40 +163,39 @@ A simple iterative procedure for solving loop fixed point equations
         v[1] = f[2](v[2]) / λ[2]
         v[end] = f[1](v[1]) / λ[1]
 
-where `λ` are normalization coefficients of fixed point with `norm(v[i]) = 1` and `norm(f[i](v[i])) = λ[i]`.
+where `f` are self-maps, i.e., `f[i](::V) -> ::V`. `λ` are normalization coefficients of fixed points `v`.
 
 # Arguments
-`f::AbstractVector{<:Function}`: automorphisms from V to V, i.e., for any v∈V, f(v)∈V
-`x₀::Tuple{AbstractVector{<:Number}, AbstractVector{<:V}}`: x₀ = (_, v₀)
-`v₀::AbstractVector{<:V}`: initial values
+`f::AbstractVector{<:Function}`: self-maps on `V`, i.e., for any v∈V, f[i](v)∈V
+`v₀::AbstractVector{<:V}`: initial arguments
 `direction::Bool`: loop direction - true is positive loop and false is reverse loop
 `alg::SimpleIterator`: wrapper for keyword arguments
 
 # Keyword Arguments
-`tol::AbstractVector{Float64}=repeat([Defaults.tol,], length(x₀[2]))`: tolerances for iteration, i.e., norm(f.(v) ./ λ - v)
+`tol::Float64=Defaults.tol`: tolerance for iteration
 `maxiter::Int64=Defaults.maxiter`: iteration step limit
 
 # Return
-`v::V`: values after iteration
+`v::V`: arguments after iteration
 `info::SimpleIteratorInfo`: iteration information
 
 # Functions to be defined
-- Base.:(-)(::V, ::V) -> ::V
-- Base.:(/)(::V, ::Float64) -> ::V
-- norm(::V) -> Float64
-- sign_first_element(::V) -> Number
+`lambda(::AbstractVector{<:V}) -> ::AbstractVector{<:N}`
+`division(::AbstractVector{<:V}, ::AbstractVector{<:N}) -> ::AbstractVector{<:V}`
+`minus(::AbstractVector{<:V}, ::AbstractVector{<:V}) -> ::AbstractVector{<:V}`
+`norm_max(::AbstractVector{<:V}) -> Float64`
 """
-function Base.iterate(f::AbstractVector{<:Function}, x₀::Tuple{AbstractVector{<:Number}, AbstractVector{<:V}}, direction::Bool; tol::Vector{Float64}=repeat([Defaults.tol,], length(f)), maxiter::Int64=Defaults.maxiter) where V
+function Base.iterate(f::AbstractVector{<:Function}, v₀::AbstractVector{<:V}, direction::Bool; tol::Float64=Defaults.tol, maxiter::Int64=Defaults.maxiter) where V
 
-    (L = length(f)) == length(x₀[2]) == length(tol) || throw(ArgumentError("Mismatched lengths of `f`, `v₀` and `tol`: ($(length(f)), $(length(x₀[2])), $(length(tol)))"))
+    (L = length(f)) == length(v₀) || throw(ArgumentError("Mismatched lengths of `f` and `v₀`: ($(length(f)), $(length(v₀)))"))
 
     converged = false
-    normres = Vector{Float64}[]
+    normres = Float64[]
     numiter = 0
     numops = 0
 
-    λ = norm.(x₀[2]) .* sign_first_element.(x₀[2])
-    v₀ = x₀[2] ./ λ
+    λ = lambda(v₀)
+    v₀ = division(v₀, λ)
     v = deepcopy(v₀)
 
     while numiter < maxiter
@@ -219,7 +206,7 @@ function Base.iterate(f::AbstractVector{<:Function}, x₀::Tuple{AbstractVector{
 
                 v[l₊] = f[l](v₀[l])
 
-                λ[l] = norm(v[l₊]) * sign_first_element(v[l₊])
+                λ[l] = lambda(v[l₊])
                 v[l₊] /= λ[l]
             end
         else
@@ -228,7 +215,7 @@ function Base.iterate(f::AbstractVector{<:Function}, x₀::Tuple{AbstractVector{
 
                 v[l₋] = f[l](v₀[l])
 
-                λ[l] = norm(v[l₋]) * sign_first_element(v[l₋])
+                λ[l] = lambda(v[l₋])
                 v[l₋] /= λ[l]
             end
         end
@@ -236,12 +223,12 @@ function Base.iterate(f::AbstractVector{<:Function}, x₀::Tuple{AbstractVector{
         numops += L
         numiter += 1
 
-        nr = norm.(v - v₀)
+        nr = norm_max((minus(v, v₀)))
         push!(normres, nr)
 
         v₀ = deepcopy(v)
 
-        if all(nr .< tol)
+        if nr < tol
             converged = true
             break
         end
@@ -253,15 +240,6 @@ function Base.iterate(f::AbstractVector{<:Function}, x₀::Tuple{AbstractVector{
 
     return λ, v₀, SimpleIteratorInfo(converged, normres, numiter, numops)
 end
-function Base.iterate(f::AbstractVector{<:Function}, v₀::AbstractVector{<:V}, direction::Bool; tol::AbstractVector{Float64}=repeat([Defaults.tol,], length(v₀)), maxiter::Int64=Defaults.maxiter) where V
-    return iterate(f, ([1.0,], v₀), direction; tol=tol, maxiter=maxiter)
-end
 function Base.iterate(f::AbstractVector{<:Function}, v₀::AbstractVector{<:V}, direction::Bool, alg::SimpleIterator) where V
-    return iterate(f, ([1.0,], v₀), direction; tol=alg.tol, maxiter=alg.maxiter)
+    return iterate(f, v₀, direction; tol=alg.tol, maxiter=alg.maxiter)
 end
-
-# Normalize eigenvectors
-sign_first_element(A::Number) = sign(A)
-sign_first_element(A::AbstractArray) = sign(A[1])
-sign_first_element(A::AbstractTensorMap) = sign(A[1])
-# sign_first_element(A::AbstractTensorWrapper) = sign(A.A[1])

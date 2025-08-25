@@ -7,11 +7,10 @@ Note each concrete subtype must have a field `A::AbstractTensorMap` to save the 
 """
 abstract type AbstractTensorWrapper{R} end
 numind(::AbstractTensorWrapper{R}) where R = R
-sign_first_element(A::AbstractTensorWrapper) = sign(A.A[1])
 
 # some common functions for wrapper type
 Base.convert(::Type{T}, A::AbstractTensorMap) where {T<:AbstractTensorWrapper} = T(A)
-for func in (:dim, :rank, :domain, :codomain, :space, :eltype, :norm, :scalartype, :data, :numin, :numout, :numind)
+for func in (:dim, :rank, :domain, :codomain, :space, :eltype, :norm, :scalartype, :data, :numin, :numout, :numind, :sign)
      # Tensor -> Number
      @eval $func(obj::AbstractTensorWrapper, args...) = $func(obj.A, args...)
 end
@@ -156,3 +155,14 @@ function _tsvd_try(t::AbstractTensorMap,
         return tsvd!(permute(t, (p₁, p₂); copy=true); trunc=trunc, p=p, alg=SVD())
     end
 end
+
+# Interface functions for `iterate`
+lambda(A::AbstractTensorWrapper) = norm(A) * sign(A)
+division(A::AbstractTensorWrapper, n::Number) = A / n
+minus(A1::AbstractTensorWrapper, A2::AbstractTensorWrapper) = A1 - A2
+norm_max(A::AbstractTensorWrapper) = norm(A)
+
+lambda(A::AbstractVector{<:AbstractTensorWrapper}) = norm.(A) .* sign.(A)
+division(A::AbstractVector{<:AbstractTensorWrapper}, n::AbstractVector{<:Number}) = A ./ n
+minus(A1::AbstractVector{<:AbstractTensorWrapper}, A2::AbstractVector{<:AbstractTensorWrapper}) = A1 .- A2
+norm_max(A::AbstractVector{<:AbstractTensorWrapper}) = maximum(norm.(A))

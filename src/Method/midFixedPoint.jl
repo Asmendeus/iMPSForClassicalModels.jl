@@ -75,7 +75,7 @@ function midFixedPoint(env::BondEnvironment{N},
         vals, vecs, info = eigsolve(func, X₀, 1, which, alg)
 
         λ = vals[1]
-        X = vecs[1] / sign_first_element(vecs[1])
+        X = vecs[1] / lambda(vecs[1])
 
         if alg isa Lanczos
             info = convert(LanczosInfo, info)
@@ -152,7 +152,7 @@ function midFixedPoint(env::CenterEnvironment{N},
         vals, vecs, info = eigsolve(func, X₀, 1, which, alg)
 
         λ = vals[1]
-        X = vecs[1] / sign_first_element(vecs[1])
+        X = vecs[1] / lambda(vecs[1])
 
         if alg isa Lanczos
             info = convert(LanczosInfo, info)

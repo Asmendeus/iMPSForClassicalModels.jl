@@ -1,20 +1,20 @@
 module iMPSForClassicalModels
 
 using Reexport
-@reexport using KrylovKit, TensorKit, TensorKit.TensorOperations
-@reexport import Base: +, -, *, /, ==, iterate, promote_rule, convert, length, size, show, getindex, setindex!, lastindex, keys, similar, merge, merge!, iterate, complex
+@reexport using KrylovKit, OptimKit, TensorKit, TensorKit.TensorOperations
+@reexport import Base: +, -, *, /, ==, iterate, promote_rule, convert, length, size, show, getindex, setindex!, lastindex, keys, similar, merge, merge!, iterate, complex, sign
 @reexport import TensorKit: ×, tr, one, zero, dim, inner, scalar, space, domain, codomain, eltype, scalartype, numin, numout, numind, leftorth, rightorth, leftnull, rightnull, tsvd, adjoint, AdjointTensorMap, norm, normalize!, normalize, axpy!, axpby!, add!, add!!, dot, mul!, rmul!, NoTruncation, fuse, zerovector!, zerovector, scale, scale!, scale!!, sqrt, inv
 @reexport import LinearAlgebra: BLAS, rank, qr, diag, I, diagm, ishermitian
 
 # utils
-export sign_first_element, SimpleIterator
+export SimpleIterator
 # export EigenAlgorithm, GradientAlgorithm
 export trivial, istrivial
-export SimpleIteratorInfo, LanczosInfo, ArnoldiInfo
-export BondInfo, FixedPointInfo
+export SimpleIteratorInfo, LanczosInfo, ArnoldiInfo, BondInfo
 
 # Tensor wrapper
 export AbstractTensorWrapper
+export lambda, division, minus, norm_max
 export AbstractLocalTensor, AbstractBondTensor, AbstractMPSTensor, AbstractMPOTensor
 export LocalTensor, BondTensor, MPSTensor, MPOTensor
 export AdjointLocalTensor, AdjointBondTensor, AdjointMPSTensor, AdjointMPOTensor

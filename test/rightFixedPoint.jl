@@ -11,9 +11,9 @@ d = 4
     A = MPSTensor(TensorMap(rand, ℝ^D⊗ℝ^d, ℝ^D))
     B = A'
 
-    λ1, L1, AR1, _ = rightFixedPoint([A,], SimpleIterator(; tol=[tol,]))
+    λ1, L1, AR1, _ = rightFixedPoint([A,], SimpleIterator())
     λ2, L2, AR2, _ = rightFixedPoint([A,], Arnoldi())
-    λ1′, L1′, BR1, _ = rightFixedPoint([B,], SimpleIterator(; tol=[tol,]))
+    λ1′, L1′, BR1, _ = rightFixedPoint([B,], SimpleIterator())
     λ2′, L2′, BR2, _ = rightFixedPoint([B,], Arnoldi())
 
     @test abs(λ1[1] - λ2[1]) < tol1
@@ -35,9 +35,9 @@ end
     B1 = A1'
     B2 = A2'
 
-    λ1, L1, AR1, _ = rightFixedPoint([A1, A2], SimpleIterator(; tol=[tol, tol]))
+    λ1, L1, AR1, _ = rightFixedPoint([A1, A2], SimpleIterator())
     λ2, L2, AR2, _ = rightFixedPoint([A1, A2], Arnoldi())
-    λ1′, L1′, BR1, _ = rightFixedPoint([B1, B2], SimpleIterator(; tol=[tol, tol]))
+    λ1′, L1′, BR1, _ = rightFixedPoint([B1, B2], SimpleIterator())
     λ2′, L2′, BR2, _ = rightFixedPoint([B1, B2], Arnoldi())
 
     @test abs(λ1[1] - λ2[1]) < tol2
@@ -67,7 +67,7 @@ end
     B = AdjointMPSTensor(TensorMap(rand, ℝ^D, ℝ^D⊗ℝ^d))
     t = TransferMatrix(A, B)
 
-    λ1, L1, _ = rightFixedPoint(t, SimpleIterator(; tol=[tol,]))
+    λ1, L1, _ = rightFixedPoint(t, SimpleIterator())
     λ2, L2, _ = rightFixedPoint(t, Arnoldi())
 
     x₀ = RightEnvironmentTensor(TensorMap(rand, ℝ^D, ℝ^D))
@@ -76,7 +76,7 @@ end
     @test abs(λ1[1] - λ2[1]) < tol1
     @test norm(L1[1] - L2[1]) < tol1
     @test abs(λ1[1] - λm[1]) < tol1
-    @test norm(L1[1] - Lm[1] / sign_first_element(Lm[1])) < tol1
+    @test norm(L1[1] - Lm[1] / sign(Lm[1].A[1])) < tol1
 end
 
 @testset "Complex MPOTransferMatrix{2}" begin
@@ -86,7 +86,7 @@ end
     B2 = AdjointMPOTensor(TensorMap(rand, ℂ^d⊗ℂ^D, ℂ^D⊗ℂ^d))
     t = TransferMatrix([A1, A2], [B1, B2])
 
-    λ1, L1, _ = rightFixedPoint(t, SimpleIterator(; tol=[tol, tol]))
+    λ1, L1, _ = rightFixedPoint(t, SimpleIterator())
     λ2, L2, _ = rightFixedPoint(t, Arnoldi())
 
     x₀ = RightEnvironmentTensor(TensorMap(rand, ℂ^D, ℂ^D))
@@ -98,8 +98,8 @@ end
     @test abs(prod(λ1) - λm2[1]) < tol2
     @test norm(L1[1] - L2[1]) < tol2
     @test norm(L1[2] - L2[2]) < tol2
-    @test norm(L1[1] - Lm1[1] / sign_first_element(Lm1[1])) < tol2
-    @test norm(L1[2] - Lm2[1] / sign_first_element(Lm2[1])) < tol2
+    @test norm(L1[1] - Lm1[1] / sign(Lm1[1].A[1])) < tol2
+    @test norm(L1[2] - Lm2[1] / sign(Lm2[1].A[1])) < tol2
 end
 
 @testset "Real right ChannelEnvironment{3, 1, 3}" begin
@@ -109,7 +109,7 @@ end
 
     env = ChannelEnvironment(A, O, B)
 
-    λ1, FL1, _ = rightFixedPoint(env, SimpleIterator(; tol=[tol,]))
+    λ1, FL1, _ = rightFixedPoint(env, SimpleIterator())
     λ2, FL2, _ = rightFixedPoint(env, Arnoldi())
 
     @test abs(λ1[1] - λ2[1]) < tol1
@@ -130,7 +130,7 @@ end
 
     env = ChannelEnvironment([A1, A2], [O11 O12; O21 O22], [B1, B2])
 
-    λ1, FL1, _ = rightFixedPoint(env, SimpleIterator(; tol=[tol, tol]))
+    λ1, FL1, _ = rightFixedPoint(env, SimpleIterator())
     λ2, FL2, _ = rightFixedPoint(env, Arnoldi())
 
     @test abs(λ1[1] - λ2[1]) < tol2

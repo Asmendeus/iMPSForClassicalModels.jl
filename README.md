@@ -9,7 +9,7 @@
 `iMPSForClassicalModel.jl` provides a range of features for MPS/MPO with canonical form and implementations of some algorithms (including `ViTEBD`and `VUMPS`). Here's what it can solve
 
 * Solve 2D classical model under thermodynamic limit (including thermodynamic quantities, 1-site physical quantity expectations, and 2-site correlation functions);
-* Fastly implement any functions based on MPS/MPO with canonical form;
+* Fastly implement any functions based on iMPS/iMPO;
 * Solve the ground state of a 1D quantum model under thermodynamic limit based on the principle of imaginary time evolution (controlling global quantum numbers is not supported).
 
 ## Package structure
@@ -44,10 +44,8 @@ See [Tutorial.md](docs/Tutorial.md)
 
 ## About next version
 
-In `v0.2.0`, the following features are expected to be added
+In `v0.1.1`, the following features are expected to be added
 
-- Variational optimization implementation based on gradient algorithm
-- Allowing `leftFixedPoint` and `rightFixedPoint` to specify solving which fixed point equation
-- Optimization of partial code logic
-- Examples of classical Clock and XY model
-- A more accurate and comprehensive tutorial
+- Optimization of partial code logic;
+- Examples of classical Clock and XY model;
+- More accurate and comprehensive reviews and tutorials.

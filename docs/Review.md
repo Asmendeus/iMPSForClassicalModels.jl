@@ -210,21 +210,19 @@ Eventually we get fixed point tensors $A_{1L}$, $A_{2L}$, $L_{12}$, $L_{21}$, $A
 
 `iMPSForClassicalModels` also provides the canonicalization method based on solving largest eigen-equation, see `leftFixedPoint ` and `leftFixedPoint` for details.
 
-### Overlap of two iMPSs
-
-Overlap of two iMPSs $|\psi\rangle$ and $|\psi^\prime\rangle$ is defined as
-
-$$
-O(\psi, \psi^\prime) = \left|\frac{\langle\psi|\psi^\prime\rangle}{\sqrt{\langle\psi|\psi\rangle\langle\psi^\prime|\psi^\prime\rangle}}\right|
-$$
-
-indicating approximation degree between the two. $O(\psi, \psi^\prime)=1$ means the two are equivalent in the sense of gauge degrees of freedom or one is a submanifold of the other. Here we assume that $|\psi\rangle$ and $|\psi^\prime\rangle$ have been normalized and their overlap are represented graphically as
-
 ### Variational optimal approximation
 
 We now consider the problem of how to find, for a given $D$-manifold iMPS $|\psi\rangle$, its optimal approximation $|\psi^\prime\rangle$ on the $D^\prime$-manifold.
 
-An evaluator that judges the degree of approximation of two iMPS is the overlap, i.e., $\frac{|\langle\psi|\psi^\prime\rangle|^2}{\langle\psi^\prime|\psi^\prime\rangle}$. We are actually looking for a $|\psi^\prime\rangle$ on the $D^\prime$-manifold to maximize it. Here we only exhibit the algorithmic flow, please refer to the reference for specific principles and details.
+An evaluator that judges the degree of approximation of two iMPS is the overlap, i.e., $\frac{|\langle\psi|\psi^\prime\rangle|^2}{\langle\psi^\prime|\psi^\prime\rangle}$. We are actually looking for a $|\psi^\prime\rangle$ on the $D^\prime$-manifold to maximize it. Here we only exhibit the algorithmic flow, please refer to the [reference](https://scipost.org/SciPostPhysLectNotes.7) for specific principles and details.
+
+1. Solve the left and right environments
+
+   ![img](fig/OA_environment.png)
+2. Update $A_C^\prime$ and $C^\prime$
+
+   ![img](fig/OA_ACC.png)
+3. Update $A_L^\prime$ and $A_R^\prime$
 
 ### Variational Infinite Time Evolving Block Decimation (ViTEBD)
 

@@ -92,13 +92,13 @@ function leftFixedPoint(A::AbstractVector{<:LocalTensor{R}},
         _, s, vd, _ = tsvd(vecs[1].A)
 
         X[1] = BondTensor(sqrt(s) * vd)
-        X[1] /= sign_first_element(X[1])
+        X[1] /= lambda(X[1])
         # Notice AL[1] and λ[1] need to be re-updated
         for l in 1:L+1
             l_now = mod(l-1, L) + 1
             l₊ = mod(l, L) + 1
             AL[l_now], x = leftorth(X[l_now] * A[l_now]; kwargs...)
-            λ[l_now] = norm(x) * sign_first_element(x)
+            λ[l_now] = lambda(x)
             X[l₊] = x / λ[l_now]
         end
 
@@ -190,13 +190,13 @@ function leftFixedPoint(B::AbstractVector{<:AdjointLocalTensor{R}},
         u, s, _, _ = tsvd(vecs[1].A)
 
         X[1] = AdjointBondTensor(u * sqrt(s))
-        X[1] /= sign_first_element(X[1])
+        X[1] /= lambda(X[1])
         # Notice BL[1] and λ[1] need to be re-updated
         for l in 1:L+1
             l_now = mod(l-1, L) + 1
             l₊ = mod(l, L) + 1
             BL[l_now], x = leftorth(X[l_now] * B[l_now]; kwargs...)
-            λ[l_now] = norm(x) * sign_first_element(x)
+            λ[l_now] = lambda(x)
             X[l₊] = x / λ[l_now]
         end
 
@@ -271,11 +271,11 @@ function leftFixedPoint(t::TransferMatrix{L, R},
         X = Vector{LeftEnvironmentTensor{2}}(undef, L)
 
         X[1] = vecs[1]
-        X[1] /= sign_first_element(X[1])
+        X[1] /= lambda(X[1])
         for l in 1:L
             l₊ = mod(l, L) + 1
             vec = pushleft(X[l], t.A[l], t.B[l])
-            λ[l] = norm(vec) * sign_first_element(vec)
+            λ[l] = lambda(vec)
             X[l₊] = vec / λ[l]
         end
 
@@ -362,11 +362,11 @@ function leftFixedPoint(env::ChannelEnvironment{N, L, R},
         X = Vector{LeftEnvironmentTensor{N}}(undef, L)
 
         X[1] = vecs[1]
-        X[1] /= sign_first_element(X[1])
+        X[1] /= lambda(X[1])
         for l in 1:L
             l₊ = mod(l, L) + 1
             vec = pushleft(X[l], env.A[l], env.O[:, l], env.B[l])
-            λ[l] = norm(vec) * sign_first_element(vec)
+            λ[l] = lambda(vec)
             X[l₊] = vec / λ[l]
         end
 

@@ -1,7 +1,6 @@
 module Defaults
 
-    using KrylovKit
-    import KrylovKit.Arnoldi
+    using KrylovKit, OptimKit
     include("SimpleIterator.jl")
 
     datatype = ComplexF64
@@ -14,6 +13,6 @@ module Defaults
 
     maxiter = 100       # iteration step limit
 
-    alg_eig = Arnoldi()           # algorithm for solving maximum/minimum eigenvalue problem
+    alg_eig = KrylovKit.Arnoldi()           # algorithm for solving maximum/minimum eigenvalue problem
     alg_grad = SimpleIterator(;tol=tol, maxiter=maxiter)  # algorithm for solving gradient problem
 end

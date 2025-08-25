@@ -25,6 +25,8 @@ numin(::Nothing) = 0
 numout(::Nothing) = 0
 numind(::Nothing) = 0
 
+sign(A::AbstractTensorMap) = sign(A[1])
+
 # implement usage A.dom[end] ...
 Base.lastindex(V::ProductSpace) = typeof(V).parameters[2]
 
