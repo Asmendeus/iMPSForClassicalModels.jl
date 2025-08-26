@@ -39,14 +39,14 @@ export AbstractUniformMPS, DenseUniformMPS, getA
 export AbstractCanonicalMPS, DenseCanonicalMPS, getAL, getAR, getAR, getC
 export DenseInfiniteMPS
 export UniformMPS, UMPS, randUMPS
-export CanonicalMPS, CMPS, randCMPS
+export CanonicalMPS, CMPS, InfiniteMPS, randCMPS
 export canonicalize, uniformize
 export AdjointInfiniteMPS
 export overlap
 
 # iMPO
 export UniformMPO, UMPO, identityUMPO
-export CanonicalMPO, CMPO, identityCMPO
+export CanonicalMPO, CMPO, InfiniteMPO, identityCMPO
 
 # SparseMPO
 export SparseUMPO
@@ -55,7 +55,8 @@ export SparseUMPO
 export AbstractLocalImpurity, LocalImpurity, expectation
 
 # Algorithm
-export getAL, getAR, approximate
+export getAL, getAR, approximate, multiply
+export VUMPS, ViTEBD
 
 include("utils/SimpleIterator.jl")
 include("utils/iterate.jl")
@@ -104,5 +105,7 @@ include("LocalImpurity/expectation.jl")
 include("Algorithm/getAL.jl")
 include("Algorithm/getAR.jl")
 include("Algorithm/approximate.jl")
+include("Algorithm/multiply.jl")
+include("Algorithm/fixedBondary/algorithm.jl")
 
 end # module iMPSForClassicalModels

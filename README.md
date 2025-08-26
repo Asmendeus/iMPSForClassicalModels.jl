@@ -42,11 +42,8 @@ See [Review.md](docs/Review.md)
 
 See [Tutorial.md](docs/Tutorial.md)
 
-## About next version
+## About `InfiniteMPS.jl`
 
-In `v0.2.0`, the following features are expected to be added
+An iMPS package `InfiniteMPS.jl` for quantum systems is planned to be developed.
 
-- Implementation of variational algorithm based on gradient algorithm;
-- Optimization of partial code logic;
-- Examples of classical Clock and XY model;
-- More accurate and comprehensive reviews and tutorials.
+A development plan is to incorporate the functionality implemented by `iMPSForClassicalModels.jl` into it, at which point maintenance of this library will cease.

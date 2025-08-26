@@ -88,6 +88,7 @@ mutable struct CanonicalMPS{L, T<:Union{Float64, ComplexF64}} <: DenseCanonicalM
     CanonicalMPS(AL::AbstractMPSTensor, C::AbstractBondTensor) = CanonicalMPS([AL,], [C,])
 end
 const CMPS = CanonicalMPS
+const InfiniteMPS{L, T} = Union{UniformMPS{L, T}, CanonicalMPS{L, T}}
 
 """
     uniformize(::Type{CanonicalMPS{L, T}}) -> ::Type{UniformMPS{L, T}}

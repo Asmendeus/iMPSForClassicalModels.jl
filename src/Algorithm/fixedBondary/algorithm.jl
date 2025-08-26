@@ -21,23 +21,21 @@ end
 
 """
     struct ViTEBD <: FixedBondaryAlgorithm
-        alg_eig::EigenAlgorithm
-        tol_eig::Float64
-
         alg_grad::GradientAlgorithm
-        tol_grad::Float64
-
-        maxlayer::Int64
+        alg_grad_mutiply::GradientAlgorithm
+        alg_eig_mutiply::EigenAlgorithm
     end
 
 ViTEBD algorithm struct storing parameters.
 """
 struct ViTEBD <: FixedBondaryAlgorithm
-    alg_eig::EigenAlgorithm
-    tol_eig::Float64
-
     alg_grad::GradientAlgorithm
-    tol_grad::Float64
+    alg_grad_mutiply::GradientAlgorithm
+    alg_eig_mutiply::EigenAlgorithm
 
-    width_max::Int64
+    function ViTEBD(alg_grad::GradientAlgorithm=SimpleIterator(;tol=Defaults.tol_low),
+                    alg_grad_mutiply::GradientAlgorithm=Defaults.alg_grad,
+                    alg_eig_mutiply::EigenAlgorithm=Defaults.alg_eig)
+        return new(alg_grad, alg_grad_mutiply, alg_eig_mutiply)
+    end
 end

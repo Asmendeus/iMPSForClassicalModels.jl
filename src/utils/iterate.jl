@@ -1,6 +1,6 @@
 """
-    Base.iterate(f::Function, v₀::V; tol::Float64=Defaults.tol, maxiter::Int64=Defaults.maxiter)
-    Base.iterate(f::Function, v₀::V, alg::SimpleIterator)
+    Base.iterate(f::Function, v₀::V; tol::Float64=Defaults.tol, maxiter::Int64=Defaults.maxiter, kwargs...)
+    Base.iterate(f::Function, v₀::V, alg::SimpleIterator; kwargs...)
 
 A simple iterative procedure for solving fixed point equation
     f(v) = λ * v,
@@ -14,6 +14,7 @@ where `f` is a self-map, i.e., `f(::V) -> ::V`. `λ` is normalization coefficien
 # Keyword Arguments
 `tol::Float64=Defaults.tol`: tolerance for iteration
 `maxiter::Int64=Defaults.maxiter`: iteration step limit
+`kwargs...`: provides multiple dispatch for `lambda`, `division`, `minus` and `norm_max`
 
 # Return
 `λ::N`: normalization coefficient of `f(v)`
@@ -26,27 +27,27 @@ where `f` is a self-map, i.e., `f(::V) -> ::V`. `λ` is normalization coefficien
 `minus(::V, ::V) -> ::V`
 `norm_max(::V) -> Float64`
 """
-function Base.iterate(f::Function, v₀::V; tol::Float64=Defaults.tol, maxiter::Int64=Defaults.maxiter) where V
+function Base.iterate(f::Function, v₀::V; tol::Float64=Defaults.tol, maxiter::Int64=Defaults.maxiter, kwargs...) where V
 
     converged = false
     normres = Float64[]
     numiter = 0
     numops = 0
 
-    λ = lambda(v₀)
-    v₀ = division(v₀, λ)
+    λ = lambda(v₀; kwargs...)
+    v₀ = division(v₀, λ; kwargs...)
 
     while numiter < maxiter
 
         v = f(v₀)
 
-        λ = lambda(v)
-        v = division(v, λ)
+        λ = lambda(v; kwargs...)
+        v = division(v, λ; kwargs...)
 
         numops += 1
         numiter += 1
 
-        nr = norm_max(minus(v, v₀))
+        nr = norm_max(minus(v, v₀; kwargs...); kwargs...)
         push!(normres, nr)
 
         v₀ = deepcopy(v)
@@ -63,8 +64,8 @@ function Base.iterate(f::Function, v₀::V; tol::Float64=Defaults.tol, maxiter::
 
     return λ, v₀, SimpleIteratorInfo(converged, normres, numiter, numops)
 end
-function Base.iterate(f::Function, v₀::V, alg::SimpleIterator) where V
-    return iterate(f, v₀; tol=alg.tol, maxiter=alg.maxiter)
+function Base.iterate(f::Function, v₀::V, alg::SimpleIterator; kwargs...) where V
+    return iterate(f, v₀; tol=alg.tol, maxiter=alg.maxiter, kwargs...)
 end
 
 """

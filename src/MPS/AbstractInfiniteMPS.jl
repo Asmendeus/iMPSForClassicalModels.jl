@@ -31,6 +31,27 @@ Interface of `AbstractUniformMPS`, return the local tensors
 getA(obj::AbstractUniformMPS) = obj.A
 
 """
+    getAL(obj::AbstractUniformMPS)
+
+Interface of `AbstractUniformMPS` for generating default environment, return the local tensors
+"""
+getAL(obj::AbstractUniformMPS) = obj.A
+
+"""
+    getAR(obj::AbstractUniformMPS)
+
+Interface of `AbstractUniformMPS` for generating default environment, return the local tensors
+"""
+getAR(obj::AbstractUniformMPS) = obj.A
+
+"""
+    getAC(obj::AbstractUniformMPS)
+
+Interface of `AbstractUniformMPS` for generating default environment, return the local tensors
+"""
+getAC(obj::AbstractUniformMPS) = obj.A
+
+"""
     norm(obj::AbstractUniformMPS;
         XL₀::AbstractVector{<:BondTensor}=_default_X₀_leftFixedPoint(obj.A),
         alg::EigenAlgorithm=Defaults.alg_eig) -> ::Vector{Float64}
@@ -137,6 +158,13 @@ getAC(obj::AbstractCanonicalMPS) = obj.AC
 Interface of `AbstractCanonicalMPS`, return the center bond tensors
 """
 getC(obj::AbstractCanonicalMPS) = obj.C
+
+"""
+    getA(obj::AbstractCanonicalMPS)
+
+Interface of `AbstractCanonicalMPS` for generating default environment, return the left-canonical tensors
+"""
+getA(obj::AbstractCanonicalMPS) = obj.AL
 
 """
     norm(obj::AbstractCanonicalMPS) -> ::Vector{Float64}
@@ -254,12 +282,42 @@ end
 const DenseInfiniteMPS{L, T} = Union{DenseUniformMPS{L, T}, DenseCanonicalMPS{L, T}}
 
 # Interface functions for `iterate`
-lambda(obj::DenseInfiniteMPS) = norm.(obj.C) .* sign.(obj.C)
-function division(obj::DenseInfiniteMPS, n::AbstractVector{<:Number})
-    obj′ = deepcopy(obj)
-    obj′.C ./= n
-    obj′.AC ./= n
-    return obj′
+function lambda(obj::DenseInfiniteMPS; which::Symbol)
+    if which == :approximate || which == :ViTEBD
+        λ_C = norm.(obj.C) .* sign.(obj.C)
+        AC_data = map(x->x.A, obj.AC)
+        λ_AC = sqrt.(tr.(adjoint.(AC_data) .* AC_data)) .* sign.(obj.C)
+        return [λ_C, λ_AC]
+    else
+        throw(ArgumentError("Undefined behavior"))
+    end
 end
-minus(obj1::T, _::T) where T <: DenseInfiniteMPS = obj1
-norm_max(obj::DenseInfiniteMPS) = maximum(norm.(obj.AL .* obj.C .- obj.AC))
+function division(obj::DenseInfiniteMPS, n::AbstractVector{<:Vector{<:Number}}; which::Symbol)
+    if which == :approximate || which == :ViTEBD
+        obj′ = deepcopy(obj)
+        obj′.C ./= n[1]
+        obj′.AC ./= n[2]
+        return obj′
+    else
+        throw(ArgumentError("Undefined behavior"))
+    end
+end
+function minus(obj1::T, obj2::T; which::Symbol) where T <: DenseInfiniteMPS
+    if which == :approximate
+        return obj1
+    elseif which == :ViTEBD
+        T <: DenseUniformMPS && return T(obj1.A-obj2.A)
+        T <: DenseCanonicalMPS && return T(obj1.AL-obj2.AL, obj1.AR-obj2.AR, obj1.AC-obj2.AC, obj1.C-obj2.C)
+    else
+        throw(ArgumentError("Undefined behavior"))
+    end
+end
+function norm_max(obj::DenseInfiniteMPS; which::Symbol)
+    if which == :approximate
+        return maximum(norm.(obj.AL .* obj.C .- obj.AC))
+    elseif which == :ViTEBD
+        return maximum(norm.(obj.AC))
+    else
+        throw(ArgumentError("Undefined behavior"))
+    end
+end
