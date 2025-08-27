@@ -2,21 +2,23 @@ abstract type FixedBondaryAlgorithm end
 
 """
     struct VUMPS
-        alg_eig::EigenAlgorithm
-        tol_eig::Float64
-
         alg_grad::GradientAlgorithm
-        tol_grad::Float64
+        alg_eig_environment::EigenAlgorithm
+        alg_eig_centertensor::EigenAlgorithm
     end
 
 VUMPS algorithm struct storing parameters.
 """
 struct VUMPS <: FixedBondaryAlgorithm
-    alg_eig::EigenAlgorithm
-    tol_eig::Float64
-
     alg_grad::GradientAlgorithm
-    tol_grad::Float64
+    alg_eig_environment::EigenAlgorithm
+    alg_eig_centertensor::EigenAlgorithm
+
+    function VUMPS(alg_grad::GradientAlgorithm=SimpleIterator(;tol=Defaults.tol_low),
+                   alg_eig_environment::EigenAlgorithm=Defaults.alg_eig,
+                   alg_eig_centertensor::EigenAlgorithm=Defaults.alg_eig)
+        return new(alg_grad, alg_eig_environment, alg_eig_centertensor)
+    end
 end
 
 """

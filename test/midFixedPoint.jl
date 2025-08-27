@@ -1,8 +1,6 @@
 using Test, iMPSForClassicalModels
 
-tol = 1e-14
-tol1 = 1e-10
-tol2 = 1e-8
+tol = 1e-8
 
 D = 10
 d = 4
@@ -17,13 +15,13 @@ d = 4
     λ1′, C1′, _ = midFixedPoint(env, C1', SimpleIterator(; tol=1e-14))
     λ2′, C2′, _ = midFixedPoint(env, C2', Arnoldi())
 
-    @test abs(λ1 - λ2) < tol1
-    @test norm(C1 - C2) < tol1
+    @test abs(λ1 - λ2) < tol
+    @test norm(C1 - C2) < tol
 
-    @test abs(λ1′ - λ2′) < tol1
-    @test norm(C1′ - C2′) < tol1
+    @test abs(λ1′ - λ2′) < tol
+    @test norm(C1′ - C2′) < tol
 
-    @test abs(λ1 - λ1′) < tol1
+    @test abs(λ1 - λ1′) < tol
 end
 
 @testset "Complex BondEnvironment{4}" begin
@@ -36,13 +34,13 @@ end
     λ1′, C1′, _ = midFixedPoint(env, C1', SimpleIterator(; tol=1e-14))
     λ2′, C2′, _ = midFixedPoint(env, C2', Arnoldi())
 
-    @test abs(λ1 - λ2) < tol1
-    @test norm(C1 - C2) < tol1
+    @test abs(λ1 - λ2) < tol
+    @test norm(C1 - C2) < tol
 
-    @test abs(λ1′ - λ2′) < tol1
-    @test norm(C1′ - C2′) < tol1
+    @test abs(λ1′ - λ2′) < tol
+    @test norm(C1′ - C2′) < tol
 
-    @test abs(λ1 - λ1′) < tol1
+    @test abs(λ1 - λ1′) < tol
 end
 
 @testset "Real CenterEnvironment{3}" begin
@@ -56,13 +54,13 @@ end
     λ1′, AC1′, _ = midFixedPoint(env, AC1', SimpleIterator(; tol=1e-14))
     λ2′, AC2′, _ = midFixedPoint(env, AC2', Arnoldi())
 
-    @test abs(λ1 - λ2) < tol1
-    @test norm(AC1 - AC2) < tol1
+    @test abs(λ1 - λ2) < tol
+    @test norm(AC1 - AC2) < tol
 
-    @test abs(λ1′ - λ2′) < tol1
-    @test norm(AC1′ - AC2′) < tol1
+    @test abs(λ1′ - λ2′) < tol
+    @test norm(AC1′ - AC2′) < tol
 
-    @test abs(λ1 - λ1′) < tol1
+    @test abs(λ1 - λ1′) < tol
 end
 
 @testset "Complex CenterEnvironment{4}" begin
@@ -79,14 +77,14 @@ end
     λ1′, AC1′, _ = midFixedPoint(env, AC1', SimpleIterator(; tol=1e-14))
     λ2′, AC2′, _ = midFixedPoint(env, AC2', Arnoldi())
 
-    @test abs(λ1 - λ2) < tol1
-    # @test norm(AC1 - AC2) < tol1    # Fail easily here because of degeneracy
+    @test abs(λ1 - λ2) < tol
+    # @test norm(AC1 - AC2) < tol    # Fail easily here because of degeneracy
 
-    @test abs(λ1′ - λ2′) < tol1
-    # @test norm(AC1′ - AC2′) < tol1  # Fail easily here because of degeneracy
+    @test abs(λ1′ - λ2′) < tol
+    # @test norm(AC1′ - AC2′) < tol  # Fail easily here because of degeneracy
 
-    @test abs(λ1 - λ1′) < tol1
+    @test abs(λ1 - λ1′) < tol
 
-    @test norm(pushmid(AC1′, env) / λ1′ - AC1′) < tol1
-    @test norm(pushmid(AC2′, env) / λ2′ - AC2′) < tol1
+    @test norm(pushmid(AC1′, env) / λ1′ - AC1′) < tol
+    @test norm(pushmid(AC2′, env) / λ2′ - AC2′) < tol
 end

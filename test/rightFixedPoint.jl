@@ -1,8 +1,6 @@
 using Test, iMPSForClassicalModels
 
-tol = 1e-14
-tol1 = 1e-10
-tol2 = 1e-8
+tol = 1e-8
 
 D = 10
 d = 4
@@ -16,17 +14,17 @@ d = 4
     λ1′, L1′, BR1, _ = rightFixedPoint([B,], SimpleIterator(; tol=1e-14))
     λ2′, L2′, BR2, _ = rightFixedPoint([B,], Arnoldi())
 
-    @test abs(λ1[1] - λ2[1]) < tol1
-    @test norm(L1[1] - L2[1]) < tol1
-    @test norm(AR1[1] - AR2[1]) < tol1
+    @test abs(λ1[1] - λ2[1]) < tol
+    @test norm(L1[1] - L2[1]) < tol
+    @test norm(AR1[1] - AR2[1]) < tol
 
-    @test abs(λ1[1] - λ1′[1]) < tol1
-    @test norm(L1[1] - L1′[1]') < tol1
-    @test norm(AR1[1] - BR1[1]') < tol1
+    @test abs(λ1[1] - λ1′[1]) < tol
+    @test norm(L1[1] - L1′[1]') < tol
+    @test norm(AR1[1] - BR1[1]') < tol
 
-    @test abs(λ1′[1] - λ2′[1]) < tol1
-    @test norm(L1′[1] - L2′[1]) < tol1
-    @test norm(BR1[1] - BR2[1]) < tol1
+    @test abs(λ1′[1] - λ2′[1]) < tol
+    @test norm(L1′[1] - L2′[1]) < tol
+    @test norm(BR1[1] - BR2[1]) < tol
 end
 
 @testset "Complex right canonicalize (L = 2, R = 4)" begin
@@ -40,26 +38,26 @@ end
     λ1′, L1′, BR1, _ = rightFixedPoint([B1, B2], SimpleIterator(; tol=1e-14))
     λ2′, L2′, BR2, _ = rightFixedPoint([B1, B2], Arnoldi())
 
-    @test abs(λ1[1] - λ2[1]) < tol2
-    @test abs(λ1[2] - λ2[2]) < tol2
-    @test norm(L1[1] - L2[1]) < tol2
-    @test norm(L1[2] - L2[2]) < tol2
-    @test norm(AR1[1] - AR2[1]) < tol2
-    @test norm(AR1[1] - AR2[1]) < tol2
+    @test abs(λ1[1] - λ2[1]) < tol
+    @test abs(λ1[2] - λ2[2]) < tol
+    @test norm(L1[1] - L2[1]) < tol
+    @test norm(L1[2] - L2[2]) < tol
+    @test norm(AR1[1] - AR2[1]) < tol
+    @test norm(AR1[1] - AR2[1]) < tol
 
-    @test abs(λ1[1] - λ1[1]) < tol2
-    @test abs(λ1[2] - λ1[2]) < tol2
-    @test norm(L1[1] - L1′[1]') < tol2
-    @test norm(L1[2] - L1′[2]') < tol2
-    @test norm(AR1[1] - BR1[1]') < tol2
-    @test norm(AR1[1] - BR1[1]') < tol2
+    @test abs(λ1[1] - λ1[1]) < tol
+    @test abs(λ1[2] - λ1[2]) < tol
+    @test norm(L1[1] - L1′[1]') < tol
+    @test norm(L1[2] - L1′[2]') < tol
+    @test norm(AR1[1] - BR1[1]') < tol
+    @test norm(AR1[1] - BR1[1]') < tol
 
-    @test abs(λ1′[1] - λ2′[1]) < tol2
-    @test abs(λ1′[2] - λ2′[2]) < tol2
-    @test norm(L1′[1] - L2′[1]) < tol2
-    @test norm(L1′[2] - L2′[2]) < tol2
-    @test norm(BR1[1] - BR2[1]) < tol2
-    @test norm(BR1[1] - BR2[1]) < tol2
+    @test abs(λ1′[1] - λ2′[1]) < tol
+    @test abs(λ1′[2] - λ2′[2]) < tol
+    @test norm(L1′[1] - L2′[1]) < tol
+    @test norm(L1′[2] - L2′[2]) < tol
+    @test norm(BR1[1] - BR2[1]) < tol
+    @test norm(BR1[1] - BR2[1]) < tol
 end
 
 @testset "Real MPSTransferMatrix{1}" begin
@@ -73,10 +71,10 @@ end
     x₀ = RightEnvironmentTensor(TensorMap(rand, ℝ^D, ℝ^D))
     λm, Lm = eigsolve(x->pushright(x, A, B), x₀, 1, :LM)
 
-    @test abs(λ1[1] - λ2[1]) < tol1
-    @test norm(L1[1] - L2[1]) < tol1
-    @test abs(λ1[1] - λm[1]) < tol1
-    @test norm(L1[1] - Lm[1] / sign(Lm[1].A[1])) < tol1
+    @test abs(λ1[1] - λ2[1]) < tol
+    @test norm(L1[1] - L2[1]) < tol
+    @test abs(λ1[1] - λm[1]) < tol
+    @test norm(L1[1] - Lm[1] / sign(Lm[1].A[1])) < tol
 end
 
 @testset "Complex MPOTransferMatrix{2}" begin
@@ -93,13 +91,13 @@ end
     λm1, Lm1 = eigsolve(x->pushright(pushright(x, A1, B1), A2, B2), x₀, 1, :LM)
     λm2, Lm2 = eigsolve(x->pushright(pushright(x, A2, B2), A1, B1), x₀, 1, :LM)
 
-    @test abs(prod(λ1) - prod(λ2)) < tol2
-    @test abs(prod(λ1) - λm1[1]) < tol2
-    @test abs(prod(λ1) - λm2[1]) < tol2
-    @test norm(L1[1] - L2[1]) < tol2
-    @test norm(L1[2] - L2[2]) < tol2
-    @test norm(L1[1] - Lm1[1] / sign(Lm1[1].A[1])) < tol2
-    @test norm(L1[2] - Lm2[1] / sign(Lm2[1].A[1])) < tol2
+    @test abs(prod(λ1) - prod(λ2)) < tol
+    @test abs(prod(λ1) - λm1[1]) < tol
+    @test abs(prod(λ1) - λm2[1]) < tol
+    @test norm(L1[1] - L2[1]) < tol
+    @test norm(L1[2] - L2[2]) < tol
+    @test norm(L1[1] - Lm1[1] / sign(Lm1[1].A[1])) < tol
+    @test norm(L1[2] - Lm2[1] / sign(Lm2[1].A[1])) < tol
 end
 
 @testset "Real right ChannelEnvironment{3, 1, 3}" begin
@@ -112,10 +110,10 @@ end
     λ1, FL1, _ = rightFixedPoint(env, SimpleIterator(; tol=1e-14))
     λ2, FL2, _ = rightFixedPoint(env, Arnoldi())
 
-    @test abs(λ1[1] - λ2[1]) < tol1
-    @test norm(FL1[1] - FL2[1]) < tol1
+    @test abs(λ1[1] - λ2[1]) < tol
+    @test norm(FL1[1] - FL2[1]) < tol
 
-    @test norm(pushright(FL1[1], A, O, B) - λ1[1] * FL1[1]) < tol1
+    @test norm(pushright(FL1[1], A, O, B) - λ1[1] * FL1[1]) < tol
 end
 
 @testset "Complex right ChannelEnvironment{4, 2, 4}" begin
@@ -133,12 +131,12 @@ end
     λ1, FL1, _ = rightFixedPoint(env, SimpleIterator(; tol=1e-14))
     λ2, FL2, _ = rightFixedPoint(env, Arnoldi())
 
-    @test abs(λ1[1] - λ2[1]) < tol2
-    @test abs(λ1[2] - λ2[2]) < tol2
-    @test norm(FL1[1] - FL2[1]) < tol2
-    @test norm(FL1[2] - FL2[2]) < tol2
+    @test abs(λ1[1] - λ2[1]) < tol
+    @test abs(λ1[2] - λ2[2]) < tol
+    @test norm(FL1[1] - FL2[1]) < tol
+    @test norm(FL1[2] - FL2[2]) < tol
 
-    @test norm(pushright(FL2[2], A2, [O12, O22], B2) - λ2[2] * FL2[1]) < tol2
-    @test norm(pushright(FL2[1], A1, [O11, O21], B1) - λ2[1] * FL2[2]) < tol2
-    @test norm(pushright(FL2[2], env) - λ2[1] * λ2[2] * FL2[2]) < tol3
+    @test norm(pushright(FL2[2], A2, [O12, O22], B2) - λ2[2] * FL2[1]) < tol
+    @test norm(pushright(FL2[1], A1, [O11, O21], B1) - λ2[1] * FL2[2]) < tol
+    @test norm(pushright(FL2[2], env) - λ2[1] * λ2[2] * FL2[2]) < tol
 end

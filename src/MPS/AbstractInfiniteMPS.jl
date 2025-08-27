@@ -79,7 +79,9 @@ Normalize a given canonical iMPS according to inner-induced norm.
 function normalize!(obj::DenseInfiniteMPS)
     nc = norm(obj)
     obj.C ./= nc
-    obj.AC ./= nc
+    AC_data = map(x->x.A, obj.AC)
+    nac = sqrt.(tr.(adjoint.(AC_data) .* AC_data)) .* sign.(obj.C)
+    obj.AC ./= nac
     return obj
 end
 
@@ -98,6 +100,18 @@ leftVirtualSpace(obj::DenseInfiniteMPS) = map(x->leftVirtualSpace(x), obj.AL)
 rightVirtualSpace(obj::DenseInfiniteMPS) = map(x->rightVirtualSpace(x), obj.AL)
 physicalSpace(obj::DenseInfiniteMPS) = map(x->physicalSpace(x), obj.AL)
 extraPhysicalSpace(obj::DenseInfiniteMPS) = map(x->extraPhysicalSpace(x), obj.AL)
+
+"""
+    EE(obj::DenseInfiniteMPS) -> Vector{<:Float64}
+
+Return the entropy of entanglement.
+"""
+function entropy(obj::DenseInfiniteMPS{L}) where L
+    C = getC(obj)
+    S = map(l -> tsvd(C[l].A)[2], 1:L)
+    EE = map(l -> sum(map(x -> - x^2 * log(x), S[l].data)), 1:L)
+    return EE
+end
 
 function Base.show(io::IO, obj::DenseInfiniteMPS{L}) where L
     any(i -> !isassigned(obj.AL, i), 1:L) && return println(io, "$(typeof(obj)): L = $L, to be initialized !")
@@ -119,7 +133,7 @@ end
 
 # Interface functions for `iterate`
 function lambda(obj::DenseInfiniteMPS; which::Symbol)
-    if which == :approximate || which == :ViTEBD
+    if which == :approximate || which == :ViTEBD || which == :VUMPS
         λ_C = norm.(obj.C) .* sign.(obj.C)
         AC_data = map(x->x.A, obj.AC)
         λ_AC = sqrt.(tr.(adjoint.(AC_data) .* AC_data)) .* sign.(obj.C)
@@ -129,7 +143,7 @@ function lambda(obj::DenseInfiniteMPS; which::Symbol)
     end
 end
 function division(obj::DenseInfiniteMPS, n::AbstractVector{<:Vector{<:Number}}; which::Symbol)
-    if which == :approximate || which == :ViTEBD
+    if which == :approximate || which == :ViTEBD || which == :VUMPS
         obj′ = deepcopy(obj)
         obj′.C ./= n[1]
         obj′.AC ./= n[2]
@@ -141,9 +155,8 @@ end
 function minus(obj1::T, obj2::T; which::Symbol) where T <: DenseInfiniteMPS
     if which == :approximate
         return obj1
-    elseif which == :ViTEBD
-        T <: DenseUniformMPS && return T(obj1.A-obj2.A)
-        T <: DenseInfiniteMPS && return T(obj1.AL-obj2.AL, obj1.AR-obj2.AR, obj1.AC-obj2.AC, obj1.C-obj2.C)
+    elseif which == :ViTEBD || which == :VUMPS
+        return T(obj1.AL-obj2.AL, obj1.AR-obj2.AR, obj1.AC-obj2.AC, obj1.C-obj2.C)
     else
         throw(ArgumentError("Undefined behavior"))
     end
@@ -151,7 +164,7 @@ end
 function norm_max(obj::DenseInfiniteMPS; which::Symbol)
     if which == :approximate
         return maximum(norm.(obj.AL .* obj.C .- obj.AC))
-    elseif which == :ViTEBD
+    elseif which == :ViTEBD || which == :VUMPS
         return maximum(norm.(obj.AC))
     else
         throw(ArgumentError("Undefined behavior"))

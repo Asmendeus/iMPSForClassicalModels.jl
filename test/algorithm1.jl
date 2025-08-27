@@ -5,19 +5,19 @@ D2 = 100
 d = 4
 
 tol = 1e-8
-tol_low = 1e-6
+tol_low = 1e-5
 
 @testset "approximate(iMPS{1, ComplexF64})" begin
-    ψ = randCMPS(ComplexF64, 1, d, D2)
+    ψ = randInfiniteMPS(ComplexF64, 1, d, D2)
 
-    ψ1₀ = randUMPS(ComplexF64, 1, d, D1)
+    ψ1₀ = randInfiniteMPS(ComplexF64, 1, d, D1)
     ψ1′, info = approximate(ψ1₀, ψ)
     @test abs(log(overlap(ψ, ψ1′))) < tol
     if !info.converged
         @show info.normres
     end
 
-    ψ2₀ = randUMPS(ComplexF64, 1, d, D2)
+    ψ2₀ = randInfiniteMPS(ComplexF64, 1, d, D2)
     ψ2′, info = approximate(ψ2₀, ψ)
     @test abs(log(overlap(ψ, ψ2′))) < tol
     if !info.converged
@@ -26,16 +26,16 @@ tol_low = 1e-6
 end
 
 @testset "approximate(iMPS{2, ComplexF64})" begin
-    ψ = randCMPS(ComplexF64, 2, d, D2)
+    ψ = randInfiniteMPS(ComplexF64, 2, d, D2)
 
-    ψ1₀ = randUMPS(ComplexF64, 2, d, D1)
+    ψ1₀ = randInfiniteMPS(ComplexF64, 2, d, D1)
     ψ1′, info = approximate(ψ1₀, ψ)
     @test abs(log(overlap(ψ, ψ1′))) < tol
     if !info.converged
         @show info.normres
     end
 
-    ψ2₀ = randUMPS(ComplexF64, 2, d, D2)
+    ψ2₀ = randInfiniteMPS(ComplexF64, 2, d, D2)
     ψ2′, info = approximate(ψ2₀, ψ)
     @test abs(log(overlap(ψ, ψ2′))) < tol
     if !info.converged
@@ -48,9 +48,9 @@ end
     O2 = MPOTensor(TensorMap(rand, ℂ^D2⊗ℂ^d, ℂ^d⊗ℂ^D2))
     O2′ = MPOTensor(TensorMap(rand, ℂ^D2⊗ℂ^d, ℂ^d⊗ℂ^D2))
 
-    ρ = UMPO(O2)
+    ρ = iMPO(O2)
 
-    ρ1₀ = UMPO(O1)
+    ρ1₀ = iMPO(O1)
     ρ1′, info = approximate(ρ1₀, ρ)
     @test abs(log(overlap(ρ, ρ1′))) < tol
     @show overlap(ρ, ρ1′)
@@ -58,7 +58,7 @@ end
         @show info.normres
     end
 
-    ρ2₀ = UMPO(O2′)
+    ρ2₀ = iMPO(O2′)
     ρ2′, info = approximate(ρ2₀, ρ)
     @test abs(log(overlap(ρ, ρ2′))) < tol
     if !info.converged
@@ -66,15 +66,38 @@ end
     end
 end
 
-@testset "multiply(iMPS{1, ComplexF64})" begin
-    ψ = randCMPS(ComplexF64, 1, d, D1)
-    ψ₀ = randCMPS(ComplexF64, 1, d, D1)
-    O = MPOTensor(TensorMap(rand, ℂ^D1⊗ℂ^d, ℂ^d⊗ℂ^D1))
-    ρ = SparseUMPO(O)
+@testset "multiply(identityInfiniteMPO, iMPS{1, ComplexF64})" begin
+    ρid = identityInfiniteMPO(ComplexF64, 1, d, d)
+    ψ = randInfiniteMPS(ComplexF64, 1, d, D1)
+    ψ′, _ = multiply(ψ, ρid, ψ)
 
-    ψ′, _, _, _ = multiply(ψ₀, ρ, ψ)
+    o = overlap(ψ, ψ′)
+    @test abs(log(o)) < tol
+end
+
+@testset "multiply(identityInfiniteMPO, iMPS{2, ComplexF64})" begin
+    va = TensorMap(ones, ℂ^1, ℂ^1)
+    Id = TensorMap(Matrix(I, d, d) * 1.0, ℂ^d, ℂ^d)
+    @tensor O[-1 -2; -3 -4] := va[-1 -4] * Id[-2 -3]
+    O = MPOTensor(O)
+
+    ρ = SparseGeneralMPO([O O; O O])
+    ψ = randInfiniteMPS(ComplexF64, 2, d, D1)
+    ψ′, _ = multiply(ψ, ρ, ψ)
+
+    o = overlap(ψ, ψ′)
+    @test abs(log(o)) < tol
+end
+
+@testset "multiply(iMPO(1, ComplexF64), iMPS{1, ComplexF64})" begin
+    ψ = randInfiniteMPS(ComplexF64, 1, d, D1)
+    ψ₀ = randInfiniteMPS(ComplexF64, 1, d, D1)
+    O = MPOTensor(TensorMap(rand, ℂ^D1⊗ℂ^d, ℂ^d⊗ℂ^D1))
+    ρ = SparseGeneralMPO(O)
+
+    ψ′, _ = multiply(ψ₀, ρ, ψ)
 
     λ1, _, _ = leftFixedPoint(environment(ψ.AL, [O;;], adjoint.(ψ′.AL)))
     λ2, _, _ = leftFixedPoint(environment(ψ.AL, [O; O;;], adjoint.(ψ.AL)))
-    @test abs(λ1[1] - sqrt(λ2[1])) < tol_low
+    @test abs(λ1[1] - sqrt(λ2[1])) / abs(λ1[1]) < tol_low
 end

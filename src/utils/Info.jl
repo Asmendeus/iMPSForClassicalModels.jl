@@ -95,7 +95,7 @@ function BondInfo(s::AbstractTensorMap{<:Union{Float64, ComplexF64} ,T}, ϵ::Flo
           Norm2 += norm(λ)^2 * dim(c)
           SE += mapreduce(x -> x == 0 ? 0 : x^2 * log(x), +, λ) * dim(c)
      end
-     SE = -2SE / Norm2 + log(Norm2)
+     SE = real(-2SE / Norm2 + log(Norm2))
      return BondInfo(D, DD, ϵ, SE)
 end
 function BondInfo(s::AbstractTensorMap{<:Union{Float64, ComplexF64}, T}, ϵ::Float64=0.0) where T <: Union{CartesianSpace, ComplexSpace}
@@ -108,7 +108,7 @@ function BondInfo(s::AbstractTensorMap{<:Union{Float64, ComplexF64}, T}, ϵ::Flo
     Norm2 += norm(λ)^2
     SE += mapreduce(x -> x == 0 ? 0 : x^2 * log(x), +, λ; init = 0.0)
 
-    SE = -2SE / Norm2 + log(Norm2)
+    SE = real(-2SE / Norm2 + log(Norm2))
     return BondInfo(D, DD, ϵ, SE)
 end
 function BondInfo(A::AbstractTensorMap, direction::Symbol)

@@ -12,4 +12,5 @@ module Defaults
 
     alg_eig = KrylovKit.Arnoldi()           # algorithm for solving maximum/minimum eigenvalue problem
     alg_grad = iMPSForClassicalModels.SimpleIterator(;tol=tol, maxiter=maxiter)  # algorithm for solving gradient problem
+    alg_ViTEBD = iMPSForClassicalModels.ViTEBD()
 end

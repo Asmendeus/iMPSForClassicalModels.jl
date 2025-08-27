@@ -35,6 +35,9 @@ struct SparseGeneralMPO{W, L} <: AbstractGeneralInfiniteMPS{W, L}
 end
 
 convert(::Type{<:SparseGeneralMPO}, A::AbstractMatrix{<:AbstractMPOTensor}) = SparseGeneralMPO(A)
+for func in (:getindex, :lastindex, :setindex!, :iterate, :keys, :isassigned)
+    @eval Base.$func(obj::SparseGeneralMPO, args...) = $func(obj.A, args...)
+end
 
 """
     getA(obj::SparseGeneralMPO)

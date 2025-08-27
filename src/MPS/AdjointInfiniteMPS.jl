@@ -34,3 +34,7 @@ normalize!(obj::AdjointInfiniteMPS) = normalize!(obj.parent)
 for func in (:getAL, :getAR, :getAC, :getC, :leftVirtualSpace, :rightVirtualSpace, :physicalSpace, :extraPhysicalSpace)
     @eval $func(obj::AdjointInfiniteMPS, args...) = adjoint.($func(obj.parent, args...))
 end
+
+for func in (:EE,)
+    @eval $func(obj::AdjointInfiniteMPS, args...) = ($func(obj.parent, args...))
+end

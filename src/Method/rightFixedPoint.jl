@@ -218,7 +218,7 @@ end
 """
     rightFixedPoint(t::TransferMatrix{L, R},
                 X₀::AbstractVector{<:RightEnvironmentTensor{2}}=_default_X₀_rightFixedPoint(t),
-                alg::EigenAlgorithm=SimpleIterator(; tol=repeat([Defaults.tol,], L))) where {L, R}
+                alg::EigenAlgorithm=SimpleIterator(; tol=Defaults.tol)) where {L, R}
 
 # Arguments
 `t::TransferMatrix{L, R}`: a transfer matrix wrapper
@@ -257,7 +257,7 @@ end
 """
 function rightFixedPoint(t::TransferMatrix{L, R},
             X₀::AbstractVector{<:RightEnvironmentTensor{2}}=_default_X₀_rightFixedPoint(t),
-            alg::EigenAlgorithm=SimpleIterator(; tol=repeat([Defaults.tol,], L))) where {L, R}
+            alg::EigenAlgorithm=SimpleIterator(; tol=Defaults.tol)) where {L, R}
     L == length(X₀) || throw(ArgumentError("Mismatched lengths: $L ≠ $(length(X₀))"))
     if alg isa SimpleIterator
         func = [x -> pushright(x, t.A[l], t.B[l]) for l in 1:L]

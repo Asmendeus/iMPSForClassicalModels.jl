@@ -34,7 +34,7 @@ export pushleft, pushright, pushmid
 export leftFixedPoint, rightFixedPoint, midFixedPoint
 
 # iMPS
-export AbstractGeneralInfiniteMPS, AbstractInfiniteMPS, DenseInfiniteMPS, getAL, getAR, getAR, getC
+export AbstractGeneralInfiniteMPS, AbstractInfiniteMPS, DenseInfiniteMPS, getAL, getAR, getAR, getC, entropy
 export InfiniteMPS, iMPS, randInfiniteMPS
 export canonicalize
 export AdjointInfiniteMPS
@@ -50,12 +50,11 @@ export SparseGeneralMPO, getA
 export AbstractLocalImpurity, LocalImpurity, expectation
 
 # Algorithm
-# export approximate, multiply
-# export VUMPS, ViTEBD
+export approximate, multiply
+export VUMPS, ViTEBD, fixedBondary
 
 include("utils/SimpleIterator.jl")
 include("utils/iterate.jl")
-include("utils/Defaults.jl")
 include("utils/TensorMap.jl")
 include("utils/trivial.jl")
 include("utils/Info.jl")
@@ -94,10 +93,13 @@ include("SparseMPO/SparseGeneralMPO.jl")
 include("LocalImpurity/LocalImpurity.jl")
 include("LocalImpurity/expectation.jl")
 
-# include("Algorithm/getAL.jl")
-# include("Algorithm/getAR.jl")
-# include("Algorithm/approximate.jl")
-# include("Algorithm/multiply.jl")
-# include("Algorithm/fixedBondary/algorithm.jl")
+include("Algorithm/getAL.jl")
+include("Algorithm/getAR.jl")
+include("Algorithm/approximate.jl")
+include("Algorithm/multiply.jl")
+include("Algorithm/fixedBondary/algorithm.jl")
+include("Algorithm/fixedBondary/fixedBondary.jl")
+
+include("utils/Defaults.jl")
 
 end # module iMPSForClassicalModels

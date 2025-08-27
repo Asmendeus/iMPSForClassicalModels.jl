@@ -134,96 +134,12 @@ However, due to the exponential growth of the computational cost of the multi-le
 
 ## 2. iMPS with mixed canonical form
 
-ref: [SciPost Phys. Lect. Notes 7 (2019)](https://scipost.org/SciPostPhysLectNotes.7)
+See the reference [SciPost Phys. Lect. Notes 7 (2019)](https://scipost.org/SciPostPhysLectNotes.7) and [SciPostPhysCore.4.1.004(2021)](https://scipost.org/10.21468/SciPostPhysCore.4.1.004) for details.
 
-Before this section begins, please understand a key concept: **Fixed Point is all we need**.
+Functions implemented in `iMPSForClassicalModels`
 
-In infinite tensor method, introduction a variational boundary at infinity is used to transform an infinite environment into a finite environment tensor, which corresponds to a maximum eigenvalue problem. The maximum eigenvalue problem can be described by either a maximum eigenvalue equation or a fixed point equation, the solution is usually the same for both in the cases we discuss.
-
-In addition, we need to solve some variational optimization problems, which correspond to fixed point with zero gradient, and thus can be solved iteratively by fixed point equations as well. It will perform better if some gradient optimization algorithm is used.
-
-`iMPSForClassicalModels.jl` provides a simple iterator (see `SimpleIteration`) for solving fixed point equations and use `KrylovKit.ArnoldiIterator` or `KrylovKit.LanczosIterator` for solving the maximum magnitude eigenequation.
-
-### What is mixed canonical form
-
-In the previous section, we show how the partition function of a 2D classical model can be represented as tensor network structure and introduce variational iMPS at the infinity boundary. Such a boundary iMPS has a uniform form, which means that every local tensor $A$ (or $n$-site unit cell $[A_1,A_2,\cdots,A_n]$) is the same.
-
-Although the state is uniquely defined by the tensor $A$, the converse is not true, as different tensors can give rise to the same physical state. This can be easily seen by noting that the *gauge transform*
-
-![gauge transform](fig/gauge.png "gauge transform")
-
-As is well known from DMRG and other MPS algorithms on finite chains, the use of canonical forms helps to ensure the numerical stability of the resulting algorithms, and this extends to algorithms for infinite systems discussed below. First, we can always find a representation of $|\Psi(A)\rangle$ in terms of a new MPS tensor $A_L$
-
-![left gauge](fig/LeftGauge.png "left gauge")
-
-such that the MPS tensor obeys the following condition
-
-![left orthonormal](fig/LeftOrth.png "left orthonormal")
-
-The representation of an MPS in terms of a tensor $A_L$ is called the *left-orthonormal* form. This gauge condition still leaves room for unitary gauge transformations,
-
-![left gauge 2](fig/LeftGauge2.png "left gauge 2")
-
-Similarly, a *right-orthonormal* form $A_R$ can be found such that
-
-![right orthonormal](fig/RightOrth.png "right orthonormal")
-
-These left- and right-orthonormal forms now allow us to define a mixed gauge for the uniform MPS. The idea is that we choose one site, the 'center site', bring all tensors to the left in the left-orthonormal form, all the tensors to the right in the right-orthonormal form, and define a new tensor $A_C$ on the center site. Diagrammatically, we obtain the following form
-
-![canonical form](fig/CanonicalForm.png "canonical form")
-
-This mixed gauge form has an intuitive interpretation. First of all, we introduce a new tensor $C=LR$, which implements the gauge transform that maps the left-orthonormal tensor into the right-orthonromal one, and which defines the center-site tensor $A_C$:
-
-![mixed gauge](fig/MixedGauge.png "mixed gauge")
-
-This allows us to rewrite the MPS with only the $C$ tensor on a virtual leg, linking the left- and right orthonormal tensors,
-
-![canonical form 2](fig/CanonicalForm2.png "canonical form 2")
-
-The normalization condition $\langle\Psi(A)|\Psi(A)\rangle = 1$ is expressed as $\text{Tr}(CC^\dagger) = \text{Tr}(C^\dagger C) = 1$
-
-In a next step, the tensor $C$ is brought into diagonal form by performing a singular-value decomposition $C=USV^\dagger$, and taking up $U$ and $V^\dagger$ in a new definition of $A_L$ and $A_R$ - remember that we still had the freedom of unitary gauge transformations on the left- and right-canonical form:
-
-![Mixed Gauge 2](fig/MixedGauge2.png "Mixed Gauge 2")
-
-The mixed canonical form can also be generalized to the $n$-site case, here we take 2-site as an example:
-
-![2-ste canonical form](fig/CanonicalForm3.png "2-ste canonical form")
-
-with left- and right-orthonromal properties
-
-![2-site mixed gauge](fig/MixedGauge3.png "2-site mixed gauge")
-
-For the sake of both generality and simplicity, we'll keep analyzing the 2-site case below.
-
-### How to find mixed canonical form
-
-Next we show how to find mixed canonical form of uniform MPS. It is not difficult to see that we actually need to find the following fixed point equations
-
-![Fixed Point](fig/FixedPoint.png "Fixed Point")
-
-and center bond matrices are $C_{12} = L_{12}R_{12}$ and $C_{21} = L_{21}R_{21}$ with normalization condition $\text{Tr}(C_{12}C^\dagger_{12}) = \text{Tr}(C_{21}C_{21}^\dagger) = 1$. Here, we use an iterative method to solve the following fixed point equations by an Arnoldi eigensolver
-
-![Fixed Point 2](fig/FixedPoint2.png "Fixed Point 2")
-
-Eventually we get fixed point tensors $A_{1L}$, $A_{2L}$, $L_{12}$, $L_{21}$, $A_{1R}$, $A_{2R}$, $R_{12}$, $R_{21}$, and center bond and center tensors are $C_{12} = L_{12}R_{12}$, $C_{21} = L_{21}R_{21}$, $A_{1C} = L_{21}A_1R_{12}$, $A_{2C} = L_{12}A_2R_{21}$
-
-`iMPSForClassicalModels` also provides the canonicalization method based on solving largest eigen-equation, see `leftFixedPoint ` and `leftFixedPoint` for details.
-
-### Variational optimal approximation
-
-We now consider the problem of how to find, for a given $D$-manifold iMPS $|\psi\rangle$, its optimal approximation $|\psi^\prime\rangle$ on the $D^\prime$-manifold.
-
-An evaluator that judges the degree of approximation of two iMPS is the overlap, i.e., $\frac{|\langle\psi|\psi^\prime\rangle|^2}{\langle\psi^\prime|\psi^\prime\rangle}$. We are actually looking for a $|\psi^\prime\rangle$ on the $D^\prime$-manifold to maximize it. Here we only exhibit the algorithmic flow, please refer to the [reference](https://scipost.org/SciPostPhysLectNotes.7) for specific principles and details.
-
-1. Solve the left and right environments
-
-   ![img](fig/OA_environment.png)
-2. Update $A_C^\prime$ and $C^\prime$
-
-   ![img](fig/OA_ACC.png)
-3. Update $A_L^\prime$ and $A_R^\prime$
-
-### Variational Infinite Time Evolving Block Decimation (ViTEBD)
-
-### Variational Uniform Matrix Product State (VUMPS)
+1. `canonicalize`: find an iMPS with mixed canonical form from uniform form
+2. `approximate`: find the best approximation of an iMPS with maximum overlap
+3. `multiply`: VOMPS
+4. `ViTEBD`: iTEBD based on VOMPS
+5. `VUMPS`: VUMPS (Note that the two largest eigenvalue equations are solved instead of one with the largest magnitude and the smallest real part)
