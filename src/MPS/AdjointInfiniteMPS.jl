@@ -10,14 +10,14 @@ Lazy wrapper type for adjoint of iMPS.
 
 Functions to be directly propagated to the parent:
 
-    normalize!, uniformize, canonicalize
+    normalize!
 
 Functions to be propagated to the parent with some adaptations:
 
-    getA, getAL, getAR, getAC, getC, leftVirtualSpace, rightVirtualSpace, physicalSpace, extraPhysicalSpace
+    getAL, getAR, getAC, getC, leftVirtualSpace, rightVirtualSpace, physicalSpace, extraPhysicalSpace
 """
 struct AdjointInfiniteMPS{L, T} <: AbstractInfiniteMPS{L}
-    parent::Union{DenseUniformMPS{L, T}, DenseCanonicalMPS{L, T}}
+    parent::DenseInfiniteMPS
 end
 adjoint(A::DenseInfiniteMPS) = AdjointInfiniteMPS(A)
 adjoint(A::AdjointInfiniteMPS) = A.parent
@@ -29,10 +29,8 @@ end
 
 # some functions to be directly propagated to the parent
 normalize!(obj::AdjointInfiniteMPS) = normalize!(obj.parent)
-uniformize(obj::AdjointInfiniteMPS) = AdjointInfiniteMPS(uniformize(obj.parent))
-canonicalize(obj::AdjointInfiniteMPS) = AdjointInfiniteMPS(canonicalize(obj.parent))
 
 # apply lazy adjoint when obtaining the local tensors
-for func in (:getA, :getAL, :getAR, :getAC, :getC, :leftVirtualSpace, :rightVirtualSpace, :physicalSpace, :extraPhysicalSpace)
+for func in (:getAL, :getAR, :getAC, :getC, :leftVirtualSpace, :rightVirtualSpace, :physicalSpace, :extraPhysicalSpace)
     @eval $func(obj::AdjointInfiniteMPS, args...) = adjoint.($func(obj.parent, args...))
 end

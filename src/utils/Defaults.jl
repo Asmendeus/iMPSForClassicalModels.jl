@@ -4,8 +4,8 @@ module Defaults
 
     datatype = ComplexF64
 
-    tol_high = 1e-14        # high-accuracy iteration tolerance
-    tol = 1e-11             # normal-accuracy iteration tolerance
+    tol_high = 1e-16        # high-accuracy iteration tolerance
+    tol = 1e-12             # normal-accuracy iteration tolerance
     tol_low = 1e-8          # low-accuracy iteration tolerance
 
     maxiter = 80       # iteration step limit

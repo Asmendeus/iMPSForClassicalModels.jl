@@ -1,9 +1,11 @@
 """
-    canonicalize(obj::DenseUniformMPS{L, T}; XL₀=_default_X₀_leftFixedPoint(obj.A),
-            XR₀=_default_X₀_rightFixedPoint(obj.A), alg::EigenAlgorithm=Defaults.alg_eig,
-            kwargs...) -> ::DenseCanonicalMPS
+    canonicalize(A::AbstractVector{<:AbstractLocalTensor{R}};
+                XL₀=_default_X₀_leftFixedPoint(A),
+                XR₀=_default_X₀_rightFixedPoint(A),
+                alg::EigenAlgorithm=Defaults.alg_eig,
+                kwargs...) -> ::InfiniteMPS
 
-Canonicalize an iMPS with uniform form to an iMPS with canonical form
+Canonicalize a vector of `LocalTensor{R}` (an iMPS/iMPO with uniform form) to an iMPS/iMPO with canonical form
 
 # Steps
 1. Solve `AL` and `L` by maximum eigenequation method;
@@ -12,13 +14,23 @@ Canonicalize an iMPS with uniform form to an iMPS with canonical form
 4. Generate `AC` by `AL[i] * C[i] = AC[i] = C[i-1] * AR[i]`;
 5. Perform a gauge transformation via SVD decomposition to diagonalize `C` and update `AL`, `AR`, `AC`;
 """
-function canonicalize(obj::DenseUniformMPS{L, T}; XL₀=_default_X₀_leftFixedPoint(obj.A),
-            XR₀=_default_X₀_rightFixedPoint(obj.A), alg::EigenAlgorithm=Defaults.alg_eig, kwargs...) where {L, T}
+function canonicalize(A::AbstractVector{<:AbstractLocalTensor{R}};
+                      XL₀=_default_X₀_leftFixedPoint(A),
+                      XR₀=_default_X₀_rightFixedPoint(A),
+                      alg::EigenAlgorithm=Defaults.alg_eig,
+                      kwargs...) where R
 
-    @assert alg isa KrylovKit.KrylovAlgorithm "Only the maximum eigenequation method is supported to canonicalize."
+    if R == 3
+        mpstype = InfiniteMPS
+    elseif R == 4
+        mpstype = InfiniteMPO
+    else
+        throw(ArgumentError("Can't convert the vector of `LocalTensor{$R}` to an iMPS(`LocalTensor{3}`) or iMPO(`LocalTensor{4}`)"))
+    end
+    L = length(A)
 
-    _, XL, AL, _ = leftFixedPoint(obj.A, XL₀, alg; kwargs...)
-    _, XR, AR, _ = rightFixedPoint(obj.A, XR₀, alg; kwargs...)
+    _, XL, AL, _ = leftFixedPoint(A, XL₀, alg; kwargs...)
+    _, XR, AR, _ = rightFixedPoint(A, XR₀, alg; kwargs...)
 
     XL = XL[[(2:L)..., 1]]
     C = XL .* XR
@@ -36,6 +48,5 @@ function canonicalize(obj::DenseUniformMPS{L, T}; XL₀=_default_X₀_leftFixedP
 
     AC = AL .* C
 
-    return canonicalize(typeof(obj))(AL, AR, AC, C)
+    return mpstype(AL, AR, AC, C)
 end
-canonicalize(obj::DenseCanonicalMPS; kwargs...) = obj

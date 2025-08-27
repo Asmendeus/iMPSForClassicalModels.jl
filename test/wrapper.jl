@@ -89,16 +89,16 @@ centerEnv1 = environment(FL1, O1, FR1)
 centerEnv2 = environment(FL1, [O1, O2], FR1)
 
 # MPS
-ψ1 = UMPS(A)
-ψ2 = randUMPS(ComplexF64, 2, 4, 10)
+ψ1 = iMPS(A)
+ψ2 = randInfiniteMPS(ComplexF64, 2, 4, 10)
 
 # MPO
-ρ1 = UMPO(O)
-ρ2 = identityUMPO(ComplexF64, 2, 4)
+ρ1 = iMPO(O)
+ρ2 = identityInfiniteMPO(ComplexF64, 2, 4)
 
 # SparseUMPO
-Z1 = SparseUMPO(O)
-Z2 = SparseUMPO([O1 O1; O2 O2])
+Z1 = SparseGeneralMPO(O)
+Z2 = SparseGeneralMPO([O1 O1; O2 O2])
 
 @testset "leftorth & rightorth" begin
     @test isLeftIsometric(AL)
@@ -128,41 +128,14 @@ end
 
 @testset "iMPS (L = 1)" begin
     @test abs(overlap(ψ1, ψ1) - 1) < tol
-
-    ψ1c = canonicalize(ψ1)
-    @test abs(overlap(ψ1c, ψ1c) - 1) < tol
-    @test norm(ψ1c.AL[1] * ψ1c.C[1] - ψ1c.C[1] * ψ1c.AR[1]) < tol
-    @test abs(overlap(ψ1, ψ1c) - 1) < tol
-
-    ψ1u = uniformize(ψ1c)
-    @test abs(overlap(ψ1u, ψ1u) - 1) < tol
-    @test abs(overlap(ψ1c, ψ1u) - 1) < tol
-    @test abs(overlap(ψ1, ψ1u) - 1) < tol
+    @test norm(ψ1.AL[1] * ψ1.C[1] - ψ1.C[1] * ψ1.AR[1]) < tol
 end
 @testset "iMPS (L = 2)" begin
     @test abs(overlap(ψ2, ψ2) - 1) < tol
-
-    ψ2c = canonicalize(ψ2)
-    @test abs(overlap(ψ2c, ψ2c) - 1) < tol
-    @test norm(ψ2c.AL[1] * ψ2c.C[1] - ψ2c.C[2] * ψ2c.AR[1]) < tol
-    @test norm(ψ2c.AL[2] * ψ2c.C[2] - ψ2c.C[1] * ψ2c.AR[2]) < tol
-    @test abs(overlap(ψ2, ψ2c) - 1) < tol
-
-    ψ2u = uniformize(ψ2c)
-    @test abs(overlap(ψ2u, ψ2u) - 1) < tol
-    @test abs(overlap(ψ2c, ψ2u) - 1) < tol
-    @test abs(overlap(ψ2, ψ2u) - 1) < tol
+    @test norm(ψ2.AL[1] * ψ2.C[1] - ψ2.C[2] * ψ2.AR[1]) < tol
+    @test norm(ψ2.AL[2] * ψ2.C[2] - ψ2.C[1] * ψ2.AR[2]) < tol
 end
 @testset "iMPO (L = 1)" begin
     @test abs(overlap(ρ1, ρ1) - 1) < tol
-
-    ρ1c = canonicalize(ρ1)
-    @test abs(overlap(ρ1c, ρ1c) - 1) < tol
-    @test norm(ρ1c.AL[1] * ρ1c.C[1] - ρ1c.C[1] * ρ1c.AR[1]) < tol
-    @test abs(overlap(ρ1, ρ1c) - 1) < tol
-
-    ρ1u = uniformize(ρ1c)
-    @test abs(overlap(ρ1u, ρ1u) - 1) < tol
-    @test abs(overlap(ρ1c, ρ1u) - 1) < tol
-    @test abs(overlap(ρ1, ρ1u) - 1) < tol
+    @test norm(ρ1.AL[1] * ρ1.C[1] - ρ1.C[1] * ρ1.AR[1]) < tol
 end

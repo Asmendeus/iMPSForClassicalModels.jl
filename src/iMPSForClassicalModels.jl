@@ -34,29 +34,24 @@ export pushleft, pushright, pushmid
 export leftFixedPoint, rightFixedPoint, midFixedPoint
 
 # iMPS
-export AbstractInfiniteMPS
-export AbstractUniformMPS, DenseUniformMPS, getA
-export AbstractCanonicalMPS, DenseCanonicalMPS, getAL, getAR, getAR, getC
-export DenseInfiniteMPS
-export UniformMPS, UMPS, randUMPS
-export CanonicalMPS, CMPS, InfiniteMPS, randCMPS
-export canonicalize, uniformize
+export AbstractGeneralInfiniteMPS, AbstractInfiniteMPS, DenseInfiniteMPS, getAL, getAR, getAR, getC
+export InfiniteMPS, iMPS, randInfiniteMPS
+export canonicalize
 export AdjointInfiniteMPS
 export overlap
 
 # iMPO
-export UniformMPO, UMPO, identityUMPO
-export CanonicalMPO, CMPO, InfiniteMPO, identityCMPO
+export InfiniteMPO, iMPO, identityInfiniteMPO
 
 # SparseMPO
-export SparseUMPO
+export SparseGeneralMPO, getA
 
 # Impurity tensor
 export AbstractLocalImpurity, LocalImpurity, expectation
 
 # Algorithm
-export getAL, getAR, approximate, multiply
-export VUMPS, ViTEBD
+# export approximate, multiply
+# export VUMPS, ViTEBD
 
 include("utils/SimpleIterator.jl")
 include("utils/iterate.jl")
@@ -87,25 +82,22 @@ include("Method/rightFixedPoint.jl")
 include("Method/midFixedPoint.jl")
 
 include("MPS/AbstractInfiniteMPS.jl")
-include("MPS/UniformMPS.jl")
-include("MPS/CanonicalMPS.jl")
+include("MPS/InfiniteMPS.jl")
 include("MPS/canonicalize.jl")
-include("MPS/uniformize.jl")
 include("MPS/AdjointInfiniteMPS.jl")
 include("MPS/overlap.jl")
 
-include("MPO/UniformMPO.jl")
-include("MPO/CanonicalMPO.jl")
+include("MPO/InfiniteMPO.jl")
 
-include("SparseUMPO/SparseUMPO.jl")
+include("SparseMPO/SparseGeneralMPO.jl")
 
 include("LocalImpurity/LocalImpurity.jl")
 include("LocalImpurity/expectation.jl")
 
-include("Algorithm/getAL.jl")
-include("Algorithm/getAR.jl")
-include("Algorithm/approximate.jl")
-include("Algorithm/multiply.jl")
-include("Algorithm/fixedBondary/algorithm.jl")
+# include("Algorithm/getAL.jl")
+# include("Algorithm/getAR.jl")
+# include("Algorithm/approximate.jl")
+# include("Algorithm/multiply.jl")
+# include("Algorithm/fixedBondary/algorithm.jl")
 
 end # module iMPSForClassicalModels

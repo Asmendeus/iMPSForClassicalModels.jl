@@ -12,9 +12,9 @@ d = 4
     FR = RightEnvironmentTensor(TensorMap(rand, ℝ^D⊗ℝ^d, ℝ^D))
     env = BondEnvironment(FL, FR)
 
-    λ1, C1, _ = midFixedPoint(env, SimpleIterator())
+    λ1, C1, _ = midFixedPoint(env, SimpleIterator(; tol=1e-14))
     λ2, C2, _ = midFixedPoint(env, Arnoldi())
-    λ1′, C1′, _ = midFixedPoint(env, C1', SimpleIterator())
+    λ1′, C1′, _ = midFixedPoint(env, C1', SimpleIterator(; tol=1e-14))
     λ2′, C2′, _ = midFixedPoint(env, C2', Arnoldi())
 
     @test abs(λ1 - λ2) < tol1
@@ -31,9 +31,9 @@ end
     FR = RightEnvironmentTensor(TensorMap(rand, ℂ^D⊗ℂ^d⊗ℂ^d, ℂ^D))
     env = BondEnvironment(FL, FR)
 
-    λ1, C1, _ = midFixedPoint(env, SimpleIterator())
+    λ1, C1, _ = midFixedPoint(env, SimpleIterator(; tol=1e-14))
     λ2, C2, _ = midFixedPoint(env, Arnoldi())
-    λ1′, C1′, _ = midFixedPoint(env, C1', SimpleIterator())
+    λ1′, C1′, _ = midFixedPoint(env, C1', SimpleIterator(; tol=1e-14))
     λ2′, C2′, _ = midFixedPoint(env, C2', Arnoldi())
 
     @test abs(λ1 - λ2) < tol1
@@ -51,9 +51,9 @@ end
     FR = RightEnvironmentTensor(TensorMap(rand, ℝ^D⊗ℝ^d, ℝ^D))
     env = CenterEnvironment(FL, O, FR)
 
-    λ1, AC1, _ = midFixedPoint(env, SimpleIterator())
+    λ1, AC1, _ = midFixedPoint(env, SimpleIterator(; tol=1e-14))
     λ2, AC2, _ = midFixedPoint(env, Arnoldi())
-    λ1′, AC1′, _ = midFixedPoint(env, AC1', SimpleIterator())
+    λ1′, AC1′, _ = midFixedPoint(env, AC1', SimpleIterator(; tol=1e-14))
     λ2′, AC2′, _ = midFixedPoint(env, AC2', Arnoldi())
 
     @test abs(λ1 - λ2) < tol1
@@ -74,9 +74,9 @@ end
 
     X₀ = MPOTensor(TensorMap(rand, ℂ^D⊗ℂ^d, ℂ^d⊗ℂ^D))
 
-    λ1, AC1, _ = midFixedPoint(env, X₀, SimpleIterator())
+    λ1, AC1, _ = midFixedPoint(env, X₀, SimpleIterator(; tol=1e-14))
     λ2, AC2, _ = midFixedPoint(env, X₀, Arnoldi())
-    λ1′, AC1′, _ = midFixedPoint(env, AC1', SimpleIterator())
+    λ1′, AC1′, _ = midFixedPoint(env, AC1', SimpleIterator(; tol=1e-14))
     λ2′, AC2′, _ = midFixedPoint(env, AC2', Arnoldi())
 
     @test abs(λ1 - λ2) < tol1
