@@ -2,8 +2,6 @@
 
 `iMPSForClassicalModel.jl` is a package based on `TensorKit.jl` for solving 2D classical statistical models under thermodynamic limit.
 
-!WARNING: The package is still under rapid development, whose current version `v0.1` is a demo version. Some features on "top" level are available, but the most efficient implementation is not provided. These problems are expected to be improved in version `v0.2`
-
 ## Problems can be solved
 
 `iMPSForClassicalModel.jl` provides a range of features for MPS/MPO with canonical form and implementations of some algorithms (including `ViTEBD`and `VUMPS`). Here's what it can solve
@@ -42,8 +40,8 @@ See [Review.md](docs/Review.md)
 
 See [Tutorial.md](docs/Tutorial.md)
 
-## About `InfiniteMPS.jl`
+## About Development and Maintenance
 
-An iMPS package `InfiniteMPS.jl` for quantum systems is planned to be developed.
+An iMPS package for quantum systems is planned to be developed.
 
-A development plan is to incorporate the functionality implemented by `iMPSForClassicalModels.jl` into it, at which point maintenance of this library will cease.
+A development plan is to incorporate the functionality implemented by `iMPSForClassicalModels.jl` into it, at which point maintenance of this package will cease.
